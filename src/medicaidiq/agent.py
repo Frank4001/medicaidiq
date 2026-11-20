@@ -6,24 +6,38 @@ regex-parsed ReAct, native tool calling gives schema-validated arguments, which 
 the reliability gain the tool-calling lab demonstrated for API models.
 
 Stop conditions: submit_answer passes verification | ask_user without a reply
-| max_steps reached | repeated identical failing call.
+| max_steps reached | repeated identical failing call | write-intent guardrail (before any LLM call).
 Self-correction: tool errors and verifier failures come back as observations.
 """
 
 from __future__ import annotations
 
 import json
-import time
+import re
 from dataclasses import asdict, dataclass, field
 from typing import Callable
 
 from .llm import AssistantTurn
 from .memory import WorkingMemory
 from .prompts import SYSTEM_PROMPT
-from .tools import TOOL_SCHEMAS, Toolbox
+from .tools import Toolbox, tool_schemas
 from .verify import verify_answer
 
-MAX_OBS_CHARS = 3500
+MAX_OBS_CHARS = 6000
+
+# Deterministic guardrail: requests to change stored data are refused before any LLM call.
+# The model refusing is not enough (local Qwen3-8B failed this case twice; see llm_selection.md).
+# "drop" alone is NOT a write verb ("Did enrollment drop?" is an analysis question).
+_WRITE_VERB = r"(delete|truncate|insert|overwrite|alter|purge|wipe|erase)"
+_DATA_OBJ = r"(rows?|records?|tables?|database|data(set)?|entries|values|drug_utilization|enrollment)"
+WRITE_INTENT = re.compile(rf"\b{_WRITE_VERB}\b[^.?!]{{0,60}}\b{_DATA_OBJ}\b"
+                          rf"|\bdrop\s+(the\s+)?(table|database)\b"
+                          rf"|\b(update|modify|edit)\b[^.?!]{{0,40}}\b(table|database|rows?|records?)\b",
+                          re.IGNORECASE)
+
+
+def write_intent(question: str) -> bool:
+    return bool(WRITE_INTENT.search(question))
 
 
 @dataclass
@@ -53,15 +67,28 @@ class AgentResult:
 
 class MedicaidIQAgent:
     def __init__(self, llm, toolbox: Toolbox, max_steps: int = 10, max_verify_retries: int = 2,
-                 clarify: Callable[[str], str | None] | None = None):
+                 clarify: Callable[[str], str | None] | None = None, retrieval: bool = True):
         self.llm = llm
         self.tools = toolbox
         self.max_steps = max_steps
         self.max_verify_retries = max_verify_retries
         self.clarify = clarify  # None -> non-interactive: stop and return the clarifying question
+        self.schemas = tool_schemas(retrieval)
+        self.offered = {t["function"]["name"] for t in self.schemas}
 
     def run(self, question: str) -> AgentResult:
         memory = WorkingMemory(question)
+        if write_intent(question):
+            answer = {"answer_type": "cannot_answer",
+                      "summary": "I can't modify, delete, or insert data: MedicaidIQ has read-only access by design. "
+                                 "To leave out provisional or problem periods, ask me to exclude them from an analysis "
+                                 "instead (pre/post analyses already exclude provisional quarters).",
+                      "findings": [], "confidence": "high",
+                      "confidence_reason": "Deterministic read-only guardrail (no model call).",
+                      "caveats": [], "human_review": []}
+            trace = [TraceStep(0, "Guardrail: write-intent detected before any model call.", "guardrail_refusal",
+                               {}, {"blocked": True}, 0.0)]
+            return self._result(question, answer, trace, memory, "guardrail", True, 0)
         messages = [{"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": question}]
         trace: list[TraceStep] = []
@@ -70,7 +97,7 @@ class MedicaidIQAgent:
         repeat_failures = 0
 
         for step in range(1, self.max_steps + 1):
-            turn: AssistantTurn = self.llm.chat(messages, tools=TOOL_SCHEMAS)
+            turn: AssistantTurn = self.llm.chat(messages, tools=self.schemas, max_tokens=4096)
             thought = (turn.content or turn.reasoning or "").strip()
             messages.append(turn.as_message())
 
@@ -85,10 +112,21 @@ class MedicaidIQAgent:
             for call in turn.tool_calls:
                 try:
                     args = json.loads(call.arguments or "{}")
+                    parsed = isinstance(args, dict)
                 except json.JSONDecodeError:
-                    args = {"_raw": call.arguments}
+                    args, parsed = {"_raw": (call.arguments or "")[:500]}, False
 
-                if call.name == "submit_answer" and isinstance(args, dict):
+                if call.name == "submit_answer" and not parsed:
+                    # Never accept an answer we cannot parse and verify (seen live: output cut off mid-JSON).
+                    obs = {"error": "submit_answer arguments were not valid JSON (possibly cut off because the "
+                                    "answer was too long). Resubmit valid JSON with a shorter summary and fewer, "
+                                    "more concise findings."}
+                    memory.record_failure("submit_answer: invalid JSON")
+                    trace.append(TraceStep(step, thought, call.name, args, obs, turn.latency_s))
+                    messages.append(_tool_msg(call.id, obs))
+                    continue
+
+                if call.name == "submit_answer":
                     problems = verify_answer(args, memory)
                     if problems and verify_retries < self.max_verify_retries:
                         verify_retries += 1
@@ -116,7 +154,11 @@ class MedicaidIQAgent:
                     messages.append(_tool_msg(call.id, {"user_reply": reply}))
                     continue
 
-                obs = self.tools.execute(call.name, call.arguments, memory)
+                if call.name not in self.offered:
+                    obs = {"error": f"Tool '{call.name}' is not available in this configuration."}
+                    memory.record_failure(f"{call.name}: not available")
+                else:
+                    obs = self.tools.execute(call.name, call.arguments, memory)
                 trace.append(TraceStep(step, thought, call.name, args, obs, turn.latency_s))
                 messages.append(_tool_msg(call.id, obs))
 

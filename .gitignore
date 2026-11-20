@@ -35,3 +35,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 ~$*
+
+# --- Retrieval index (rebuilt from the corpus) ---
+data/index/

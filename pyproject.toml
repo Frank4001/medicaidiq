@@ -9,6 +9,8 @@ dependencies = [
     "duckdb>=1.0",       # embedded analytical SQL, opened read-only
     "mcp>=2.0",          # Model Context Protocol server (MCPServer, formerly FastMCP)
     "python-dotenv>=1.0",
+    "fastembed>=0.4",    # local bge-small-en-v1.5 embeddings (ONNX, CPU, no API cost)
+    "numpy>=1.26",
 ]
 
 [project.optional-dependencies]

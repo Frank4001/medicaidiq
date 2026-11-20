@@ -38,9 +38,10 @@ def _call(name: str, **kwargs) -> str:
 
 
 @mcp.tool()
-def search_policy(query: str, state: str | None = None, as_of: str | None = None) -> str:
-    """Keyword search over Medicaid policy documents with optional state and as-of filters."""
-    return _call("search_policy", query=query, state=state, as_of=as_of)
+def search_policy(query: str, state: str | None = None, as_of: str | None = None,
+                  include_federal: bool = True) -> str:
+    """Hybrid semantic + keyword search over state policy documents and federal regulations (42 CFR)."""
+    return _call("search_policy", query=query, state=state, as_of=as_of, include_federal=include_federal)
 
 
 @mcp.tool()
@@ -90,11 +91,17 @@ def schema() -> str:
 
 @mcp.resource("policy://{doc_id}")
 def policy_document(doc_id: str) -> str:
-    """Full text of one policy document by id (e.g. EV-BUL-2024-011)."""
-    path = POLICY_DIR / f"{doc_id}.md"
-    if not path.exists() or path.parent != POLICY_DIR:
+    """Full text of one policy document by id (e.g. EV-BUL-2024-011 or 42-CFR-430.20)."""
+    from .ingest_public import PUBLIC_DIR
+    if not all(ch.isalnum() or ch in "-." for ch in doc_id):
         return f"Unknown document id: {doc_id}"
-    return path.read_text(encoding="utf-8")
+    md, js = POLICY_DIR / f"{doc_id}.md", PUBLIC_DIR / f"{doc_id}.json"
+    if md.exists():
+        return md.read_text(encoding="utf-8")
+    if js.exists():
+        d = json.loads(js.read_text(encoding="utf-8"))
+        return f"# {d['title']}\nSource: {d['url']} (version {d['version_date']})\n\n" + "\n\n".join(d["paragraphs"])
+    return f"Unknown document id: {doc_id}"
 
 
 @mcp.prompt()

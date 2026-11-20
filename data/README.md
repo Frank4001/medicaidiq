@@ -28,3 +28,19 @@ Product names are real generic drug names. NDC-style codes and every number are 
 ## Real public data (planned, Week 3+)
 
 CMS State Drug Utilization Data and public enrollment data from data.medicaid.gov, plus public state policy documents. Restricted data (T-MSIS/TAF) is out of scope.
+
+## `public/`: real external corpus (Week 3)
+
+Fetched by `medicaidiq fetch-public` (`src/medicaidiq/ingest_public.py`). Snapshots are committed so reviewers don't need network access.
+
+| Document | Source |
+|---|---|
+| 42 CFR 430.12, 430.20 (state plan amendments and their effective dates) | eCFR API, version 2026-11-18 |
+| 42 CFR 440.120 (prescribed drugs) | eCFR API |
+| 42 CFR 447.205, 447.256, 447.512, 447.518 (payment notice, payment-SPA effective dates, drug payment) | eCFR API |
+| 42 CFR 456.703, 456.705, 456.709 (drug use review) | eCFR API |
+| State Drug Utilization Data dataset description | data.medicaid.gov metastore API |
+
+Each JSON file records `url`, `version_date`, `retrieved_at`, and the `sha256` of its text. Federal regulations are public-domain U.S. government works. Medicaid.gov web pages are not included because they block automated access (HTTP 403).
+
+The retrieval index (`data/index/`) is rebuilt automatically from the corpus and is gitignored.
