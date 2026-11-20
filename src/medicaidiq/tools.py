@@ -80,7 +80,8 @@ TOOL_SCHEMAS = [
         {"question": {"type": "string"}}, ["question"]),
     _fn("submit_answer",
         "Submit the final structured answer. Every number in summary/findings must come from a tool result, "
-        "and each finding must cite evidence ids (E1, E2, ...).",
+        "and each finding must cite evidence ids (E1, E2, ...) returned by tools. For cannot_answer or "
+        "clarification_needed without tool evidence, use an empty findings list.",
         {"answer_type": {"type": "string", "enum": ["answer", "cannot_answer", "clarification_needed"]},
          "summary": {"type": "string", "description": "2-4 sentences, plain language"},
          "findings": {"type": "array", "items": {
