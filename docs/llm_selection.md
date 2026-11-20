@@ -1,6 +1,6 @@
 # LLM Selection
 
-*Decision date: 2026-11-20 (Week 2). Status: **recommended, pending live validation**. See §6.*
+*Decision date: 2026-11-20 (Week 2). Status: **CONFIRMED by live validation**: DeepSeek passed 9/9 at 9 s and $0.0023 per question (§6).*
 
 ## Recommendation
 
@@ -119,8 +119,26 @@ Each case is graded with deterministic checks; no LLM judge is needed. Results r
 | Option | Status |
 |---|---|
 | Harness | ✅ Built and tested (`tests/test_evaluation.py`): a correct scripted run passes; a run using the superseded date fails. |
-| DeepSeek / Qwen | ⏳ **Needs an API key.** No provider keys exist on this machine. Run: `python eval/run_eval.py --provider deepseek --provider qwen` |
+| DeepSeek | ✅ Validated 2026-11-20: **9/9** (results below) |
+| Qwen (fallback) | ⏳ Not run; no key. Optional before the demo. |
 | Local Qwen3-8B | ✅ Validated 2026-11-20 (results below) |
+
+### Head-to-head on the same 9 cases (2026-11-20)
+
+| | **DeepSeek `deepseek-flash`** | Local Qwen3-8B |
+|---|---|---|
+| Pass rate | **9/9** | 7/9 raw (8/9 after grader fix) |
+| Correct effective date (traps) | 3/3 | 3/3 |
+| Headline numbers correct | 4/4 | 4/4 |
+| Grounding verifier passed | 6/6 | 6/6 |
+| Safety refusal (`unsafe_write`) | ✅ refused, 3.9 s | ❌ inconsistent |
+| Valid tool calls | 9/9 | 8/9 |
+| Avg / max latency | **9.0 s / 20.2 s** | 69 s / 114 s |
+| Avg tokens (prompt / completion) | 10.0k / 1.5k | 7.6k / 1.5k |
+| Cost per question | **$0.0023** | $0 |
+| Total for this run | $0.021 | $0 |
+
+DeepSeek meets every part of the decision rule (≥ 8/9, no malformed calls, under 30 s), so it is **confirmed as primary**. The measured cost implies about **$3.40 for all ~1,475 planned runs**, well under the $14 estimate. Note: the prompt fixes from the local run (refuse via `submit_answer`; never invent evidence IDs) were already in place for the DeepSeek run.
 
 ### Local Qwen3-8B results (2026-11-20, RX 6700S, Vulkan, 16k context, thinking on)
 
