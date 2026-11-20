@@ -1,0 +1,37 @@
+state,year,quarter,status,note
+NL,2023,1,final,
+NL,2023,2,final,
+NL,2023,3,final,
+NL,2023,4,final,
+NL,2024,1,final,
+NL,2024,2,final,
+NL,2024,3,final,
+NL,2024,4,final,
+NL,2025,1,final,
+NL,2025,2,final,
+NL,2025,3,provisional,Claims run-out incomplete; roughly 93% of expected claims received as of data date.
+NL,2025,4,provisional,Claims run-out incomplete; roughly 70% of expected claims received as of data date.
+EV,2023,1,final,
+EV,2023,2,final,
+EV,2023,3,final,
+EV,2023,4,final,
+EV,2024,1,final,
+EV,2024,2,final,
+EV,2024,3,final,
+EV,2024,4,final,
+EV,2025,1,final,
+EV,2025,2,final,
+EV,2025,3,provisional,Claims run-out incomplete; roughly 93% of expected claims received as of data date.
+EV,2025,4,provisional,Claims run-out incomplete; roughly 70% of expected claims received as of data date.
+SP,2023,1,final,
+SP,2023,2,final,
+SP,2023,3,final,
+SP,2023,4,final,
+SP,2024,1,final,
+SP,2024,2,final,
+SP,2024,3,missing,State did not submit data for this quarter.
+SP,2024,4,final,
+SP,2025,1,final,
+SP,2025,2,final,
+SP,2025,3,provisional,Claims run-out incomplete; roughly 93% of expected claims received as of data date.
+SP,2025,4,provisional,Claims run-out incomplete; roughly 70% of expected claims received as of data date.

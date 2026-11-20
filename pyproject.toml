@@ -1,0 +1,29 @@
+[project]
+name = "medicaidiq"
+version = "0.2.0"
+description = "Research assistant that links Medicaid policy changes to drug-utilization data with citations, reproducible statistics, and stated uncertainty."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.40",      # OpenAI-compatible client: DeepSeek, Qwen, Kimi, and local llama.cpp all speak this API
+    "duckdb>=1.0",       # embedded analytical SQL, opened read-only
+    "mcp>=2.0",          # Model Context Protocol server (MCPServer, formerly FastMCP)
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+medicaidiq = "medicaidiq.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
