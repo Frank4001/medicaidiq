@@ -1,0 +1,246 @@
+{
+  "summary": {
+    "label": "deepseek:deepseek-flash",
+    "cases": 1,
+    "passed": 1,
+    "pass_rate": 1.0,
+    "checks": {
+      "answer_type": "1/1",
+      "mentions_all": "1/1",
+      "mentions_any": "1/1",
+      "required_tools": "1/1",
+      "tool_call_valid": "1/1",
+      "verified": "1/1"
+    },
+    "total_cost_usd": 0.0045,
+    "avg_cost_per_question_usd": 0.00446,
+    "avg_prompt_tokens": 25298,
+    "avg_completion_tokens": 1968,
+    "avg_seconds": 11.8,
+    "max_seconds": 11.8,
+    "consistency": "n/a"
+  },
+  "results": [
+    {
+      "id": "rag_compare_states",
+      "category": "rag_multi_state",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "mentions_all": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "get_policy_timeline",
+        "get_policy_timeline",
+        "get_policy_timeline",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "The two states differ: Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), while Northland's documents describe a prior-authorization-free pathway for weight-management GLP-1s meeting its BMI criteria. Northland's clinical eligibility test is broader (BMI &gt;= 30, or BMI &gt;= 27 with a weight-related comorbidity, effective January 1, 2024), whereas Eastvale's PA criteria are narrower on the weight side (type 2 diabetes with A1c &gt;= 7.0 after a metformin trial, or BMI &gt;= 35 with a comorbidity). Each state's rules apply only to that state, and no federal regulation sets these criteria.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 25298,
+        "cached_tokens": 18688,
+        "completion_tokens": 1968,
+        "llm_seconds": 11.78,
+        "cost_usd": 0.004457
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a policy-content question for two states, so I need to search each state's documents separately (NL GLP-1 coverage/PA and EV GLP-1 prior auth criteria).",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 coverage and prior authorization eligibility criteria",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"GLP-1 coverage and prior authorization eligibility criteria\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.746, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\": \"2023-11-2"
+        },
+        {
+          "thought": "Thought: This is a policy-content question for two states, so I need to search each state's documents separately (NL GLP-1 coverage/PA and EV GLP-1 prior auth criteria).",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization eligibility criteria requirements",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"GLP-1 prior authorization eligibility criteria requirements\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.819, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-BUL-2024-007#p1\", \"doc_id\": \"EV-BUL-2024-007\", \"title\": \"Provider Bulletin 2024-07: Prior authorization for GLP-1 agonists\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"effective_date\": \""
+        },
+        {
+          "thought": "Thought: I have the passages; now I need the authoritative effective dates (NL has a Jan 1 SPA vs Feb 1 manual discrepancy, and EV's PA start date was postponed) plus confirmation whether NL has any PA requirement at all.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: I have the passages; now I need the authoritative effective dates (NL has a Jan 1 SPA vs Feb 1 manual discrepancy, and EV's PA start date was postponed) plus confirmation whether NL has any PA requirement at all.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"error\": \"No policy on record for NL/glp1_prior_auth. Search documents instead; if none exist, the policy may not exist for this state.\"}"
+        },
+        {
+          "thought": "Thought: I have the passages; now I need the authoritative effective dates (NL has a Jan 1 SPA vs Feb 1 manual discrepancy, and EV's PA start date was postponed) plus confirmation whether NL has any PA requirement at all.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: NL has no PA policy on record in memory; I should confirm via a targeted document search that NL has no GLP-1 PA requirement before answering.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "prior authorization not required GLP-1 preferred drug list utilization management",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E5\", \"query\": \"prior authorization not required GLP-1 preferred drug list utilization management\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.755, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"ALL\", \"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-MAN-2024-RX#p1\", \"doc_id\": \"NL-MAN-2024-RX\", \"title\": \"Northland Pharmacy Provider Manual, Section 7.4 (GLP-1 agonists)\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-"
+        },
+        {
+          "thought": "I have enough. Note: the working memory slot got mangled (\"state\": \"NL\", \"topic\": \"glp1_prior_auth\", \"effective_date\": \"2024-07-01\") \u2014 but that's an artifact; my actual evidence: NL has no PA policy, and NL manual says prior-authorization-free pathway. EV requires PA effective 2024-07-01.\n\nAnswer.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "The two states differ: Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), while Northland's documents describe a prior-authorization-free pathway for weight-management GLP-1s meeting its BMI criteria. Northland's clinical eligibility test is broader (BMI &gt;= 30, or BMI &gt;= 27 with a weight-related comorbidity, effective January 1, 2024), whereas Eastvale's PA criteria are narrower on the weight side (type 2 diabetes with A1c &gt;= 7.0 after a metformin trial, or BMI &gt;= 35 with a comorbidity). Each state's rules apply only to that state, and no federal regulation sets these criteria.",
+            "findings": [
+              {
+                "statement": "Northland: no GLP-1 prior-authorization policy is on record for NL, and the NL pharmacy manual directs pharmacies to use the \"standard prior-authorization-free pathway\" for weight-management GLP-1s in patients meeting the BMI criteria [E5 NL-MAN-2024-RX#p1]; no NL document found imposes PA on GLP-1s.",
+                "evidence_ids": [
+                  "E5",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Northland coverage criteria (SPA 23-014): GLP-1 receptor agonists covered for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity; type 2 diabetes coverage unchanged [E1 NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Northland effective date conflict: the authoritative source (SPA 23-014) sets January 1, 2024, but the provider manual says coverage begins February 1, 2024 \u2014 a lower-authority conflict that should be disclosed [E3].",
+                "evidence_ids": [
+                  "E3",
+                  "E1",
+                  "E5"
+                ]
+              },
+              {
+                "statement": "Eastvale: PA is required for all GLP-1 receptor agonists [E2 EV-BUL-2024-007#p1]; the requirement was postponed by Bulletin 2024-11 to take effect July 1, 2024, and claims with dates of service before then need no PA [E2 EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Eastvale PA criteria (manual Chapter 5, effective July 1, 2024): (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [E2 EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The federal passages retrieved (42 CFR 447.518, 456.703, and the SDUD suppression guidance) address DUR/state-plan payment requirements and data suppression generally; none establishes GLP-1 PA or eligibility criteria for either state [E1, E5].",
+                "evidence_ids": [
+                  "E1",
+                  "E5"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Both states have specific, non-superseded primary documents retrieved with high similarity, and effective dates were resolved with the timeline tool; the only gap is the absence of any NL PA document, which is corroborated by both the timeline lookup and the manual language.",
+            "caveats": [
+              "Northland's BMI >= 27/30 thresholds are materially broader than Eastvale's BMI >= 35 plus comorbidity; the difference in PA status makes cross-state utilization comparisons non-comparable without adjusting for this.",
+              "NL effective-date conflict: SPA 23-014 says 2024-01-01, the provider manual says 2024-02-01; the SPA is treated as authoritative.",
+              "EV Bulletin 2024-007 (June 1, 2024 start) is superseded by Bulletin 2024-011 (July 1, 2024); only the latter should be cited as current.",
+              "Absence of an NL PA policy document is a negative finding from the corpus \u2014 it is not proof that no PA edits exist in NL's claims system.",
+              "All states and data are synthetic (NL Northland, EV Eastvale, SP Southport) and mirror CMS SDUD structure; not real Medicaid programs."
+            ],
+            "human_review": [
+              "Confirm with Northland that no GLP-1 PA or other utilization-management edit (e.g., quantity limits, step therapy) exists outside the retrieved documents.",
+              "Resolve the NL SPA vs. manual date discrepancy (2024-01-01 vs 2024-02-01) for any pre/post analysis.",
+              "Verify current Eastvale PA criteria text is still Chapter 5 as of the analysis date and that approval duration (12 months) has not been revised."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "The two states differ: Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), while Northland's documents describe a prior-authorization-free pathway for weight-management GLP-1s meeting its BMI criteria. Northland's clinical eligibility test is broader (BMI &gt;= 30, or BMI &gt;= 27 with a weight-related comorbidity, effective January 1, 2024), whereas Eastvale's PA criteria are narrower on the weight side (type 2 diabetes with A1c &gt;= 7.0 after a metformin trial, or BMI &gt;= 35 with a comorbidity). Each state's rules apply only to that state, and no federal regulation sets these criteria.",
+        "findings": [
+          {
+            "statement": "Northland: no GLP-1 prior-authorization policy is on record for NL, and the NL pharmacy manual directs pharmacies to use the \"standard prior-authorization-free pathway\" for weight-management GLP-1s in patients meeting the BMI criteria [E5 NL-MAN-2024-RX#p1]; no NL document found imposes PA on GLP-1s.",
+            "evidence_ids": [
+              "E5",
+              "E3"
+            ]
+          },
+          {
+            "statement": "Northland coverage criteria (SPA 23-014): GLP-1 receptor agonists covered for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity; type 2 diabetes coverage unchanged [E1 NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Northland effective date conflict: the authoritative source (SPA 23-014) sets January 1, 2024, but the provider manual says coverage begins February 1, 2024 \u2014 a lower-authority conflict that should be disclosed [E3].",
+            "evidence_ids": [
+              "E3",
+              "E1",
+              "E5"
+            ]
+          },
+          {
+            "statement": "Eastvale: PA is required for all GLP-1 receptor agonists [E2 EV-BUL-2024-007#p1]; the requirement was postponed by Bulletin 2024-11 to take effect July 1, 2024, and claims with dates of service before then need no PA [E2 EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E2",
+              "E4"
+            ]
+          },
+          {
+            "statement": "Eastvale PA criteria (manual Chapter 5, effective July 1, 2024): (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [E2 EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "The federal passages retrieved (42 CFR 447.518, 456.703, and the SDUD suppression guidance) address DUR/state-plan payment requirements and data suppression generally; none establishes GLP-1 PA or eligibility criteria for either state [E1, E5].",
+            "evidence_ids": [
+              "E1",
+              "E5"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Both states have specific, non-superseded primary documents retrieved with high similarity, and effective dates were resolved with the timeline tool; the only gap is the absence of any NL PA document, which is corroborated by both the timeline lookup and the manual language.",
+        "caveats": [
+          "Northland's BMI >= 27/30 thresholds are materially broader than Eastvale's BMI >= 35 plus comorbidity; the difference in PA status makes cross-state utilization comparisons non-comparable without adjusting for this.",
+          "NL effective-date conflict: SPA 23-014 says 2024-01-01, the provider manual says 2024-02-01; the SPA is treated as authoritative.",
+          "EV Bulletin 2024-007 (June 1, 2024 start) is superseded by Bulletin 2024-011 (July 1, 2024); only the latter should be cited as current.",
+          "Absence of an NL PA policy document is a negative finding from the corpus \u2014 it is not proof that no PA edits exist in NL's claims system.",
+          "All states and data are synthetic (NL Northland, EV Eastvale, SP Southport) and mirror CMS SDUD structure; not real Medicaid programs."
+        ],
+        "human_review": [
+          "Confirm with Northland that no GLP-1 PA or other utilization-management edit (e.g., quantity limits, step therapy) exists outside the retrieved documents.",
+          "Resolve the NL SPA vs. manual date discrepancy (2024-01-01 vs 2024-02-01) for any pre/post analysis.",
+          "Verify current Eastvale PA criteria text is still Chapter 5 as of the analysis date and that approval duration (12 months) has not been revised."
+        ]
+      },
+      "wall_seconds": 11.8,
+      "paraphrase_of": null
+    }
+  ]
+}

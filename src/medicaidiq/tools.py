@@ -37,11 +37,15 @@ def _fn(name: str, description: str, properties: dict, required: list[str]) -> d
 
 TOOL_SCHEMAS = [
     _fn("search_policy",
-        "Keyword search over state Medicaid policy documents (SPAs, bulletins, manuals, federal guidance). "
-        "Returns document metadata (doc_type, published, effective_date, supersedes/superseded_by) and text.",
-        {"query": {"type": "string", "description": "Search terms, e.g. 'GLP-1 prior authorization'"},
-         "state": {"type": "string", "enum": STATE_ENUM, "description": "Optional state filter"},
-         "as_of": {"type": "string", "description": "Optional YYYY-MM-DD; only documents published by then"}},
+        "Hybrid semantic + keyword search over policy text: state documents (SPAs, bulletins, manuals) and "
+        "federal regulations (42 CFR) / CMS dataset documentation. Returns paragraph-level passages with "
+        "chunk_id citations, jurisdiction scope, supersession info, and a retrieval_quality flag. Use it for "
+        "any question about what a policy or regulation SAYS (criteria, requirements, conditions).",
+        {"query": {"type": "string", "description": "Natural-language question or key terms"},
+         "state": {"type": "string", "description": "Optional state code filter (e.g. EV). Search one state "
+                                                    "per call; for multi-state questions call once per state."},
+         "as_of": {"type": "string", "description": "Optional YYYY-MM-DD; only state documents published by then"},
+         "include_federal": {"type": "boolean", "description": "Include federal regulations (default true)"}},
         ["query"]),
     _fn("get_policy_timeline",
         "Resolve the authoritative effective date for a policy from long-term memory, applying supersession "
@@ -98,12 +102,29 @@ TOOL_SCHEMAS = [
 ]
 TOOL_NAMES = {t["function"]["name"] for t in TOOL_SCHEMAS}
 TERMINAL_TOOLS = {"submit_answer", "ask_user"}
+RETRIEVAL_TOOLS = {"search_policy"}
+
+
+def tool_schemas(retrieval: bool = True) -> list[dict]:
+    """Tool list offered to the model; retrieval=False is the no-RAG ablation."""
+    return [t for t in TOOL_SCHEMAS if retrieval or t["function"]["name"] not in RETRIEVAL_TOOLS]
+
+
+_SEARCH: PolicySearch | None = None
+
+
+def shared_search() -> PolicySearch:
+    """One retriever per process: the embedding model and index load once (~7 s)."""
+    global _SEARCH
+    if _SEARCH is None:
+        _SEARCH = PolicySearch()
+    return _SEARCH
 
 
 @dataclass
 class Toolbox:
     db: ReadOnlyDB
-    search: PolicySearch = field(default_factory=PolicySearch)
+    search: PolicySearch = field(default_factory=shared_search)
     knowledge: KnowledgeStore = field(default_factory=KnowledgeStore)
 
     def execute(self, name: str, raw_args: str, memory: WorkingMemory) -> dict:
@@ -130,12 +151,13 @@ class Toolbox:
         return {"evidence_id": eid, **result}
 
     # --- tool implementations --------------------------------------------------------------
-    def _t_search_policy(self, memory, query: str, state: str | None = None, as_of: str | None = None):
-        hits = self.search.search(query, state=state, as_of=as_of)
-        if not hits:
-            return {"error": "No matching documents. Try different terms or remove filters."}
+    def _t_search_policy(self, memory, query: str, state: str | None = None, as_of: str | None = None,
+                         include_federal: bool = True):
+        res = self.search.search(query, state=state, as_of=as_of, include_federal=bool(include_federal))
+        if not res["passages"]:
+            return {"error": "No passages matched these filters. Try different terms or remove filters."}
         memory.update_slots(state=state)
-        return {"documents": hits}
+        return res
 
     def _t_get_policy_timeline(self, memory, state: str, topic: str):
         res = self.knowledge.resolve(f"{state.upper()}:{topic}:effective_date")
@@ -171,7 +193,8 @@ def _summarize(name: str, args: dict, result: dict) -> str:
     if name == "get_policy_timeline":
         return f"{result['key']} -> {result['value']} ({result['status']}, {result['source_doc']})"
     if name == "search_policy":
-        return "docs " + ",".join(d["doc_id"] for d in result["documents"])
+        return (f"[{result['retrieval_quality']['status']}] passages "
+                + ",".join(p["chunk_id"] for p in result["passages"]))
     if name == "run_sql":
         return f"{result['row_count']} rows"
     if name == "spending_decomposition":

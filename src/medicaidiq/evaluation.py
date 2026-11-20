@@ -73,6 +73,10 @@ def grade(case: dict, result, toolbox: Toolbox) -> dict:
         checks["mentions_any"] = any(k.lower() in low for k in case["must_mention_any"])
     if case.get("must_mention_all"):
         checks["mentions_all"] = all(k.lower() in low for k in case["must_mention_all"])
+    if case.get("must_cite_any"):       # retrieval grounding: answer cites a specific passage/document
+        checks["cites_source"] = any(c.lower() in low for c in case["must_cite_any"])
+    if case.get("must_not_mention"):    # e.g. cross-state contamination
+        checks["no_forbidden"] = not any(k.lower() in low for k in case["must_not_mention"])
     if case.get("forbid_numbers"):
         checks["no_fabrication"] = not [v for v, _ in _claim_numbers(answer.get("summary", ""))
                                         + sum((_claim_numbers(f.get("statement", ""))
@@ -127,12 +131,13 @@ def _consistency(results: list[dict]) -> str:
 
 
 def run_eval(llm_factory, label: str, ids: list[str] | None = None, max_steps: int = 10,
-             progress=print) -> EvalRun:
+             progress=print, retrieval: bool = True, category: str | None = None) -> EvalRun:
     db = ReadOnlyDB()
     run = EvalRun(label)
-    for case in load_cases(ids=ids):
+    cases = [c for c in load_cases(ids=ids) if not category or c["category"].startswith(category)]
+    for case in cases:
         llm = llm_factory()
-        agent = MedicaidIQAgent(llm, Toolbox(db), max_steps=max_steps)
+        agent = MedicaidIQAgent(llm, Toolbox(db), max_steps=max_steps, retrieval=retrieval)
         t0 = time.perf_counter()
         try:
             result = agent.run(case["question"])

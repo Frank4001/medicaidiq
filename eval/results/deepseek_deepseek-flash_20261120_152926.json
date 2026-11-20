@@ -1,0 +1,806 @@
+{
+  "summary": {
+    "label": "deepseek:deepseek-flash",
+    "cases": 5,
+    "passed": 5,
+    "pass_rate": 1.0,
+    "checks": {
+      "answer_type": "5/5",
+      "cites_source": "3/3",
+      "mentions_all": "2/2",
+      "mentions_any": "3/3",
+      "no_fabrication": "1/1",
+      "required_tools": "4/4",
+      "tool_call_valid": "5/5",
+      "verified": "4/4"
+    },
+    "total_cost_usd": 0.0154,
+    "avg_cost_per_question_usd": 0.00308,
+    "avg_prompt_tokens": 13583,
+    "avg_completion_tokens": 1498,
+    "avg_seconds": 9.0,
+    "max_seconds": 12.8,
+    "consistency": "n/a"
+  },
+  "results": [
+    {
+      "id": "rag_ev_criteria",
+      "category": "rag_state_policy",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_all": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "search_policy",
+        "get_policy_timeline",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Eastvale's current GLP-1 prior authorization criteria (effective July 1, 2024) allow approval by either of two paths: type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The earlier bulletin that set a June 1, 2024 start date was superseded, though the clinical criteria themselves were not changed by the postponement bulletin.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 12062,
+        "cached_tokens": 9600,
+        "completion_tokens": 1049,
+        "llm_seconds": 6.73,
+        "cost_usd": 0.002055
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a \"what does the policy say\" question for Eastvale's GLP-1 prior authorization, so I need search_policy filtered to EV.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization clinical criteria for approval",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"GLP-1 prior authorization clinical criteria for approval\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.846, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-MAN-2024-PH#p1\", \"doc_id\": \"EV-MAN-2024-PH\", \"title\": \"Eastvale Pharmacy Manual, Chapter 5: Prior authorization criteria\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-07-01\", \"effective_date\": \"2024-07"
+        },
+        {
+          "thought": "Thought: Retrieval quality is \"ok\" and the pharmacy manual passage contains the criteria; I'll confirm the authoritative effective date/supersession via the timeline so I can disclose it correctly.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: I have the criteria from the current, highest-authority source and confirmed the effective date, so I can answer.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Eastvale's current GLP-1 prior authorization criteria (effective July 1, 2024) allow approval by either of two paths: type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The earlier bulletin that set a June 1, 2024 start date was superseded, though the clinical criteria themselves were not changed by the postponement bulletin.",
+            "findings": [
+              {
+                "statement": "Eastvale's pharmacy manual lists the GLP-1 PA criteria: (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, OR (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The authoritative PA effective date is 2024-07-01 from EV-MAN-2024-PH; the June 1, 2024 date in Provider Bulletin 2024-07 was superseded by Bulletin 2024-11 [EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The superseded Bulletin 2024-07 described the requirement only generally (documented type 2 diabetes or qualifying weight-management criteria) \u2014 it did not specify the A1c or BMI thresholds [EV-BUL-2024-007#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Retrieval quality was \"ok\" (dense similarity 0.85), the criteria appear verbatim in the highest-authority current source (provider manual), and the timeline resolved with no conflicts.",
+            "caveats": [
+              "Bulletin EV-BUL-2024-007 (June 1, 2024 effective date) is superseded; only its start date changed, not its description of criteria.",
+              "Federal passages returned (42 CFR 447.256) concern SPA approval procedures and do not establish Eastvale's clinical criteria.",
+              "The data/states here are synthetic; verify against the live Eastvale (EV) provider manual before operational use."
+            ],
+            "human_review": [
+              "Confirm whether documentation requirements (e.g., metformin trial duration, acceptable comorbidity list) exist in other chapters or appendices of EV-MAN-2024-PH not returned by this search.",
+              "Verify whether a renewal/continuation-of-therapy pathway differs from initial approval criteria."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Eastvale's current GLP-1 prior authorization criteria (effective July 1, 2024) allow approval by either of two paths: type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The earlier bulletin that set a June 1, 2024 start date was superseded, though the clinical criteria themselves were not changed by the postponement bulletin.",
+        "findings": [
+          {
+            "statement": "Eastvale's pharmacy manual lists the GLP-1 PA criteria: (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, OR (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The authoritative PA effective date is 2024-07-01 from EV-MAN-2024-PH; the June 1, 2024 date in Provider Bulletin 2024-07 was superseded by Bulletin 2024-11 [EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "The superseded Bulletin 2024-07 described the requirement only generally (documented type 2 diabetes or qualifying weight-management criteria) \u2014 it did not specify the A1c or BMI thresholds [EV-BUL-2024-007#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Retrieval quality was \"ok\" (dense similarity 0.85), the criteria appear verbatim in the highest-authority current source (provider manual), and the timeline resolved with no conflicts.",
+        "caveats": [
+          "Bulletin EV-BUL-2024-007 (June 1, 2024 effective date) is superseded; only its start date changed, not its description of criteria.",
+          "Federal passages returned (42 CFR 447.256) concern SPA approval procedures and do not establish Eastvale's clinical criteria.",
+          "The data/states here are synthetic; verify against the live Eastvale (EV) provider manual before operational use."
+        ],
+        "human_review": [
+          "Confirm whether documentation requirements (e.g., metformin trial duration, acceptable comorbidity list) exist in other chapters or appendices of EV-MAN-2024-PH not returned by this search.",
+          "Verify whether a renewal/continuation-of-therapy pathway differs from initial approval criteria."
+        ]
+      },
+      "wall_seconds": 6.7,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_compare_states",
+      "category": "rag_multi_state",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "mentions_all": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "search_policy",
+        "get_policy_timeline",
+        "get_policy_timeline",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), with approval limited to type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity, for 12-month approval periods. Northland covers GLP-1s for chronic weight management without prior authorization via its standard \"prior-authorization-free pathway,\" using broader BMI thresholds of >= 30, or >= 27 with at least one weight-related comorbidity (effective January 1, 2024). So the states differ on both fronts: EV gates access through PA with a higher BMI bar, while NL uses no PA and a lower BMI bar.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 16801,
+        "cached_tokens": 11392,
+        "completion_tokens": 2131,
+        "llm_seconds": 11.65,
+        "cost_usd": 0.004248
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a multi-state policy-content question about GLP-1 prior authorization and eligibility criteria in NL and EV. I need to search each state's policy corpus separately, so I'll run two independent searches.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization eligibility criteria coverage",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"GLP-1 prior authorization eligibility criteria coverage\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.743, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\": \"2023-11-20\", "
+        },
+        {
+          "thought": "Thought: This is a multi-state policy-content question about GLP-1 prior authorization and eligibility criteria in NL and EV. I need to search each state's policy corpus separately, so I'll run two independent searches.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization eligibility criteria coverage",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"GLP-1 prior authorization eligibility criteria coverage\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.811, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-MAN-2024-PH#p1\", \"doc_id\": \"EV-MAN-2024-PH\", \"title\": \"Eastvale Pharmacy Manual, Chapter 5: Prior authorization criteria\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-07-01\", \"effective_date\": \"2024-07-"
+        },
+        {
+          "thought": "Thought: I have both states' core passages. NL's manual mentions a \"prior-authorization-free pathway\" but I should check whether NL requires PA for GLP-1 at all, and resolve the NL effective-date conflict (SPA says 2024-01-01, manual says 2024-02-01) plus confirm EV's PA date.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "prior authorization required for GLP-1 agonists type 2 diabetes",
+            "state": "NL",
+            "include_federal": false
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"query\": \"prior authorization required for GLP-1 agonists type 2 diabetes\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": false}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.771, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"NL\"], \"passages\": [{\"chunk_id\": \"NL-MAN-2024-RX#p1\", \"doc_id\": \"NL-MAN-2024-RX\", \"title\": \"Northland Pharmacy Provider Manual, Section 7.4 (GLP-1 agonists)\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"effective_date\": \"2024-0"
+        },
+        {
+          "thought": "Thought: I have both states' core passages. NL's manual mentions a \"prior-authorization-free pathway\" but I should check whether NL requires PA for GLP-1 at all, and resolve the NL effective-date conflict (SPA says 2024-01-01, manual says 2024-02-01) plus confirm EV's PA date.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: I have both states' core passages. NL's manual mentions a \"prior-authorization-free pathway\" but I should check whether NL requires PA for GLP-1 at all, and resolve the NL effective-date conflict (SPA says 2024-01-01, manual says 2024-02-01) plus confirm EV's PA date.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E5\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "I have what I need. NL: no PA for GLP-1 for weight management (prior-authorization-free pathway for patients meeting BMI criteria); BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity; T2D coverage unchanged. EV: PA required for all GLP-1s effective 2024-07-01; criteria: (1) T2D wit",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), with approval limited to type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity, for 12-month approval periods. Northland covers GLP-1s for chronic weight management without prior authorization via its standard \"prior-authorization-free pathway,\" using broader BMI thresholds of >= 30, or >= 27 with at least one weight-related comorbidity (effective January 1, 2024). So the states differ on both fronts: EV gates access through PA with a higher BMI bar, while NL uses no PA and a lower BMI bar.",
+            "findings": [
+              {
+                "statement": "Eastvale requires prior authorization for all GLP-1 receptor agonists; PA takes effect July 1, 2024 and claims with dates of service before that date do not require PA [EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E5"
+                ]
+              },
+              {
+                "statement": "Eastvale PA approval criteria: (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "Northland covers GLP-1 agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024; type 2 diabetes coverage is unchanged [NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E1",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Northland's manual directs pharmacies to use the standard prior-authorization-free pathway for patients meeting the BMI criteria, indicating no PA requirement for weight-management GLP-1s [NL-MAN-2024-RX#p1].",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Eastvale's earlier bulletin setting a June 1, 2024 PA start date was superseded by the July 1, 2024 date and should not be used [EV-BUL-2024-007#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E5"
+                ]
+              },
+              {
+                "statement": "Northland sources conflict on the weight-management start date: the SPA (higher authority) says January 1, 2024, while the provider manual says February 1, 2024; the timeline resolves to January 1, 2024 [NL-SPA-2023-014#p1; NL-MAN-2024-RX#p1].",
+                "evidence_ids": [
+                  "E4",
+                  "E1",
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Both states' criteria and PA status come directly from state-specific passages with good retrieval quality and resolved effective dates; confidence is reduced by the unresolved NL start-date conflict and by the absence of explicit NL text on PA for type 2 diabetes.",
+            "caveats": [
+              "Data and state documents are synthetic (NL Northland, EV Eastvale, SP Southport), though federal regulation text is real.",
+              "NL effective date conflict: SPA 23-014 says 2024-01-01, provider manual says 2024-02-01; timeline rule selects the SPA (higher authority). Disclosed, not resolved by us.",
+              "EV bulletin 2024-007 (June 1, 2024 start) is superseded by bulletin 2024-11 (July 1, 2024) and was not used as current policy.",
+              "No NL passage retrieved states whether prior authorization applies to GLP-1s prescribed for type 2 diabetes; NL's SPA says only that T2D coverage is 'unchanged,' so NL's T2D PA status is undocumented here.",
+              "Federal passages retrieved (42 CFR 447.256, 456.703) describe SPA approval and DUR standards generally and do not establish either state's GLP-1 rules.",
+              "This is a policy-content comparison only; no utilization or spending analysis was run, so nothing here indicates whether the criteria changed actual prescribing."
+            ],
+            "human_review": [
+              "Confirm with Northland which effective date governs claims: SPA 23-014 (2024-01-01) or the provider manual (2024-02-01).",
+              "Verify whether Northland requires prior authorization for GLP-1s used for type 2 diabetes, and for any quantity/dose limits on the PA-free weight-management pathway.",
+              "Check whether Eastvale's PA criteria have been amended after the July 1, 2024 manual chapter, and whether any grandfathering or step-therapy exceptions apply.",
+              "Confirm whether Eastvale's PA applies uniformly to all GLP-1 products or only a subset (e.g., preferred agents)."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Eastvale requires prior authorization for all GLP-1 receptor agonists (effective July 1, 2024), with approval limited to type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity, for 12-month approval periods. Northland covers GLP-1s for chronic weight management without prior authorization via its standard \"prior-authorization-free pathway,\" using broader BMI thresholds of >= 30, or >= 27 with at least one weight-related comorbidity (effective January 1, 2024). So the states differ on both fronts: EV gates access through PA with a higher BMI bar, while NL uses no PA and a lower BMI bar.",
+        "findings": [
+          {
+            "statement": "Eastvale requires prior authorization for all GLP-1 receptor agonists; PA takes effect July 1, 2024 and claims with dates of service before that date do not require PA [EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E2",
+              "E5"
+            ]
+          },
+          {
+            "statement": "Eastvale PA approval criteria: (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "Northland covers GLP-1 agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024; type 2 diabetes coverage is unchanged [NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E1",
+              "E4"
+            ]
+          },
+          {
+            "statement": "Northland's manual directs pharmacies to use the standard prior-authorization-free pathway for patients meeting the BMI criteria, indicating no PA requirement for weight-management GLP-1s [NL-MAN-2024-RX#p1].",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Eastvale's earlier bulletin setting a June 1, 2024 PA start date was superseded by the July 1, 2024 date and should not be used [EV-BUL-2024-007#p1].",
+            "evidence_ids": [
+              "E2",
+              "E5"
+            ]
+          },
+          {
+            "statement": "Northland sources conflict on the weight-management start date: the SPA (higher authority) says January 1, 2024, while the provider manual says February 1, 2024; the timeline resolves to January 1, 2024 [NL-SPA-2023-014#p1; NL-MAN-2024-RX#p1].",
+            "evidence_ids": [
+              "E4",
+              "E1",
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Both states' criteria and PA status come directly from state-specific passages with good retrieval quality and resolved effective dates; confidence is reduced by the unresolved NL start-date conflict and by the absence of explicit NL text on PA for type 2 diabetes.",
+        "caveats": [
+          "Data and state documents are synthetic (NL Northland, EV Eastvale, SP Southport), though federal regulation text is real.",
+          "NL effective date conflict: SPA 23-014 says 2024-01-01, provider manual says 2024-02-01; timeline rule selects the SPA (higher authority). Disclosed, not resolved by us.",
+          "EV bulletin 2024-007 (June 1, 2024 start) is superseded by bulletin 2024-11 (July 1, 2024) and was not used as current policy.",
+          "No NL passage retrieved states whether prior authorization applies to GLP-1s prescribed for type 2 diabetes; NL's SPA says only that T2D coverage is 'unchanged,' so NL's T2D PA status is undocumented here.",
+          "Federal passages retrieved (42 CFR 447.256, 456.703) describe SPA approval and DUR standards generally and do not establish either state's GLP-1 rules.",
+          "This is a policy-content comparison only; no utilization or spending analysis was run, so nothing here indicates whether the criteria changed actual prescribing."
+        ],
+        "human_review": [
+          "Confirm with Northland which effective date governs claims: SPA 23-014 (2024-01-01) or the provider manual (2024-02-01).",
+          "Verify whether Northland requires prior authorization for GLP-1s used for type 2 diabetes, and for any quantity/dose limits on the PA-free weight-management pathway.",
+          "Check whether Eastvale's PA criteria have been amended after the July 1, 2024 manual chapter, and whether any grandfathering or step-therapy exceptions apply.",
+          "Confirm whether Eastvale's PA applies uniformly to all GLP-1 products or only a subset (e.g., preferred agents)."
+        ]
+      },
+      "wall_seconds": 11.7,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_federal_spa",
+      "category": "rag_federal_regulation",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 2,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Under 42 CFR 430.20, a State plan amendment generally cannot be effective earlier than the first day of the calendar quarter in which an approvable amendment is submitted to CMS, and these rules exist to establish when federal financial participation (FFP) is available. Amendments that add services, raise payment amounts, or add eligibility groups follow the same rule as new plans (430.20(a)); amendments changing payment methods and standards follow 42 CFR 447.256. The one explicit flexibility is for \"other\" plan amendments, where the effective date may be a date requested by the state if CMS approves it. So a pre-submission (retroactive) effective date is not available under the standard rules, but is possible only in that discretionary \"other amendment\" category.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 2,
+        "prompt_tokens": 8150,
+        "cached_tokens": 5248,
+        "completion_tokens": 1478,
+        "llm_seconds": 8.51,
+        "cost_usd": 0.002676
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a federal policy question about SPA effective dates under 42 CFR. I'll search the federal corpus for the relevant regulations.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "effective date of a state plan amendment; when can a SPA be effective; retrospective effective dates",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"effective date of a state plan amendment; when can a SPA be effective; retrospective effective dates\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.822, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-430.20(a)\", \"doc_id\": \"42-CFR-430.20\", \"title\": \"42 CFR 430.20 Effective dates of State plans and plan amendments.\", \"paragraph\": \"(a)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"publishe"
+        },
+        {
+          "thought": "Thought: This is a federal policy question about SPA effective dates under 42 CFR. I'll search the federal corpus for the relevant regulations.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "state plan amendment approval effective date earlier than date of submission",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"state plan amendment approval effective date earlier than date of submission\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.846, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-447.256(c)\", \"doc_id\": \"42-CFR-447.256\", \"title\": \"42 CFR 447.256 Procedures for CMS action on assurances and State plan amendments.\", \"paragraph\": \"(c)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"published\": \"2"
+        },
+        {
+          "thought": "The retrieval is good. I have the authoritative text. Let me maybe search for 447.205 (public notice) or 430.20 preamble? Not needed. I have enough.\n\nLet me compose answer. Key points:\n- 42 CFR 430.20(a): new plan effective date may not be earlier than first day of quarter in which an approvable pla",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Under 42 CFR 430.20, a State plan amendment generally cannot be effective earlier than the first day of the calendar quarter in which an approvable amendment is submitted to CMS, and these rules exist to establish when federal financial participation (FFP) is available. Amendments that add services, raise payment amounts, or add eligibility groups follow the same rule as new plans (430.20(a)); amendments changing payment methods and standards follow 42 CFR 447.256. The one explicit flexibility is for \"other\" plan amendments, where the effective date may be a date requested by the state if CMS approves it. So a pre-submission (retroactive) effective date is not available under the standard rules, but is possible only in that discretionary \"other amendment\" category.",
+            "findings": [
+              {
+                "statement": "A new state plan's effective date may not be earlier than the first day of the quarter in which an approvable plan is submitted to the regional office, and for medical assistance expenditures may not be earlier than the first day the plan operates statewide [42-CFR-430.20(a)].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Plan amendments that add services, increase payment amounts, or add eligibility groups take their effective date from the new-plan rule in 430.20(a) [42-CFR-430.20(b)] [42-CFR-430.20(a)].",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "An approved SPA that changes payment methods and standards becomes effective not earlier than the first day of the calendar quarter in which the approvable amendment is submitted (42 CFR 447.256(c); 430.20(b)(2)) [42-CFR-447.256(c)].",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "For 'other' plan amendments, the effective date may be a date requested by the state if CMS approves it \u2014 the only passage in the retrieved text that permits a state-chosen (and potentially earlier) date [42-CFR-430.20(b)].",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The effective-date rules are framed as FFP rules: prompt submittal of amendments is required so CMS can determine approvability and to ensure availability of FFP under 430.20 [42-CFR-430.12(c)].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Direct, consistent citations from the federal regulation text (42 CFR 430.20, 447.256, 430.12) returned at high retrieval relevance with no supersession flags.",
+            "caveats": [
+              "This is federal rule text only; it does not establish any specific state's rules or dates. The synthetic states (NL Northland, EV Eastvale, SP Southport) are fictional and their state documents were not consulted here.",
+              "Regulation text was retrieved with published date 2026-11-18 and no superseded_by flags; confirm against the current eCFR before relying on it for a filing decision.",
+              "CMS sub-regulatory practice (e.g., SPA review/effective-date policy guides) is not in this corpus and could constrain the discretionary 'other amendment' date in 430.20(b)(3)."
+            ],
+            "human_review": [
+              "Verify the current eCFR text of 42 CFR 430.20(b)(3) and any CMS guidance limiting state-requested effective dates for 'other' amendments.",
+              "Confirm which category a given amendment falls into (new-plan rule vs. 447.256 payment-method rule vs. 'other'), since that determines the earliest permissible date.",
+              "Check whether the specific amendment has a public-notice requirement (42 CFR 447.205) that also constrains the effective date."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Under 42 CFR 430.20, a State plan amendment generally cannot be effective earlier than the first day of the calendar quarter in which an approvable amendment is submitted to CMS, and these rules exist to establish when federal financial participation (FFP) is available. Amendments that add services, raise payment amounts, or add eligibility groups follow the same rule as new plans (430.20(a)); amendments changing payment methods and standards follow 42 CFR 447.256. The one explicit flexibility is for \"other\" plan amendments, where the effective date may be a date requested by the state if CMS approves it. So a pre-submission (retroactive) effective date is not available under the standard rules, but is possible only in that discretionary \"other amendment\" category.",
+        "findings": [
+          {
+            "statement": "A new state plan's effective date may not be earlier than the first day of the quarter in which an approvable plan is submitted to the regional office, and for medical assistance expenditures may not be earlier than the first day the plan operates statewide [42-CFR-430.20(a)].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Plan amendments that add services, increase payment amounts, or add eligibility groups take their effective date from the new-plan rule in 430.20(a) [42-CFR-430.20(b)] [42-CFR-430.20(a)].",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "An approved SPA that changes payment methods and standards becomes effective not earlier than the first day of the calendar quarter in which the approvable amendment is submitted (42 CFR 447.256(c); 430.20(b)(2)) [42-CFR-447.256(c)].",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "For 'other' plan amendments, the effective date may be a date requested by the state if CMS approves it \u2014 the only passage in the retrieved text that permits a state-chosen (and potentially earlier) date [42-CFR-430.20(b)].",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "The effective-date rules are framed as FFP rules: prompt submittal of amendments is required so CMS can determine approvability and to ensure availability of FFP under 430.20 [42-CFR-430.12(c)].",
+            "evidence_ids": [
+              "E2"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Direct, consistent citations from the federal regulation text (42 CFR 430.20, 447.256, 430.12) returned at high retrieval relevance with no supersession flags.",
+        "caveats": [
+          "This is federal rule text only; it does not establish any specific state's rules or dates. The synthetic states (NL Northland, EV Eastvale, SP Southport) are fictional and their state documents were not consulted here.",
+          "Regulation text was retrieved with published date 2026-11-18 and no superseded_by flags; confirm against the current eCFR before relying on it for a filing decision.",
+          "CMS sub-regulatory practice (e.g., SPA review/effective-date policy guides) is not in this corpus and could constrain the discretionary 'other amendment' date in 430.20(b)(3)."
+        ],
+        "human_review": [
+          "Verify the current eCFR text of 42 CFR 430.20(b)(3) and any CMS guidance limiting state-requested effective dates for 'other' amendments.",
+          "Confirm which category a given amendment falls into (new-plan rule vs. 447.256 payment-method rule vs. 'other'), since that determines the earliest permissible date.",
+          "Check whether the specific amendment has a public-notice requirement (42 CFR 447.205) that also constrains the effective date."
+        ]
+      },
+      "wall_seconds": 8.5,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_federal_dur",
+      "category": "rag_federal_regulation",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Yes \u2014 federal Medicaid drug use review (DUR) rules require the State plan to provide for review of drug therapy before each prescription is filled or delivered, using point-of-sale or point-of-distribution review with predetermined standards. The screening must identify seven specified types of potential drug therapy problems, from therapeutic duplication through clinical abuse/misuse. The obligation is framed as a State plan requirement with detailed instructions that pharmacies, in turn, must pass to their pharmacists, and narrow exceptions apply for certain nursing facility, hospital, and HMO dispensing.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 22040,
+        "cached_tokens": 16000,
+        "completion_tokens": 2048,
+        "llm_seconds": 12.74,
+        "cost_usd": 0.004366
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a federal-only question (no state specified), so I need to search the federal regulation corpus on drug utilization review screening requirements.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "prospective drug utilization review, pharmacy must screen prescription before dispensing, problems to identify",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"prospective drug utilization review, pharmacy must screen prescription before dispensing, problems to identify\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.793, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(a)\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(a)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"published\": \"2026-11-1"
+        },
+        {
+          "thought": "Thought: I have the general requirement and the start of the screening list, but the passage was truncated \u2014 I need the complete list of problem types in \u00a7456.705(b).",
+          "action": "search_policy",
+          "arguments": {
+            "query": "prospective drug review screen identify potential drug therapy problems drug-disease contraindication drug-drug interaction incorrect drug dosage duration drug-allergy interaction clinical abuse misuse",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"prospective drug review screen identify potential drug therapy problems drug-disease contraindication drug-drug interaction incorrect drug dosage duration drug-allergy interaction clinical abuse misuse\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.841, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(b)-2\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(b) cont. 2\", \"jurisdiction\""
+        },
+        {
+          "thought": "Thought: The list runs (1)\u2013(7), but item (7) is truncated; I want to confirm the list ends there and capture the \u00a7456.703(c) exception before answering.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "clinical abuse gross overuse overutilization excessive utilization definition; exception in 456.703(c) drugs dispensed to hospital inpatients",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"query\": \"clinical abuse gross overuse overutilization excessive utilization definition; exception in 456.703(c) drugs dispensed to hospital inpatients\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.715, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"ALL\", \"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(b)-2\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(b) cont. 2\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": "
+        },
+        {
+          "thought": "I have enough. Note: the regulation says \"the State plan must provide for review of drug therapy before each prescription is filled or delivered\" \u2014 the requirement is on the State plan; pharmacies must be given detailed information of what they must do. So framing: federal rules require state Medica",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Yes \u2014 federal Medicaid drug use review (DUR) rules require the State plan to provide for review of drug therapy before each prescription is filled or delivered, using point-of-sale or point-of-distribution review with predetermined standards. The screening must identify seven specified types of potential drug therapy problems, from therapeutic duplication through clinical abuse/misuse. The obligation is framed as a State plan requirement with detailed instructions that pharmacies, in turn, must pass to their pharmacists, and narrow exceptions apply for certain nursing facility, hospital, and HMO dispensing.",
+            "findings": [
+              {
+                "statement": "Except for the \u00a7456.703(b)/(c) exceptions, the State plan must provide for review of drug therapy before each prescription is filled or delivered to a beneficiary, with applicable State law establishing counseling standards; the State must give pharmacies detailed information on what they must do to comply with prospective DUR (guidelines on counseling, profiling, documentation), and pharmacies must relay that to their pharmacists [42-CFR-456.705(a)].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The State plan must provide for point-of-sale or point-of-distribution review using predetermined standards before each prescription is filled or delivered, and that review must include screening for specified types of potential drug therapy problems [42-CFR-456.705(b)].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Required screening types (1)-(2): therapeutic duplication (two or more drugs from the same therapeutic class where the combined daily dose risks an adverse result or extra cost without added benefit) and drug-disease contraindication [42-CFR-456.705(b)] [42-CFR-456.705(b)-2].",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "Required screening types (3)-(6): adverse drug-drug interaction (clinically significant adverse effect from using two or more drugs together), incorrect drug dosage (outside the daily dosage in predetermined standards; dosage = strength \u00d7 quantity dispensed \u00f7 day's supply), incorrect duration of drug treatment (exceeds or falls short of standards), and drug-allergy interactions [42-CFR-456.705(b)-2].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "Required screening type (7): clinical abuse/misuse, i.e., situations falling under the definitions of abuse, gross overuse, overutilization and related terms; retrospective DUR separately monitors over/underutilization and the same problem types [42-CFR-456.705(b)-2, 42-CFR-456.709(b)].",
+                "evidence_ids": [
+                  "E2",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Exceptions: prospective DUR is not required for drugs dispensed to residents of nursing facilities in compliance with part 483 drug regimen review procedures [42-CFR-456.703(b)], nor for covered outpatient drugs dispensed by hospitals using formulary systems and billed at no more than purchasing cost, or dispensed by HMOs [42-CFR-456.703(c)].",
+                "evidence_ids": [
+                  "E1",
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Retrieval was high-similarity and top-ranked against the actual eCFR text of 42 CFR 456.703 and 456.705, with the enumerated screening list spread across two contiguous paragraphs of the same section; no superseding versions were flagged.",
+            "caveats": [
+              "These are federal requirements binding on all states; they set a floor, and individual state Medicaid programs may impose additional prospective DUR or safety-edit requirements that this answer does not cover.",
+              "The regulation places the requirement on the State plan and on information flow to pharmacies; it does not itself specify dispensing software or a formulary, so operational compliance details are matters of state law/board policy.",
+              "State-level synthetic documents (NL, EV, SP \u2014 fictional states with synthetic data) were not searched because no state was specified; the federal passages cited here are real eCFR text.",
+              "Passage text was truncated mid-item in retrieval, so wording of item (7) is summarized rather than quoted in full; exact regulatory language should be checked at the cited eCFR URL."
+            ],
+            "human_review": [
+              "Confirm the full text of 42 CFR 456.705(b)(2) and (b)(7) at eCFR, since retrieved passages were truncated.",
+              "If the question applies to a specific state (NL, EV, or SP), have an analyst check that state's DUR/point-of-sale edit documents for additions beyond the federal floor."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Yes \u2014 federal Medicaid drug use review (DUR) rules require the State plan to provide for review of drug therapy before each prescription is filled or delivered, using point-of-sale or point-of-distribution review with predetermined standards. The screening must identify seven specified types of potential drug therapy problems, from therapeutic duplication through clinical abuse/misuse. The obligation is framed as a State plan requirement with detailed instructions that pharmacies, in turn, must pass to their pharmacists, and narrow exceptions apply for certain nursing facility, hospital, and HMO dispensing.",
+        "findings": [
+          {
+            "statement": "Except for the \u00a7456.703(b)/(c) exceptions, the State plan must provide for review of drug therapy before each prescription is filled or delivered to a beneficiary, with applicable State law establishing counseling standards; the State must give pharmacies detailed information on what they must do to comply with prospective DUR (guidelines on counseling, profiling, documentation), and pharmacies must relay that to their pharmacists [42-CFR-456.705(a)].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The State plan must provide for point-of-sale or point-of-distribution review using predetermined standards before each prescription is filled or delivered, and that review must include screening for specified types of potential drug therapy problems [42-CFR-456.705(b)].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Required screening types (1)-(2): therapeutic duplication (two or more drugs from the same therapeutic class where the combined daily dose risks an adverse result or extra cost without added benefit) and drug-disease contraindication [42-CFR-456.705(b)] [42-CFR-456.705(b)-2].",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "Required screening types (3)-(6): adverse drug-drug interaction (clinically significant adverse effect from using two or more drugs together), incorrect drug dosage (outside the daily dosage in predetermined standards; dosage = strength \u00d7 quantity dispensed \u00f7 day's supply), incorrect duration of drug treatment (exceeds or falls short of standards), and drug-allergy interactions [42-CFR-456.705(b)-2].",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "Required screening type (7): clinical abuse/misuse, i.e., situations falling under the definitions of abuse, gross overuse, overutilization and related terms; retrospective DUR separately monitors over/underutilization and the same problem types [42-CFR-456.705(b)-2, 42-CFR-456.709(b)].",
+            "evidence_ids": [
+              "E2",
+              "E3"
+            ]
+          },
+          {
+            "statement": "Exceptions: prospective DUR is not required for drugs dispensed to residents of nursing facilities in compliance with part 483 drug regimen review procedures [42-CFR-456.703(b)], nor for covered outpatient drugs dispensed by hospitals using formulary systems and billed at no more than purchasing cost, or dispensed by HMOs [42-CFR-456.703(c)].",
+            "evidence_ids": [
+              "E1",
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Retrieval was high-similarity and top-ranked against the actual eCFR text of 42 CFR 456.703 and 456.705, with the enumerated screening list spread across two contiguous paragraphs of the same section; no superseding versions were flagged.",
+        "caveats": [
+          "These are federal requirements binding on all states; they set a floor, and individual state Medicaid programs may impose additional prospective DUR or safety-edit requirements that this answer does not cover.",
+          "The regulation places the requirement on the State plan and on information flow to pharmacies; it does not itself specify dispensing software or a formulary, so operational compliance details are matters of state law/board policy.",
+          "State-level synthetic documents (NL, EV, SP \u2014 fictional states with synthetic data) were not searched because no state was specified; the federal passages cited here are real eCFR text.",
+          "Passage text was truncated mid-item in retrieval, so wording of item (7) is summarized rather than quoted in full; exact regulatory language should be checked at the cited eCFR URL."
+        ],
+        "human_review": [
+          "Confirm the full text of 42 CFR 456.705(b)(2) and (b)(7) at eCFR, since retrieved passages were truncated.",
+          "If the question applies to a specific state (NL, EV, or SP), have an analyst check that state's DUR/point-of-sale edit documents for additions beyond the federal floor."
+        ]
+      },
+      "wall_seconds": 12.8,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_out_of_scope_state",
+      "category": "rag_failure_mode",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "no_fabrication": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "submitted",
+      "steps": 2,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot report Illinois GLP-1 prior authorization criteria. The corpus covers only three fictional states (NL Northland, EV Eastvale, SP Southport) plus federal regulations, and federal rules do not establish any specific state's PA criteria. I will not substitute another state's rules for Illinois.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 2,
+        "prompt_tokens": 8862,
+        "cached_tokens": 5248,
+        "completion_tokens": 784,
+        "llm_seconds": 5.13,
+        "cost_usd": 0.002056
+      },
+      "trace": [
+        {
+          "thought": "Thought: Illinois is not one of the synthetic states in this corpus (only NL, EV, SP plus federal regulations); I should verify with a search before declaring it out of scope.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "Illinois Medicaid prior authorization criteria for GLP-1 agonists",
+            "state": "IL"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"Illinois Medicaid prior authorization criteria for GLP-1 agonists\", \"filters\": {\"state\": \"IL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.669, \"status\": \"out_of_scope\", \"warning\": \"The corpus has no documents for IL. Do not answer state-specific questions from federal passages.\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(d)\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(d)\", \"jurisdiction\": \"US\", \"scope\": \"federa"
+        },
+        {
+          "thought": "Thought: Illinois is not one of the synthetic states in this corpus (only NL, EV, SP plus federal regulations); I should verify with a search before declaring it out of scope.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization criteria coverage requirements",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"GLP-1 prior authorization criteria coverage requirements\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.807, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-BUL-2024-007#p1\", \"doc_id\": \"EV-BUL-2024-007\", \"title\": \"Provider Bulletin 2024-07: Prior authorization for GLP-1 agonists\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"effective_date\": \"202"
+        },
+        {
+          "thought": "Thought: No Illinois documents exist in the corpus (retrieval_quality \"out_of_scope\" for IL), and the only state GLP-1 PA criteria that surfaced belong to the fictional state of Eastvale (EV), which cannot be applied to Illinois. I should refuse rather than substitute.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "cannot_answer",
+            "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot report Illinois GLP-1 prior authorization criteria. The corpus covers only three fictional states (NL Northland, EV Eastvale, SP Southport) plus federal regulations, and federal rules do not establish any specific state's PA criteria. I will not substitute another state's rules for Illinois.",
+            "findings": [],
+            "confidence": "high",
+            "confidence_reason": "A state-filtered search for IL returned retrieval_quality.status \"out_of_scope\" with an explicit warning that the corpus has no IL documents and that federal passages must not be used to answer state-specific questions.",
+            "caveats": [
+              "The corpus contains documents only for the synthetic states NL (Northland), EV (Eastvale), and SP (Southport); there are no Illinois sources.",
+              "A separate GLP-1 PA search returned criteria for Eastvale (EV) only, which is out of scope for Illinois and was not applied.",
+              "Federal regulations in the corpus (42 CFR 447, 456) govern DUR and SPA/state-plan processes generally but do not specify any state's GLP-1 prior authorization criteria.",
+              "The data and states in this environment are synthetic (NL, EV, SP)."
+            ],
+            "human_review": [
+              "Confirm whether the question intended one of the in-scope synthetic states (NL, EV, or SP), or if a real Illinois Medicaid source must be added to the corpus before answering.",
+              "For an authoritative Illinois answer, a human should consult the Illinois Department of Healthcare and Family Services provider handbook, the Illinois Medicaid drug formulary/prior authorization list, and any applicable Illinois SPA or emergency rule."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot report Illinois GLP-1 prior authorization criteria. The corpus covers only three fictional states (NL Northland, EV Eastvale, SP Southport) plus federal regulations, and federal rules do not establish any specific state's PA criteria. I will not substitute another state's rules for Illinois.",
+        "findings": [],
+        "confidence": "high",
+        "confidence_reason": "A state-filtered search for IL returned retrieval_quality.status \"out_of_scope\" with an explicit warning that the corpus has no IL documents and that federal passages must not be used to answer state-specific questions.",
+        "caveats": [
+          "The corpus contains documents only for the synthetic states NL (Northland), EV (Eastvale), and SP (Southport); there are no Illinois sources.",
+          "A separate GLP-1 PA search returned criteria for Eastvale (EV) only, which is out of scope for Illinois and was not applied.",
+          "Federal regulations in the corpus (42 CFR 447, 456) govern DUR and SPA/state-plan processes generally but do not specify any state's GLP-1 prior authorization criteria.",
+          "The data and states in this environment are synthetic (NL, EV, SP)."
+        ],
+        "human_review": [
+          "Confirm whether the question intended one of the in-scope synthetic states (NL, EV, or SP), or if a real Illinois Medicaid source must be added to the corpus before answering.",
+          "For an authoritative Illinois answer, a human should consult the Illinois Department of Healthcare and Family Services provider handbook, the Illinois Medicaid drug formulary/prior authorization list, and any applicable Illinois SPA or emergency rule."
+        ]
+      },
+      "wall_seconds": 5.1,
+      "paraphrase_of": null
+    }
+  ]
+}

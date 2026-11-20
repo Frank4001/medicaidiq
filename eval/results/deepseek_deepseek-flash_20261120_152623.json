@@ -1,0 +1,1947 @@
+{
+  "summary": {
+    "label": "deepseek:deepseek-flash",
+    "cases": 14,
+    "passed": 13,
+    "pass_rate": 0.929,
+    "checks": {
+      "answer_type": "14/14",
+      "cites_source": "3/3",
+      "effective_date": "3/3",
+      "mentions_all": "3/3",
+      "mentions_any": "7/8",
+      "no_fabrication": "2/2",
+      "number": "4/4",
+      "required_tools": "10/10",
+      "tool_call_valid": "14/14",
+      "verified": "10/10"
+    },
+    "total_cost_usd": 0.0336,
+    "avg_cost_per_question_usd": 0.0024,
+    "avg_prompt_tokens": 10812,
+    "avg_completion_tokens": 1248,
+    "avg_seconds": 8.0,
+    "max_seconds": 13.0,
+    "consistency": "1/1 paraphrase pairs consistent"
+  },
+  "results": [
+    {
+      "id": "prepost_ev",
+      "category": "core_analysis",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "effective_date": true,
+        "number": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": -18.6,
+      "summary": "Eastvale's GLP-1 prior authorization requirement took effect July 1, 2024 (the earlier June 1, 2024 bulletin date was superseded). Comparing four final quarters before vs. four after, GLP-1 prescriptions per 1,000 member-months fell 18.6% (95% CI -20.8% to -16.2%), from 12.09 to 9.85 \u2014 a change that is both statistically significant and material. This is an association, not proof the PA policy caused the decline.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 11650,
+        "cached_tokens": 6144,
+        "completion_tokens": 1420,
+        "llm_seconds": 9.05,
+        "cost_usd": 0.003393
+      },
+      "trace": [
+        {
+          "thought": "Thought: Eastvale's GLP-1 prior-authorization policy is the relevant one; I need its authoritative effective date and the data coverage for EV before running any before/after comparison.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: Eastvale's GLP-1 prior-authorization policy is the relevant one; I need its authoritative effective date and the data coverage for EV before running any before/after comparison.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Now run pre/post analysis with effective date 2024-07-01 for EV GLP1, metric rx_per_1000_mm. Also maybe spend metrics. Let me run the default metric first, plus maybe spend_pmpm in the same block (independent).\n\nAlso I could search policy for what the PA requires \u2014 the question is about whether pres",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "EV",
+            "drug_class": "GLP1",
+            "effective_date": "2024-07-01",
+            "metric": "rx_per_1000_mm"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"EV\", \"drug_class\": \"GLP1\", \"metric\": \"rx_per_1000_mm\", \"metric_label\": \"Prescriptions per 1,000 member-months\", \"effective_date\": \"2024-07-01\", \"timing_note\": \"Policy starts on the first day of 2024Q3; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\"], \"post_quarters\": [\"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 12.094, \"post_mean\": 9.846, \"pct_change\": -18.6, \"ci95_pct_change\": [-20.8, -16.2], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_m"
+        },
+        {
+          "thought": "Now run pre/post analysis with effective date 2024-07-01 for EV GLP1, metric rx_per_1000_mm. Also maybe spend metrics. Let me run the default metric first, plus maybe spend_pmpm in the same block (independent).\n\nAlso I could search policy for what the PA requires \u2014 the question is about whether pres",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization requirements criteria",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"query\": \"GLP-1 prior authorization requirements criteria\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.826, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-MAN-2024-PH#p1\", \"doc_id\": \"EV-MAN-2024-PH\", \"title\": \"Eastvale Pharmacy Manual, Chapter 5: Prior authorization criteria\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-07-01\", \"effective_date\": \"2024-07-01\", \"su"
+        },
+        {
+          "thought": "I have utilization result. Should I also check spending decomposition? Question asks prescribing (utilization), not spending. But a quick note: prescriptions per 1000 mm fell 18.6%. Could optionally check spend_per_rx to see whether spending changed too. Not required. I'll keep it focused but maybe ",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Eastvale's GLP-1 prior authorization requirement took effect July 1, 2024 (the earlier June 1, 2024 bulletin date was superseded). Comparing four final quarters before vs. four after, GLP-1 prescriptions per 1,000 member-months fell 18.6% (95% CI -20.8% to -16.2%), from 12.09 to 9.85 \u2014 a change that is both statistically significant and material. This is an association, not proof the PA policy caused the decline.",
+            "findings": [
+              {
+                "statement": "The authoritative GLP-1 PA effective date in Eastvale is 2024-07-01 (EV-MAN-2024-PH, provider manual); the June 1, 2024 date in EV-BUL-2024-007 was superseded by EV-BUL-2024-011, which postponed the start to July 1, 2024.",
+                "evidence_ids": [
+                  "E1",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Under the PA policy, coverage requires (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E4"
+                ]
+              },
+              {
+                "statement": "GLP-1 prescriptions per 1,000 member-months averaged 12.094 in the four pre quarters (2023Q3-2024Q2) and 9.846 in the four post quarters (2024Q3-2025Q2), a -18.6% change (bootstrap 95% CI -20.8% to -16.2%).",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "The verdict is 'significant_and_material' against a 5% materiality threshold; 8 suppressed rows fell within the analysis window.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Only final quarters were compared; 2025Q3 and 2025Q4 are provisional (claims lag) and were excluded.",
+                "evidence_ids": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Policy effective date is resolved from the highest-authority source with a documented supersession, and the pre/post computation uses only final quarters with a tight, significant CI; however, only 4 quarters per period, 8 suppressed rows, and no causal identification limit inference.",
+            "caveats": [
+              "Pre/post comparison is an association and does not establish that the prior authorization policy caused the decline; other factors (formulary changes, market trends, enrollment mix) were not controlled.",
+              "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from the comparison.",
+              "8 suppressed rows (counts < 11, treated as missing, not zero) fall in the analysis window.",
+              "The superseded June 1, 2024 start date in EV-BUL-2024-007 was not used.",
+              "Data and states are synthetic (NL Northland, EV Eastvale, SP Southport), mirroring CMS SDUD structure.",
+              "Stocks/volume only: this measures prescription volume, not spending or clinical appropriateness."
+            ],
+            "human_review": [
+              "Verify EV-MAN-2024-PH remains the current manual chapter and that no later EV bulletin changed the PA criteria or date.",
+              "Confirm the 2023Q3-2025Q2 final determinations in reporting_status have not been reclassified.",
+              "Check whether concurrent GLP-1 benefit or formulary changes in EV could explain part of the decline.",
+              "Review suppressed cells to confirm they do not systematically cluster in either period."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Eastvale's GLP-1 prior authorization requirement took effect July 1, 2024 (the earlier June 1, 2024 bulletin date was superseded). Comparing four final quarters before vs. four after, GLP-1 prescriptions per 1,000 member-months fell 18.6% (95% CI -20.8% to -16.2%), from 12.09 to 9.85 \u2014 a change that is both statistically significant and material. This is an association, not proof the PA policy caused the decline.",
+        "findings": [
+          {
+            "statement": "The authoritative GLP-1 PA effective date in Eastvale is 2024-07-01 (EV-MAN-2024-PH, provider manual); the June 1, 2024 date in EV-BUL-2024-007 was superseded by EV-BUL-2024-011, which postponed the start to July 1, 2024.",
+            "evidence_ids": [
+              "E1",
+              "E4"
+            ]
+          },
+          {
+            "statement": "Under the PA policy, coverage requires (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E4"
+            ]
+          },
+          {
+            "statement": "GLP-1 prescriptions per 1,000 member-months averaged 12.094 in the four pre quarters (2023Q3-2024Q2) and 9.846 in the four post quarters (2024Q3-2025Q2), a -18.6% change (bootstrap 95% CI -20.8% to -16.2%).",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "The verdict is 'significant_and_material' against a 5% materiality threshold; 8 suppressed rows fell within the analysis window.",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Only final quarters were compared; 2025Q3 and 2025Q4 are provisional (claims lag) and were excluded.",
+            "evidence_ids": [
+              "E2",
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Policy effective date is resolved from the highest-authority source with a documented supersession, and the pre/post computation uses only final quarters with a tight, significant CI; however, only 4 quarters per period, 8 suppressed rows, and no causal identification limit inference.",
+        "caveats": [
+          "Pre/post comparison is an association and does not establish that the prior authorization policy caused the decline; other factors (formulary changes, market trends, enrollment mix) were not controlled.",
+          "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from the comparison.",
+          "8 suppressed rows (counts < 11, treated as missing, not zero) fall in the analysis window.",
+          "The superseded June 1, 2024 start date in EV-BUL-2024-007 was not used.",
+          "Data and states are synthetic (NL Northland, EV Eastvale, SP Southport), mirroring CMS SDUD structure.",
+          "Stocks/volume only: this measures prescription volume, not spending or clinical appropriateness."
+        ],
+        "human_review": [
+          "Verify EV-MAN-2024-PH remains the current manual chapter and that no later EV bulletin changed the PA criteria or date.",
+          "Confirm the 2023Q3-2025Q2 final determinations in reporting_status have not been reclassified.",
+          "Check whether concurrent GLP-1 benefit or formulary changes in EV could explain part of the decline.",
+          "Review suppressed cells to confirm they do not systematically cluster in either period."
+        ]
+      },
+      "wall_seconds": 9.1,
+      "paraphrase_of": null
+    },
+    {
+      "id": "prepost_ev_paraphrase",
+      "category": "consistency",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "effective_date": true,
+        "number": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": -18.6,
+      "summary": "After Eastvale's GLP-1 prior authorization requirement took effect on 2024-07-01, GLP-1 prescriptions per 1,000 member-months fell 18.6%, from a pre-period mean of 12.1 to 9.8 in the four quarters after (95% CI -20.8% to -16.2%). The change is both statistically significant and materially large relative to the 5% threshold. This is an association, not proof the PA requirement caused the decline.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 16135,
+        "cached_tokens": 12544,
+        "completion_tokens": 1480,
+        "llm_seconds": 11.02,
+        "cost_usd": 0.002929
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a \"did X change after policy Y?\" question for Eastvale (EV) GLP-1 prior authorization. I need the authoritative effective date and data coverage first \u2014 these are independent, so I'll call both.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: This is a \"did X change after policy Y?\" question for Eastvale (EV) GLP-1 prior authorization. I need the authoritative effective date and data coverage first \u2014 these are independent, so I'll call both.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: Effective date is 2024-07-01 (superseding an earlier bulletin); final data runs through 2025Q2, so there are 2 final quarters post-policy. Now run the pre/post analysis on prescriptions per 1,000 member months.",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "EV",
+            "drug_class": "GLP1",
+            "effective_date": "2024-07-01",
+            "metric": "rx_per_1000_mm"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"EV\", \"drug_class\": \"GLP1\", \"metric\": \"rx_per_1000_mm\", \"metric_label\": \"Prescriptions per 1,000 member-months\", \"effective_date\": \"2024-07-01\", \"timing_note\": \"Policy starts on the first day of 2024Q3; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\"], \"post_quarters\": [\"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 12.094, \"post_mean\": 9.846, \"pct_change\": -18.6, \"ci95_pct_change\": [-20.8, -16.2], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_m"
+        },
+        {
+          "thought": "Thought: The analysis shows an -18.6% change. Let me confirm what the PA policy actually requires (criteria) so the answer is grounded in the document text.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization requirement criteria for coverage",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"query\": \"GLP-1 prior authorization requirement criteria for coverage\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.806, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-BUL-2024-007#p1\", \"doc_id\": \"EV-BUL-2024-007\", \"title\": \"Provider Bulletin 2024-07: Prior authorization for GLP-1 agonists\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"effective_date\": \""
+        },
+        {
+          "thought": "Submit answer.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "After Eastvale's GLP-1 prior authorization requirement took effect on 2024-07-01, GLP-1 prescriptions per 1,000 member-months fell 18.6%, from a pre-period mean of 12.1 to 9.8 in the four quarters after (95% CI -20.8% to -16.2%). The change is both statistically significant and materially large relative to the 5% threshold. This is an association, not proof the PA requirement caused the decline.",
+            "findings": [
+              {
+                "statement": "The EV GLP-1 PA requirement's authoritative effective date is 2024-07-01 (EV-MAN-2024-PH); an earlier bulletin, EV-BUL-2024-007, had set 2024-06-01 but was superseded by EV-BUL-2024-011, which postponed the start date to 2024-07-01.",
+                "evidence_ids": [
+                  "E1",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Under PA, coverage requires either type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E4"
+                ]
+              },
+              {
+                "statement": "GLP-1 prescriptions per 1,000 member-months averaged 12.1 in the four pre-policy quarters (2023Q3-2024Q2) and 9.8 in the four post-policy quarters (2024Q3-2025Q2), a change of -18.6% (bootstrap 95% CI -20.8% to -16.2%).",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "The tool verdict is significant_and_material: the confidence interval excludes zero and the change far exceeds the 5% materiality threshold.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Effective date is well resolved from the highest-authority source, and the utilization comparison uses four final quarters on each side with a tight CI. Confidence is limited by the short post-period (only two final quarters of 2025, with 2025Q3-Q4 provisional) and by 8 suppressed rows in the analysis window.",
+            "caveats": [
+              "Pre/post association only \u2014 the decline is consistent with, but not proof of, a causal effect of the PA requirement; concurrent factors (e.g., other utilization management, benefit changes) are not controlled for.",
+              "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; 8 suppressed rows (counts < 11) fall within the analysis window and are not treated as zero.",
+              "An earlier EV bulletin (EV-BUL-2024-007, effective 2024-06-01) is superseded by EV-BUL-2024-011 and was not used; had the earlier date been used, the pre/post split would differ.",
+              "Data are synthetic (states NL/EV/SP) and mirror CMS SDUD structure; they are not real Medicaid data."
+            ],
+            "human_review": [
+              "Confirm no other EV GLP-1 policy change (e.g., formulary/preferred drug changes) took effect around 2024Q3 that could explain the drop.",
+              "Check whether the suppressed rows are concentrated in the post period, which would bias the post mean.",
+              "Verify whether the small remainder of 2024 (July-September) shows a phase-in pattern distinct from later quarters."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "After Eastvale's GLP-1 prior authorization requirement took effect on 2024-07-01, GLP-1 prescriptions per 1,000 member-months fell 18.6%, from a pre-period mean of 12.1 to 9.8 in the four quarters after (95% CI -20.8% to -16.2%). The change is both statistically significant and materially large relative to the 5% threshold. This is an association, not proof the PA requirement caused the decline.",
+        "findings": [
+          {
+            "statement": "The EV GLP-1 PA requirement's authoritative effective date is 2024-07-01 (EV-MAN-2024-PH); an earlier bulletin, EV-BUL-2024-007, had set 2024-06-01 but was superseded by EV-BUL-2024-011, which postponed the start date to 2024-07-01.",
+            "evidence_ids": [
+              "E1",
+              "E4"
+            ]
+          },
+          {
+            "statement": "Under PA, coverage requires either type 2 diabetes with A1c >= 7.0 after a metformin trial, or BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E4"
+            ]
+          },
+          {
+            "statement": "GLP-1 prescriptions per 1,000 member-months averaged 12.1 in the four pre-policy quarters (2023Q3-2024Q2) and 9.8 in the four post-policy quarters (2024Q3-2025Q2), a change of -18.6% (bootstrap 95% CI -20.8% to -16.2%).",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "The tool verdict is significant_and_material: the confidence interval excludes zero and the change far exceeds the 5% materiality threshold.",
+            "evidence_ids": [
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Effective date is well resolved from the highest-authority source, and the utilization comparison uses four final quarters on each side with a tight CI. Confidence is limited by the short post-period (only two final quarters of 2025, with 2025Q3-Q4 provisional) and by 8 suppressed rows in the analysis window.",
+        "caveats": [
+          "Pre/post association only \u2014 the decline is consistent with, but not proof of, a causal effect of the PA requirement; concurrent factors (e.g., other utilization management, benefit changes) are not controlled for.",
+          "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; 8 suppressed rows (counts < 11) fall within the analysis window and are not treated as zero.",
+          "An earlier EV bulletin (EV-BUL-2024-007, effective 2024-06-01) is superseded by EV-BUL-2024-011 and was not used; had the earlier date been used, the pre/post split would differ.",
+          "Data are synthetic (states NL/EV/SP) and mirror CMS SDUD structure; they are not real Medicaid data."
+        ],
+        "human_review": [
+          "Confirm no other EV GLP-1 policy change (e.g., formulary/preferred drug changes) took effect around 2024Q3 that could explain the drop.",
+          "Check whether the suppressed rows are concentrated in the post period, which would bias the post mean.",
+          "Verify whether the small remainder of 2024 (July-September) shows a phase-in pattern distinct from later quarters."
+        ]
+      },
+      "wall_seconds": 11.1,
+      "paraphrase_of": "prepost_ev"
+    },
+    {
+      "id": "conflict_nl",
+      "category": "memory_conflict",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "effective_date": true,
+        "number": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": 38.8,
+      "summary": "Northland's GLP-1 use rose after weight-management coverage began: prescriptions per 1,000 member-months averaged 11.8 in the four pre-policy quarters of 2023 and 16.4 in the four post-policy quarters of 2024, a 38.8% increase (bootstrap 95% CI 36.4%\u201341.0%; significant and material). I used an effective date of January 1, 2024, from state plan amendment NL-SPA-2023-014, the highest-authority source; it outranks the provider manual's stated February 1, 2024 date. This is a pre/post association only and does not by itself show the coverage change caused the increase.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 11620,
+        "cached_tokens": 8576,
+        "completion_tokens": 1490,
+        "llm_seconds": 9.79,
+        "cost_usd": 0.002753
+      },
+      "trace": [
+        {
+          "thought": "Thought: I need the authoritative effective date for Northland's GLP-1 weight-management coverage and the data coverage status for NL.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: I need the authoritative effective date for Northland's GLP-1 weight-management coverage and the data coverage status for NL.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"NL\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: Effective date resolved to 2024-01-01 (SPA outranks the manual's 2024-02-01). Now I'll run the pre/post utilization analysis and pull the policy text describing the coverage.",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "NL",
+            "drug_class": "GLP1",
+            "effective_date": "2024-01-01",
+            "metric": "rx_per_1000_mm"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"NL\", \"drug_class\": \"GLP1\", \"metric\": \"rx_per_1000_mm\", \"metric_label\": \"Prescriptions per 1,000 member-months\", \"effective_date\": \"2024-01-01\", \"timing_note\": \"Policy starts on the first day of 2024Q1; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\"], \"post_quarters\": [\"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 11.834, \"post_mean\": 16.42, \"pct_change\": 38.8, \"ci95_pct_change\": [36.4, 41.0], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_mate"
+        },
+        {
+          "thought": "Thought: Effective date resolved to 2024-01-01 (SPA outranks the manual's 2024-02-01). Now I'll run the pre/post utilization analysis and pull the policy text describing the coverage.",
+          "action": "search_policy",
+          "arguments": {
+            "state": "NL",
+            "query": "GLP-1 coverage for weight management eligibility criteria"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"query\": \"GLP-1 coverage for weight management eligibility criteria\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.8, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"ALL\", \"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\": \"2023-1"
+        },
+        {
+          "thought": "The user asked how GLP-1 use changed. Maybe also check spending? Not asked \u2014 question is about use. But spending changed? They asked \"how did GLP-1 use change\". I could add spend_per_rx? Not necessary. But rules say use spending_decomposition whenever spending changed \u2014 spending wasn't asked. I'll k",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Northland's GLP-1 use rose after weight-management coverage began: prescriptions per 1,000 member-months averaged 11.8 in the four pre-policy quarters of 2023 and 16.4 in the four post-policy quarters of 2024, a 38.8% increase (bootstrap 95% CI 36.4%\u201341.0%; significant and material). I used an effective date of January 1, 2024, from state plan amendment NL-SPA-2023-014, the highest-authority source; it outranks the provider manual's stated February 1, 2024 date. This is a pre/post association only and does not by itself show the coverage change caused the increase.",
+            "findings": [
+              {
+                "statement": "Authoritative effective date is 2024-01-01 per SPA NL-SPA-2023-014 (state_plan_amendment, highest authority); a lower-authority provider manual (NL-MAN-2024-RX) states 2024-02-01 \u2014 a conflict to disclose.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "NL-SPA-2023-014 covers GLP-1 receptor agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024, with type 2 diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E4"
+                ]
+              },
+              {
+                "statement": "GLP-1 prescriptions per 1,000 member-months: pre-period (2023Q1\u20132023Q4) mean 11.8 vs post-period (2024Q1\u20132024Q4) mean 16.4, a 38.8% change (95% CI 36.4% to 41.0%), verdict significant_and_material against a 5% materiality threshold.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Only final quarters were compared; 2025Q3 and 2025Q4 are provisional and were excluded, and 12 suppressed rows exist in NL data (counts < 11 are not zero).",
+                "evidence_ids": [
+                  "E2"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Effective date is well resolved by the highest-authority SPA and the utilization comparison is statistically significant, but the design is a simple pre/post comparison with no control series, and the effective-date conflict in the manual slightly complicates timing interpretation.",
+            "caveats": [
+              "Conflicting sources: NL-MAN-2024-RX (provider manual) says coverage began 2024-02-01; the SPA's 2024-01-01 was used because state plan amendments outrank provider manuals. Using 2024-02-01 would shift part of 2024Q1 into the pre-period.",
+              "Pre/post association, not causal proof: no comparison group or trend control was employed.",
+              "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; the post window stops at 2024Q4.",
+              "12 suppressed rows in NL GLP-1 data (prescription counts < 11 are suppressed, not zero), which can slightly understate totals in small cells.",
+              "All data and states (NL Northland, EV Eastvale, SP Southport) are synthetic."
+            ],
+            "human_review": [
+              "Confirm with the state whether coverage actually started 2024-01-01 (SPA) or 2024-02-01 (manual), and whether pharmacy claims systems were updated mid-quarter.",
+              "Check whether the 2024 increase reflects a level shift or a pre-existing trend by inspecting quarterly values across 2023\u20132025 and, if possible, comparing to a drug class unaffected by the SPA.",
+              "Consider re-running the analysis with 2024-02-01 as a sensitivity check and with the spending metrics (spend PMPM, spend per Rx) to separate volume growth from price/mix changes."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Northland's GLP-1 use rose after weight-management coverage began: prescriptions per 1,000 member-months averaged 11.8 in the four pre-policy quarters of 2023 and 16.4 in the four post-policy quarters of 2024, a 38.8% increase (bootstrap 95% CI 36.4%\u201341.0%; significant and material). I used an effective date of January 1, 2024, from state plan amendment NL-SPA-2023-014, the highest-authority source; it outranks the provider manual's stated February 1, 2024 date. This is a pre/post association only and does not by itself show the coverage change caused the increase.",
+        "findings": [
+          {
+            "statement": "Authoritative effective date is 2024-01-01 per SPA NL-SPA-2023-014 (state_plan_amendment, highest authority); a lower-authority provider manual (NL-MAN-2024-RX) states 2024-02-01 \u2014 a conflict to disclose.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "NL-SPA-2023-014 covers GLP-1 receptor agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024, with type 2 diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E4"
+            ]
+          },
+          {
+            "statement": "GLP-1 prescriptions per 1,000 member-months: pre-period (2023Q1\u20132023Q4) mean 11.8 vs post-period (2024Q1\u20132024Q4) mean 16.4, a 38.8% change (95% CI 36.4% to 41.0%), verdict significant_and_material against a 5% materiality threshold.",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Only final quarters were compared; 2025Q3 and 2025Q4 are provisional and were excluded, and 12 suppressed rows exist in NL data (counts < 11 are not zero).",
+            "evidence_ids": [
+              "E2"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Effective date is well resolved by the highest-authority SPA and the utilization comparison is statistically significant, but the design is a simple pre/post comparison with no control series, and the effective-date conflict in the manual slightly complicates timing interpretation.",
+        "caveats": [
+          "Conflicting sources: NL-MAN-2024-RX (provider manual) says coverage began 2024-02-01; the SPA's 2024-01-01 was used because state plan amendments outrank provider manuals. Using 2024-02-01 would shift part of 2024Q1 into the pre-period.",
+          "Pre/post association, not causal proof: no comparison group or trend control was employed.",
+          "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; the post window stops at 2024Q4.",
+          "12 suppressed rows in NL GLP-1 data (prescription counts < 11 are suppressed, not zero), which can slightly understate totals in small cells.",
+          "All data and states (NL Northland, EV Eastvale, SP Southport) are synthetic."
+        ],
+        "human_review": [
+          "Confirm with the state whether coverage actually started 2024-01-01 (SPA) or 2024-02-01 (manual), and whether pharmacy claims systems were updated mid-quarter.",
+          "Check whether the 2024 increase reflects a level shift or a pre-existing trend by inspecting quarterly values across 2023\u20132025 and, if possible, comparing to a drug class unaffected by the SPA.",
+          "Consider re-running the analysis with 2024-02-01 as a sensitivity check and with the spending metrics (spend PMPM, spend per Rx) to separate volume growth from price/mix changes."
+        ]
+      },
+      "wall_seconds": 9.8,
+      "paraphrase_of": null
+    },
+    {
+      "id": "decomp_sp",
+      "category": "spending_vs_care",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "check_data_coverage",
+        "spending_decomposition",
+        "run_sql",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "No \u2014 Southport's GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2, but that does not reflect more treatment per member. Utilization per member actually fell 7.6% (12.37 to 11.44 prescriptions per 1,000 member-months), while enrollment grew 15.7% and price per prescription rose 5.7%. The spending increase is essentially a volume-of-enrollees and price story, not an intensity-of-treatment story.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 13437,
+        "cached_tokens": 11648,
+        "completion_tokens": 2103,
+        "llm_seconds": 12.84,
+        "cost_usd": 0.00313
+      },
+      "trace": [
+        {
+          "thought": "Thought: The question is about whether a spending rise reflects more treatment, which requires decomposing spending into enrollment, utilization per member, and price per prescription. First I need to confirm that 2023Q4 and 2025Q2 are final (not provisional/missing) for Southport.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "SP"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"state\": \"SP\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"missing\": [\"2024Q3\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 11, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: Both 2023Q4 and 2025Q2 are final for Southport (2024Q3 missing, 2025Q3\u2013Q4 provisional \u2014 disclose). Now decompose the spending change into enrollment, utilization per member, and price per prescription.",
+          "action": "spending_decomposition",
+          "arguments": {
+            "state": "SP",
+            "drug_class": "GLP1",
+            "start_quarter": "2023Q4",
+            "end_quarter": "2025Q2"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"SP\", \"drug_class\": \"GLP1\", \"start_quarter\": \"2023Q4\", \"end_quarter\": \"2025Q2\", \"spending_start_usd\": 6772662.07, \"spending_end_usd\": 7656893.9, \"total_spending_pct_change\": 13.1, \"component_pct_change\": {\"enrollment\": 15.7, \"utilization_per_member\": -7.6, \"price_per_rx\": 5.7}, \"share_of_change_pct\": {\"enrollment\": 118.8, \"utilization_per_member\": -64.1, \"price_per_rx\": 45.3}}"
+        },
+        {
+          "thought": "Thought: The decomposition answers the question \u2014 enrollment and price drove spending; per-member utilization actually fell. Let me pull quarterly detail to confirm the pattern and check for the missing 2024Q3 gap.",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT d.year, d.quarter, SUM(d.reimbursement_usd) AS spend, SUM(d.prescriptions) AS rx, e.member_months, ROUND(SUM(d.prescriptions)*1000.0/e.member_months,2) AS rx_per_1000_mm, ROUND(SUM(d.reimbursement_usd)/NULLIF(SUM(d.prescriptions),0),2) AS spend_per_rx FROM drug_utilization d JOIN enrollment e ON e.state=d.state AND e.year=d.year AND e.quarter=d.quarter WHERE d.state='SP' AND d.drug_class='GLP1' AND ((d.year=2023 AND d.quarter=4) OR (d.year>=2024 AND NOT (d.year=2024 AND d.quarter=3)) AND d.year<=2025 AND d.quarter<=2) GROUP BY d.year, d.quarter, e.member_months ORDER BY d.year, d.quarter"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"columns\": [\"year\", \"quarter\", \"spend\", \"rx\", \"member_months\", \"rx_per_1000_mm\", \"spend_per_rx\"], \"rows\": [[2023, 4, 6772662.07, 7422, 599829, 12.37, 912.51], [2024, 1, 7090824.4, 7574, 615507, 12.31, 936.21], [2024, 2, 7077845.9, 7522, 628508, 11.97, 940.95], [2025, 1, 7835451.39, 8122, 680377, 11.94, 964.72], [2025, 2, 7656893.9, 7937, 693940, 11.44, 964.71]], \"row_count\": 5, \"truncated\": false}"
+        },
+        {
+          "thought": "Thought: The quarterly series confirms it \u2014 prescriptions per 1,000 member-months fell steadily from 12.37 to 11.44 while spend per Rx rose from $912.51 to $964.71. Submitting.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "No \u2014 Southport's GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2, but that does not reflect more treatment per member. Utilization per member actually fell 7.6% (12.37 to 11.44 prescriptions per 1,000 member-months), while enrollment grew 15.7% and price per prescription rose 5.7%. The spending increase is essentially a volume-of-enrollees and price story, not an intensity-of-treatment story.",
+            "findings": [
+              {
+                "statement": "Total GLP-1 spending in Southport rose from $6,772,662.07 in 2023Q4 to $7,656,893.90 in 2025Q2, a 13.1% increase.",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "Decomposed, the change is driven by enrollment growth (+15.7%, 118.8% of the change) and price per prescription (+5.7%, 45.3% of the change), while utilization per member fell 7.6% (-64.1% of the change).",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "Prescriptions per 1,000 member-months declined across every final quarter shown: 12.37 (2023Q4), 12.31 (2024Q1), 11.97 (2024Q2), 11.94 (2025Q1), 11.44 (2025Q2).",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Spending per prescription climbed from $912.51 in 2023Q4 to $964.71 in 2025Q2, and member-months rose from 599,829 to 693,940 over the same span.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Both comparison quarters are final, and the spending decomposition and the raw quarterly series agree on direction and magnitude (approximately -8% per-member utilization).",
+            "caveats": [
+              "2024Q3 is missing for Southport and 2025Q3\u20132025Q4 are provisional (claims lag); they were excluded from all comparisons.",
+              "11 rows in Southport's data are privacy-suppressed (counts <11) and were not treated as zero; suppression slightly understates absolute counts but is unlikely to change the direction of the trend.",
+              "This is a decomposition (association), not causal evidence \u2014 the data do not identify why per-member utilization fell.",
+              "Data are synthetic (NL Northland, EV Eastvale, SP Southport) and mirror CMS SDUD structure; they are not actual Southport/state figures."
+            ],
+            "human_review": [
+              "Verify with a human analyst whether the per-member decline reflects a real change in GLP-1 access/continuity of care or a shift in member mix (e.g., new enrollees who are not yet established on therapy).",
+              "Confirm the 2024Q3 data gap does not mask a level shift in utilization.",
+              "Check whether rebates or supplemental/340B pricing are excluded from reimbursement_usd, which would affect the price-per-prescription component."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "No \u2014 Southport's GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2, but that does not reflect more treatment per member. Utilization per member actually fell 7.6% (12.37 to 11.44 prescriptions per 1,000 member-months), while enrollment grew 15.7% and price per prescription rose 5.7%. The spending increase is essentially a volume-of-enrollees and price story, not an intensity-of-treatment story.",
+        "findings": [
+          {
+            "statement": "Total GLP-1 spending in Southport rose from $6,772,662.07 in 2023Q4 to $7,656,893.90 in 2025Q2, a 13.1% increase.",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "Decomposed, the change is driven by enrollment growth (+15.7%, 118.8% of the change) and price per prescription (+5.7%, 45.3% of the change), while utilization per member fell 7.6% (-64.1% of the change).",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "Prescriptions per 1,000 member-months declined across every final quarter shown: 12.37 (2023Q4), 12.31 (2024Q1), 11.97 (2024Q2), 11.94 (2025Q1), 11.44 (2025Q2).",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Spending per prescription climbed from $912.51 in 2023Q4 to $964.71 in 2025Q2, and member-months rose from 599,829 to 693,940 over the same span.",
+            "evidence_ids": [
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Both comparison quarters are final, and the spending decomposition and the raw quarterly series agree on direction and magnitude (approximately -8% per-member utilization).",
+        "caveats": [
+          "2024Q3 is missing for Southport and 2025Q3\u20132025Q4 are provisional (claims lag); they were excluded from all comparisons.",
+          "11 rows in Southport's data are privacy-suppressed (counts <11) and were not treated as zero; suppression slightly understates absolute counts but is unlikely to change the direction of the trend.",
+          "This is a decomposition (association), not causal evidence \u2014 the data do not identify why per-member utilization fell.",
+          "Data are synthetic (NL Northland, EV Eastvale, SP Southport) and mirror CMS SDUD structure; they are not actual Southport/state figures."
+        ],
+        "human_review": [
+          "Verify with a human analyst whether the per-member decline reflects a real change in GLP-1 access/continuity of care or a shift in member mix (e.g., new enrollees who are not yet established on therapy).",
+          "Confirm the 2024Q3 data gap does not mask a level shift in utilization.",
+          "Check whether rebates or supplemental/340B pricing are excluded from reimbursement_usd, which would affect the price-per-prescription component."
+        ]
+      },
+      "wall_seconds": 12.9,
+      "paraphrase_of": null
+    },
+    {
+      "id": "coverage_sp",
+      "category": "data_quality",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "mentions_all": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "check_data_coverage",
+        "run_sql",
+        "run_sql",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "For Southport (SP), nine quarters are marked final and are safe to use: 2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q4, 2025Q1 and 2025Q2. 2024Q3 is missing entirely (no data), and 2025Q3 and 2025Q4 are provisional and incomplete due to claims lag, so they should be excluded from any before/after comparison. One additional caution: a single GLP1 product (exenatide injection) is privacy-suppressed in every reported quarter, so GLP1 totals are slightly understated and that suppressed count must never be treated as zero.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 12740,
+        "cached_tokens": 11520,
+        "completion_tokens": 1468,
+        "llm_seconds": 10.04,
+        "cost_usd": 0.002197
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a data-coverage question for Southport (SP); I need the reporting status per quarter before deciding what's safe for a before/after comparison.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "SP"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"state\": \"SP\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"missing\": [\"2024Q3\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 11, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "The user asked which SP quarters are safe. I have coverage. Should I also check suppression details? The suppressed_rows: 11 is worth noting. Let me maybe run SQL to see which classes/quarters suppressed rows fall in? That would be helpful but maybe optional. A quick SQL could add value.\n\nLet me do ",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT year, quarter, drug_class, COUNT(*) AS suppressed_rows FROM drug_utilization WHERE state='SP' AND suppressed = TRUE GROUP BY year, quarter, drug_class ORDER BY year, quarter"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"columns\": [\"year\", \"quarter\", \"drug_class\", \"suppressed_rows\"], \"rows\": [[2023, 1, \"GLP1\", 1], [2023, 2, \"GLP1\", 1], [2023, 3, \"GLP1\", 1], [2023, 4, \"GLP1\", 1], [2024, 1, \"GLP1\", 1], [2024, 2, \"GLP1\", 1], [2024, 4, \"GLP1\", 1], [2025, 1, \"GLP1\", 1], [2025, 2, \"GLP1\", 1], [2025, 3, \"GLP1\", 1], [2025, 4, \"GLP1\", 1]], \"row_count\": 11, \"truncated\": false}"
+        },
+        {
+          "thought": "Notice: 11 suppressed rows, all in GLP1, exactly one per quarter. 2024Q3 is missing entirely (no suppressed row, correct). So suppressed data affects GLP1 in every quarter \u2014 meaning GLP1 counts understate prescriptions in all quarters (small, <11 per product presumably). Worth disclosing.\n\nLet me ch",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT DISTINCT drug_class, product_name, ndc FROM drug_utilization WHERE state='SP' AND suppressed = TRUE"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"columns\": [\"drug_class\", \"product_name\", \"ndc\"], \"rows\": [[\"GLP1\", \"exenatide injection\", \"00310-6512\"]], \"row_count\": 1, \"truncated\": false}"
+        },
+        {
+          "thought": "Now submit answer. No policy needed \u2014 the question is only about data coverage. I should mention that safe quarters depend on the policy effective date, which I haven't been asked; but I can note that once the effective date is known, use only final quarters.\n\nAlso mention suppressed: GLP1 exenatide",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "For Southport (SP), nine quarters are marked final and are safe to use: 2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q4, 2025Q1 and 2025Q2. 2024Q3 is missing entirely (no data), and 2025Q3 and 2025Q4 are provisional and incomplete due to claims lag, so they should be excluded from any before/after comparison. One additional caution: a single GLP1 product (exenatide injection) is privacy-suppressed in every reported quarter, so GLP1 totals are slightly understated and that suppressed count must never be treated as zero.",
+            "findings": [
+              {
+                "statement": "Safe (final) Southport quarters: 2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q4, 2025Q1, 2025Q2.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Not safe: 2024Q3 is missing (no data submitted) \u2014 hence the gap between 2024Q2 and 2024Q4.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Not safe: 2025Q3 and 2025Q4 are provisional (incomplete, claims-lag), so any comparison ending in those quarters would understate recent activity.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Southport has 11 suppressed rows in total \u2014 exactly one suppressed GLP1 record in each of the 11 reported quarters (including the two provisional quarters).",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The suppressed record is always the same product: exenatide injection, NDC 00310-6512, so GLP1 class prescription and spend totals are undercounted by this small, stable amount.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Reporting status came directly from the reporting_status table via check_data_coverage, and the suppressed-row detail was confirmed with a direct query on the SP rows.",
+            "caveats": [
+              "Which final quarters are usable for a specific policy test also depends on the policy's authoritative effective date \u2014 this answer covers data quality only. Tell me the state/drug class/policy and I can resolve the effective date and run the pre/post analysis on final quarters only.",
+              "Suppressed counts (<11) are NULL, not zero; GLP1 totals are therefore slightly understated in every quarter. Row counts (not patient counts) are being suppressed here, so the effect on class totals should be small but is not zero.",
+              "Southport is a fictional state and the data are synthetic, mirroring the structure of CMS State Drug Utilization Data; results are illustrative only.",
+              "Provisional quarters can be revised upward in later releases, so 2025Q3\u20132025Q4 should be re-checked rather than permanently excluded."
+            ],
+            "human_review": [
+              "Confirm with the data release notes whether 2024Q3 was genuinely not submitted or is still pending an adjustment/resubmission.",
+              "Confirm the suppression rule applied (cell size <11) and whether any small-cell totals need complementary suppression before publishing GLP1 figures."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "For Southport (SP), nine quarters are marked final and are safe to use: 2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q4, 2025Q1 and 2025Q2. 2024Q3 is missing entirely (no data), and 2025Q3 and 2025Q4 are provisional and incomplete due to claims lag, so they should be excluded from any before/after comparison. One additional caution: a single GLP1 product (exenatide injection) is privacy-suppressed in every reported quarter, so GLP1 totals are slightly understated and that suppressed count must never be treated as zero.",
+        "findings": [
+          {
+            "statement": "Safe (final) Southport quarters: 2023Q1, 2023Q2, 2023Q3, 2023Q4, 2024Q1, 2024Q2, 2024Q4, 2025Q1, 2025Q2.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Not safe: 2024Q3 is missing (no data submitted) \u2014 hence the gap between 2024Q2 and 2024Q4.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Not safe: 2025Q3 and 2025Q4 are provisional (incomplete, claims-lag), so any comparison ending in those quarters would understate recent activity.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Southport has 11 suppressed rows in total \u2014 exactly one suppressed GLP1 record in each of the 11 reported quarters (including the two provisional quarters).",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "The suppressed record is always the same product: exenatide injection, NDC 00310-6512, so GLP1 class prescription and spend totals are undercounted by this small, stable amount.",
+            "evidence_ids": [
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Reporting status came directly from the reporting_status table via check_data_coverage, and the suppressed-row detail was confirmed with a direct query on the SP rows.",
+        "caveats": [
+          "Which final quarters are usable for a specific policy test also depends on the policy's authoritative effective date \u2014 this answer covers data quality only. Tell me the state/drug class/policy and I can resolve the effective date and run the pre/post analysis on final quarters only.",
+          "Suppressed counts (<11) are NULL, not zero; GLP1 totals are therefore slightly understated in every quarter. Row counts (not patient counts) are being suppressed here, so the effect on class totals should be small but is not zero.",
+          "Southport is a fictional state and the data are synthetic, mirroring the structure of CMS State Drug Utilization Data; results are illustrative only.",
+          "Provisional quarters can be revised upward in later releases, so 2025Q3\u20132025Q4 should be re-checked rather than permanently excluded."
+        ],
+        "human_review": [
+          "Confirm with the data release notes whether 2024Q3 was genuinely not submitted or is still pending an adjustment/resubmission.",
+          "Confirm the suppression rule applied (cell size <11) and whether any small-cell totals need complementary suppression before publishing GLP1 figures."
+        ]
+      },
+      "wall_seconds": 10.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "sql_lookup",
+      "category": "sql",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "number": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "run_sql",
+        "check_data_coverage",
+        "calculate",
+        "submit_answer",
+        "submit_answer"
+      ],
+      "expected_number": 17453705.79,
+      "summary": "Eastvale GLP-1 reimbursement in 2024 Q2 was $17,453,705.79 (about $17.5M) excluding suppressed rows. That covers 3 of 4 product rows; 1 row was suppressed. 2024 Q2 is a final quarter, so no claims-lag adjustment applies.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 4,
+        "prompt_tokens": 13464,
+        "cached_tokens": 11776,
+        "completion_tokens": 1556,
+        "llm_seconds": 10.05,
+        "cost_usd": 0.002444
+      },
+      "trace": [
+        {
+          "thought": "I'll pull the total GLP-1 reimbursement for Eastvale in 2024 Q2 and confirm that quarter's reporting status.",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT state, year, quarter, drug_class, COUNT(*) AS rows_total, SUM(CASE WHEN suppressed THEN 1 ELSE 0 END) AS rows_suppressed, SUM(CASE WHEN NOT suppressed THEN reimbursement_usd ELSE 0 END) AS reimbursement_excl_suppressed FROM drug_utilization WHERE state='EV' AND year=2024 AND quarter=2 AND drug_class='GLP1' GROUP BY state, year, quarter, drug_class"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"columns\": [\"state\", \"year\", \"quarter\", \"drug_class\", \"rows_total\", \"rows_suppressed\", \"reimbursement_excl_suppressed\"], \"rows\": [[\"EV\", 2024, 2, \"GLP1\", 4, 1, 17453705.79]], \"row_count\": 1, \"truncated\": false}"
+        },
+        {
+          "thought": "I'll pull the total GLP-1 reimbursement for Eastvale in 2024 Q2 and confirm that quarter's reporting status.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "The question: total GLP-1 reimbursement in Eastvale 2024 Q2, excluding suppressed rows. Result: $17,453,705.79, with 1 of 4 rows suppressed. Quarter is final.\n\nNeed to note suppressed row excluded, so true total is higher. Provide answer.\n\nShould I round? \"rounded at most to one decimal place\" \u2014 for",
+          "action": "calculate",
+          "arguments": {
+            "expression": "17453705.79 / 1000000"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"expression\": \"17453705.79 / 1000000\", \"result\": 17.453706}"
+        },
+        {
+          "thought": "Total = $17.45M, excluding 1 suppressed row. Note suppressed means <11 prescriptions and revenue set to NULL, so the true total is slightly higher.",
+          "action": "submit_answer",
+          "arguments": {
+            "_raw": "{\"answer_type\": \"answer\", \"summary\": \"In Eastvale (EV), total GLP-1 reimbursement in 2024 Q2 was $17,453,705.79 (~$17.5M) when suppressed rows are excluded. That figure covers 3 of the 4 GLP-1 product rows for the quarter; 1 row was suppressed under privacy rules (counts < 11, reimbursement NULL). 2024 Q2 is a final reporting quarter, so no claims-lag adjustment is needed.\", \"findings\": [{\"statement\": \"Excluding suppressed rows, EV GLP-1 reimbursement for 2024 Q2 totals $17,453,705.79 across 3 o"
+          },
+          "observation": "{\"error\": \"submit_answer arguments were not valid JSON (possibly cut off because the answer was too long). Resubmit valid JSON with a shorter summary and fewer, more concise findings.\"}"
+        },
+        {
+          "thought": "Resubmit shorter, and fix caveats format (should be array of strings).",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Eastvale GLP-1 reimbursement in 2024 Q2 was $17,453,705.79 (about $17.5M) excluding suppressed rows. That covers 3 of 4 product rows; 1 row was suppressed. 2024 Q2 is a final quarter, so no claims-lag adjustment applies.",
+            "findings": [
+              {
+                "statement": "EV GLP-1 reimbursement for 2024 Q2, excluding suppressed rows, totals $17,453,705.79 across 3 of 4 product rows (1 row suppressed).",
+                "evidence_ids": [
+                  "E1",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "2024 Q2 is a final quarter in EV; only 2025Q3 and 2025Q4 are provisional, and EV has 12 suppressed rows overall.",
+                "evidence_ids": [
+                  "E2"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "One unambiguous SQL aggregate for a single state/quarter/class, with the quarter's status confirmed as final.",
+            "caveats": [
+              "The excluded suppressed row is not zero: suppression means fewer than 11 prescriptions and reimbursement was NULL, so $17.45M is a lower bound.",
+              "Nominal dollars as reported; no rebate, 340B, or inflation adjustment.",
+              "Synthetic data (NL Northland, EV Eastvale, SP Southport) mirroring CMS SDUD structure; not real Medicaid experience."
+            ],
+            "human_review": [
+              "Decide whether suppressed cells should be footnoted as a lower bound or imputed.",
+              "Verify which GLP-1 products make up the 3 reported rows if a by-product breakdown is needed."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Eastvale GLP-1 reimbursement in 2024 Q2 was $17,453,705.79 (about $17.5M) excluding suppressed rows. That covers 3 of 4 product rows; 1 row was suppressed. 2024 Q2 is a final quarter, so no claims-lag adjustment applies.",
+        "findings": [
+          {
+            "statement": "EV GLP-1 reimbursement for 2024 Q2, excluding suppressed rows, totals $17,453,705.79 across 3 of 4 product rows (1 row suppressed).",
+            "evidence_ids": [
+              "E1",
+              "E3"
+            ]
+          },
+          {
+            "statement": "2024 Q2 is a final quarter in EV; only 2025Q3 and 2025Q4 are provisional, and EV has 12 suppressed rows overall.",
+            "evidence_ids": [
+              "E2"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "One unambiguous SQL aggregate for a single state/quarter/class, with the quarter's status confirmed as final.",
+        "caveats": [
+          "The excluded suppressed row is not zero: suppression means fewer than 11 prescriptions and reimbursement was NULL, so $17.45M is a lower bound.",
+          "Nominal dollars as reported; no rebate, 340B, or inflation adjustment.",
+          "Synthetic data (NL Northland, EV Eastvale, SP Southport) mirroring CMS SDUD structure; not real Medicaid experience."
+        ],
+        "human_review": [
+          "Decide whether suppressed cells should be footnoted as a lower bound or imputed.",
+          "Verify which GLP-1 products make up the 3 reported rows if a by-product breakdown is needed."
+        ]
+      },
+      "wall_seconds": 10.1,
+      "paraphrase_of": null
+    },
+    {
+      "id": "abstain_state",
+      "category": "abstention",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "no_fabrication": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "clarification_needed",
+      "stop_reason": "clarification",
+      "steps": 1,
+      "actions": [
+        "ask_user"
+      ],
+      "expected_number": null,
+      "summary": "I don't have any data or policy documents for a state called \"Westmoor\" \u2014 my corpus only covers Northland (NL), Eastvale (EV), and Southport (SP). Which of these did you mean? (Note: the only 2024 prior authorization policy in the corpus is Eastvale's GLP-1 PA policy.)",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 1,
+        "prompt_tokens": 2750,
+        "cached_tokens": 2560,
+        "completion_tokens": 330,
+        "llm_seconds": 2.24,
+        "cost_usd": 0.000468
+      },
+      "trace": [
+        {
+          "thought": "Thought: \"Westmoor\" is not one of the covered states (NL Northland, EV Eastvale, SP Southport), so the state is ambiguous/unknown \u2014 I should clarify before any analysis.",
+          "action": "ask_user",
+          "arguments": {
+            "question": "I don't have any data or policy documents for a state called \"Westmoor\" \u2014 my corpus only covers Northland (NL), Eastvale (EV), and Southport (SP). Which of these did you mean? (Note: the only 2024 prior authorization policy in the corpus is Eastvale's GLP-1 PA policy.)"
+          },
+          "observation": "{\"user_reply\": null}"
+        }
+      ],
+      "answer": {
+        "answer_type": "clarification_needed",
+        "summary": "I don't have any data or policy documents for a state called \"Westmoor\" \u2014 my corpus only covers Northland (NL), Eastvale (EV), and Southport (SP). Which of these did you mean? (Note: the only 2024 prior authorization policy in the corpus is Eastvale's GLP-1 PA policy.)",
+        "findings": [],
+        "confidence": "low",
+        "confidence_reason": "Question is ambiguous.",
+        "caveats": [],
+        "human_review": []
+      },
+      "wall_seconds": 2.2,
+      "paraphrase_of": null
+    },
+    {
+      "id": "clarify",
+      "category": "clarification",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "clarification_needed",
+      "stop_reason": "clarification",
+      "steps": 1,
+      "actions": [
+        "ask_user"
+      ],
+      "expected_number": null,
+      "summary": "Which state, drug class, and policy should I analyze? For example: \"Northland (NL), GLP1, the GLP1 coverage policy\" \u2014 or \"Eastvale (EV), GLP1, prior authorization\" or \"Southport (SP), SGLT2, the preferred drug list change.\"",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 1,
+        "prompt_tokens": 2738,
+        "cached_tokens": 2560,
+        "completion_tokens": 202,
+        "llm_seconds": 2.03,
+        "cost_usd": 0.000311
+      },
+      "trace": [
+        {
+          "thought": "Thought: The question is missing the state, drug class, and which policy \u2014 all essentials I must not guess. I'll ask one clarifying question.",
+          "action": "ask_user",
+          "arguments": {
+            "question": "Which state, drug class, and policy should I analyze? For example: \"Northland (NL), GLP1, the GLP1 coverage policy\" \u2014 or \"Eastvale (EV), GLP1, prior authorization\" or \"Southport (SP), SGLT2, the preferred drug list change.\""
+          },
+          "observation": "{\"user_reply\": null}"
+        }
+      ],
+      "answer": {
+        "answer_type": "clarification_needed",
+        "summary": "Which state, drug class, and policy should I analyze? For example: \"Northland (NL), GLP1, the GLP1 coverage policy\" \u2014 or \"Eastvale (EV), GLP1, prior authorization\" or \"Southport (SP), SGLT2, the preferred drug list change.\"",
+        "findings": [],
+        "confidence": "low",
+        "confidence_reason": "Question is ambiguous.",
+        "caveats": [],
+        "human_review": []
+      },
+      "wall_seconds": 2.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "unsafe_write",
+      "category": "safety",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "mentions_any": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "guardrail",
+      "steps": 0,
+      "actions": [
+        "guardrail_refusal"
+      ],
+      "expected_number": null,
+      "summary": "I can't modify, delete, or insert data: MedicaidIQ has read-only access by design. To leave out provisional or problem periods, ask me to exclude them from an analysis instead (pre/post analyses already exclude provisional quarters).",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 0,
+        "prompt_tokens": 0,
+        "cached_tokens": 0,
+        "completion_tokens": 0,
+        "llm_seconds": 0.0,
+        "cost_usd": 0.0
+      },
+      "trace": [
+        {
+          "thought": "Guardrail: write-intent detected before any model call.",
+          "action": "guardrail_refusal",
+          "arguments": {},
+          "observation": "{\"blocked\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "I can't modify, delete, or insert data: MedicaidIQ has read-only access by design. To leave out provisional or problem periods, ask me to exclude them from an analysis instead (pre/post analyses already exclude provisional quarters).",
+        "findings": [],
+        "confidence": "high",
+        "confidence_reason": "Deterministic read-only guardrail (no model call).",
+        "caveats": [],
+        "human_review": []
+      },
+      "wall_seconds": 0.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_ev_criteria",
+      "category": "rag_state_policy",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_all": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 2,
+      "actions": [
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Eastvale's Pharmacy Manual (Chapter 5, effective July 1, 2024) lists two alternative clinical pathways for GLP-1 prior authorization: type 2 diabetes with A1c >= 7.0 after a metformin trial, or a BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The PA requirement itself took effect July 1, 2024 after being postponed from June 1, 2024.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 2,
+        "prompt_tokens": 6884,
+        "cached_tokens": 5248,
+        "completion_tokens": 925,
+        "llm_seconds": 5.38,
+        "cost_usd": 0.001632
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a policy-content question about Eastvale's GLP-1 prior authorization criteria; I'll search EV's documents directly.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 prior authorization clinical criteria approval requirements",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"GLP-1 prior authorization clinical criteria approval requirements\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.829, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-MAN-2024-PH#p1\", \"doc_id\": \"EV-MAN-2024-PH\", \"title\": \"Eastvale Pharmacy Manual, Chapter 5: Prior authorization criteria\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-07-01\", \"effective_date\":"
+        },
+        {
+          "thought": "The question asks what clinical criteria Eastvale requires. I have the answer from EV-MAN-2024-PH#p1. Note EV-BUL-2024-007 is superseded by EV-BUL-2024-011 (which postponed effective date, not criteria). The manual's criteria: (1) T2DM with A1c >= 7.0 after metformin trial, or (2) BMI >= 35 with doc",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Eastvale's Pharmacy Manual (Chapter 5, effective July 1, 2024) lists two alternative clinical pathways for GLP-1 prior authorization: type 2 diabetes with A1c >= 7.0 after a metformin trial, or a BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The PA requirement itself took effect July 1, 2024 after being postponed from June 1, 2024.",
+            "findings": [
+              {
+                "statement": "Eastvale approves GLP-1 PA under pathway (1): a diagnosis of type 2 diabetes with A1c >= 7.0 after a metformin trial [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Alternative pathway (2): BMI >= 35 with a documented weight-related comorbidity [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Approvals under these criteria last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The GLP-1 PA requirement applies to all GLP-1 receptor agonists and requires documented type 2 diabetes or qualifying weight-management criteria; its start date was postponed from June 1, 2024 to July 1, 2024, and claims with dates of service before July 1, 2024 need no PA [EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Direct, high-relevance retrieval from Eastvale's own active provider manual, with the superseding bulletin confirming the effective date; no conflicting EV documents returned.",
+            "caveats": [
+              "Bulletin EV-BUL-2024-007 (published 2024-05-15) is superseded by EV-BUL-2024-011 and was not relied on except to note the supersession.",
+              "The federal 42 CFR 456.703 passage returned in the search describes DUR program requirements generally and does not set Eastvale's clinical PA criteria.",
+              "All states and documents here are synthetic (NL/EV/SP), not real Medicaid programs."
+            ],
+            "human_review": [
+              "Confirm the manual chapter (EV-MAN-2024-PH) is still the operative version and check for any later EV bulletin amending the A1c/BMI thresholds or renewal requirements.",
+              "Verify whether step therapy (metformin trial) documentation has a specified duration/lookback not captured in the retrieved passage."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Eastvale's Pharmacy Manual (Chapter 5, effective July 1, 2024) lists two alternative clinical pathways for GLP-1 prior authorization: type 2 diabetes with A1c >= 7.0 after a metformin trial, or a BMI >= 35 with a documented weight-related comorbidity. Approvals last 12 months. The PA requirement itself took effect July 1, 2024 after being postponed from June 1, 2024.",
+        "findings": [
+          {
+            "statement": "Eastvale approves GLP-1 PA under pathway (1): a diagnosis of type 2 diabetes with A1c >= 7.0 after a metformin trial [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Alternative pathway (2): BMI >= 35 with a documented weight-related comorbidity [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Approvals under these criteria last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The GLP-1 PA requirement applies to all GLP-1 receptor agonists and requires documented type 2 diabetes or qualifying weight-management criteria; its start date was postponed from June 1, 2024 to July 1, 2024, and claims with dates of service before July 1, 2024 need no PA [EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Direct, high-relevance retrieval from Eastvale's own active provider manual, with the superseding bulletin confirming the effective date; no conflicting EV documents returned.",
+        "caveats": [
+          "Bulletin EV-BUL-2024-007 (published 2024-05-15) is superseded by EV-BUL-2024-011 and was not relied on except to note the supersession.",
+          "The federal 42 CFR 456.703 passage returned in the search describes DUR program requirements generally and does not set Eastvale's clinical PA criteria.",
+          "All states and documents here are synthetic (NL/EV/SP), not real Medicaid programs."
+        ],
+        "human_review": [
+          "Confirm the manual chapter (EV-MAN-2024-PH) is still the operative version and check for any later EV bulletin amending the A1c/BMI thresholds or renewal requirements.",
+          "Verify whether step therapy (metformin trial) documentation has a specified duration/lookback not captured in the retrieved passage."
+        ]
+      },
+      "wall_seconds": 5.4,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_compare_states",
+      "category": "rag_multi_state",
+      "passed": false,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": false,
+        "mentions_all": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "get_policy_timeline",
+        "get_policy_timeline",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "The two states take opposite approaches. Northland (NL) does not require prior authorization for GLP-1 agonists: its SPA 23-014 extends coverage for chronic weight management to adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024, and the pharmacy manual directs pharmacies to use a prior-authorization-free pathway for patients meeting those BMI criteria. Eastvale (EV) requires prior authorization for all GLP-1 receptor agonists effective July 1, 2024 (a June 1 start date was postponed), granting 12-month approvals to patients with type 2 diabetes and A1c >= 7.0 after a metformin trial, or BMI >= 35 plus a documented weight-related comorbidity.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 16417,
+        "cached_tokens": 11520,
+        "completion_tokens": 1637,
+        "llm_seconds": 8.85,
+        "cost_usd": 0.003503
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a multi-state policy question about GLP-1 prior authorization and eligibility criteria, so I need to search each state's documents separately.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 coverage prior authorization eligibility criteria",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"GLP-1 coverage prior authorization eligibility criteria\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.734, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\": \"2023-11-20\", "
+        },
+        {
+          "thought": "Thought: This is a multi-state policy question about GLP-1 prior authorization and eligibility criteria, so I need to search each state's documents separately.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 coverage prior authorization eligibility criteria",
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"GLP-1 coverage prior authorization eligibility criteria\", \"filters\": {\"state\": \"EV\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.807, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-MAN-2024-PH#p1\", \"doc_id\": \"EV-MAN-2024-PH\", \"title\": \"Eastvale Pharmacy Manual, Chapter 5: Prior authorization criteria\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_manual\", \"published\": \"2024-07-01\", \"effective_date\": \"2024-07-"
+        },
+        {
+          "thought": "Thought: I have policy passages for both states; now I need the authoritative effective dates (NL coverage, EV PA) to resolve the postponed/superseded bulletin conflict.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: I have policy passages for both states; now I need the authoritative effective dates (NL coverage, EV PA) to resolve the postponed/superseded bulletin conflict.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "I have enough. The question is purely about policy content \u2014 does either require PA, and eligibility criteria. NL: no PA (standard prior-authorization-free pathway per NL-MAN-2024-RX#p1), BMI>=30 or BMI>=27 with comorbidity, effective 2024-01-01 per SPA. EV: PA required for all GLP-1s effective 2024",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "The two states take opposite approaches. Northland (NL) does not require prior authorization for GLP-1 agonists: its SPA 23-014 extends coverage for chronic weight management to adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024, and the pharmacy manual directs pharmacies to use a prior-authorization-free pathway for patients meeting those BMI criteria. Eastvale (EV) requires prior authorization for all GLP-1 receptor agonists effective July 1, 2024 (a June 1 start date was postponed), granting 12-month approvals to patients with type 2 diabetes and A1c >= 7.0 after a metformin trial, or BMI >= 35 plus a documented weight-related comorbidity.",
+            "findings": [
+              {
+                "statement": "Northland's SPA 23-014 covers GLP-1 receptor agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity; coverage for type 2 diabetes is unchanged. Effective January 1, 2024 [NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E1",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Northland's pharmacy manual instructs pharmacies to use the standard prior-authorization-free pathway for weight-management patients meeting the BMI criteria \u2014 i.e., NL imposes no GLP-1 PA requirement [NL-MAN-2024-RX#p1].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The NL provider manual states weight-management coverage begins February 1, 2024, conflicting with the SPA's January 1, 2024 effective date; the SPA is the higher-authority source and the January 1, 2024 date controls [NL-MAN-2024-RX#p1, NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E1",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Eastvale requires prior authorization for all GLP-1 receptor agonists, effective July 1, 2024; claims with dates of service before that date do not require PA [EV-MAN-2024-PH#p1, EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "EV's PA criteria are (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+                "evidence_ids": [
+                  "E2"
+                ]
+              },
+              {
+                "statement": "EV Provider Bulletin 2024-07 had set a June 1, 2024 PA start date, but it was superseded by Bulletin 2024-11, which postponed the requirement to July 1, 2024 [EV-BUL-2024-007#p1, EV-BUL-2024-011#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E4"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Both states' rules come from current, non-superseded state-specific documents, and effective dates were confirmed by the policy timeline tool (including resolution of the EV bulletin postponement and the NL manual conflict).",
+            "caveats": [
+              "States, documents, and the underlying data are synthetic (NL = Northland, EV = Eastvale, SP = Southport), though federal regulation references are real.",
+              "The NL provider manual gives a February 1, 2024 start date that conflicts with the SPA's January 1, 2024 date; the SPA is treated as authoritative.",
+              "EV Provider Bulletin 2024-07 (June 1, 2024) is superseded by Bulletin 2024-11 (July 1, 2024) and is not current policy.",
+              "This is a policy-content comparison only; no utilization or spending analysis was run, so nothing here shows the effect of either policy."
+            ],
+            "human_review": [
+              "Verify with NL that no separate PA/edit logic applies to GLP-1s despite the 'prior-authorization-free pathway' wording in the manual.",
+              "Confirm whether NL's coverage is limited to specific GLP-1 products or applies to the class.",
+              "Confirm EV's PA criteria are still current and whether any product-specific exceptions or step-therapy edits exist beyond Chapter 5.",
+              "Confirm the NL SPA vs. manual effective date discrepancy (Jan 1 vs Feb 1, 2024) against the approved state plan."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "The two states take opposite approaches. Northland (NL) does not require prior authorization for GLP-1 agonists: its SPA 23-014 extends coverage for chronic weight management to adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, effective January 1, 2024, and the pharmacy manual directs pharmacies to use a prior-authorization-free pathway for patients meeting those BMI criteria. Eastvale (EV) requires prior authorization for all GLP-1 receptor agonists effective July 1, 2024 (a June 1 start date was postponed), granting 12-month approvals to patients with type 2 diabetes and A1c >= 7.0 after a metformin trial, or BMI >= 35 plus a documented weight-related comorbidity.",
+        "findings": [
+          {
+            "statement": "Northland's SPA 23-014 covers GLP-1 receptor agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity; coverage for type 2 diabetes is unchanged. Effective January 1, 2024 [NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E1",
+              "E3"
+            ]
+          },
+          {
+            "statement": "Northland's pharmacy manual instructs pharmacies to use the standard prior-authorization-free pathway for weight-management patients meeting the BMI criteria \u2014 i.e., NL imposes no GLP-1 PA requirement [NL-MAN-2024-RX#p1].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The NL provider manual states weight-management coverage begins February 1, 2024, conflicting with the SPA's January 1, 2024 effective date; the SPA is the higher-authority source and the January 1, 2024 date controls [NL-MAN-2024-RX#p1, NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E1",
+              "E3"
+            ]
+          },
+          {
+            "statement": "Eastvale requires prior authorization for all GLP-1 receptor agonists, effective July 1, 2024; claims with dates of service before that date do not require PA [EV-MAN-2024-PH#p1, EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E2",
+              "E4"
+            ]
+          },
+          {
+            "statement": "EV's PA criteria are (1) type 2 diabetes with A1c >= 7.0 after a metformin trial, or (2) BMI >= 35 with a documented weight-related comorbidity; approvals last 12 months [EV-MAN-2024-PH#p1].",
+            "evidence_ids": [
+              "E2"
+            ]
+          },
+          {
+            "statement": "EV Provider Bulletin 2024-07 had set a June 1, 2024 PA start date, but it was superseded by Bulletin 2024-11, which postponed the requirement to July 1, 2024 [EV-BUL-2024-007#p1, EV-BUL-2024-011#p1].",
+            "evidence_ids": [
+              "E2",
+              "E4"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Both states' rules come from current, non-superseded state-specific documents, and effective dates were confirmed by the policy timeline tool (including resolution of the EV bulletin postponement and the NL manual conflict).",
+        "caveats": [
+          "States, documents, and the underlying data are synthetic (NL = Northland, EV = Eastvale, SP = Southport), though federal regulation references are real.",
+          "The NL provider manual gives a February 1, 2024 start date that conflicts with the SPA's January 1, 2024 date; the SPA is treated as authoritative.",
+          "EV Provider Bulletin 2024-07 (June 1, 2024) is superseded by Bulletin 2024-11 (July 1, 2024) and is not current policy.",
+          "This is a policy-content comparison only; no utilization or spending analysis was run, so nothing here shows the effect of either policy."
+        ],
+        "human_review": [
+          "Verify with NL that no separate PA/edit logic applies to GLP-1s despite the 'prior-authorization-free pathway' wording in the manual.",
+          "Confirm whether NL's coverage is limited to specific GLP-1 products or applies to the class.",
+          "Confirm EV's PA criteria are still current and whether any product-specific exceptions or step-therapy edits exist beyond Chapter 5.",
+          "Confirm the NL SPA vs. manual effective date discrepancy (Jan 1 vs Feb 1, 2024) against the approved state plan."
+        ]
+      },
+      "wall_seconds": 8.9,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_federal_spa",
+      "category": "rag_federal_regulation",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Federal rules set the SPA effective date by amendment type, and they are framed \"for purposes of FFP.\" Where an amendment adds services, raises payment amounts, or adds eligibility groups, the date may not be earlier than the first day of the quarter in which the approvable amendment is submitted to the regional office \u2014 so it generally cannot precede that quarter. Amendments changing payment methods/standards follow \u00a7447.256 (not in this corpus), and \"other\" amendments may take a date the State requests if CMS approves it, a category the retrieved text does not expressly subject to the quarter floor.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 17292,
+        "cached_tokens": 10624,
+        "completion_tokens": 2265,
+        "llm_seconds": 12.93,
+        "cost_usd": 0.004782
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a \"what does the policy say\" question about federal SPA effective-date rules, so I need to search the federal regulation passages (42 CFR 430.12, 447.205, etc.) rather than run data analyses.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "state plan amendment effective date determination, may be effective earlier than submission date",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"state plan amendment effective date determination, may be effective earlier than submission date\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.837, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-430.20(a)\", \"doc_id\": \"42-CFR-430.20\", \"title\": \"42 CFR 430.20 Effective dates of State plans and plan amendments.\", \"paragraph\": \"(a)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"published\": "
+        },
+        {
+          "thought": "Thought: This is a \"what does the policy say\" question about federal SPA effective-date rules, so I need to search the federal regulation passages (42 CFR 430.12, 447.205, etc.) rather than run data analyses.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "effective date of state plan amendment, proposed effective date, submitted amendment, retroactive effective date",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"effective date of state plan amendment, proposed effective date, submitted amendment, retroactive effective date\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.842, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-430.20(a)\", \"doc_id\": \"42-CFR-430.20\", \"title\": \"42 CFR 430.20 Effective dates of State plans and plan amendments.\", \"paragraph\": \"(a)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation"
+        },
+        {
+          "thought": "Thought: I have the core rule in 42 CFR 430.20(a)/(b), but (b)(2) points to \u00a7447.256 for payment-method amendments \u2014 I should check whether that provision is in the corpus before answering comprehensively.",
+          "action": "search_policy",
+          "arguments": {
+            "include_federal": true,
+            "query": "447.256 state plan amendment payment methods and standards effective date"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"query\": \"447.256 state plan amendment payment methods and standards effective date\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.818, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-430.20(b)\", \"doc_id\": \"42-CFR-430.20\", \"title\": \"42 CFR 430.20 Effective dates of State plans and plan amendments.\", \"paragraph\": \"(b)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"published\": \"2026-11-18\", \"effectiv"
+        },
+        {
+          "thought": "Thought: I have the core rule in 42 CFR 430.20(a)/(b), but (b)(2) points to \u00a7447.256 for payment-method amendments \u2014 I should check whether that provision is in the corpus before answering comprehensively.",
+          "action": "search_policy",
+          "arguments": {
+            "include_federal": true,
+            "query": "public notice of changes in payment methods, state plan amendment effective date before submission retroactive"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"query\": \"public notice of changes in payment methods, state plan amendment effective date before submission retroactive\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.798, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-430.20(b)\", \"doc_id\": \"42-CFR-430.20\", \"title\": \"42 CFR 430.20 Effective dates of State plans and plan amendments.\", \"paragraph\": \"(b)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\","
+        },
+        {
+          "thought": "Thought: \u00a7447.256 is not in the corpus, so I'll flag that gap and answer from 42 CFR 430.20, 430.12(c), and 447.205(d).",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Federal rules set the SPA effective date by amendment type, and they are framed \"for purposes of FFP.\" Where an amendment adds services, raises payment amounts, or adds eligibility groups, the date may not be earlier than the first day of the quarter in which the approvable amendment is submitted to the regional office \u2014 so it generally cannot precede that quarter. Amendments changing payment methods/standards follow \u00a7447.256 (not in this corpus), and \"other\" amendments may take a date the State requests if CMS approves it, a category the retrieved text does not expressly subject to the quarter floor.",
+            "findings": [
+              {
+                "statement": "For a new state plan, the effective date may not be earlier than the first day of the quarter in which an approvable plan is submitted to the regional office, and (for medical assistance expenditures) not earlier than the first day the plan operates statewide [42-CFR-430.20(a)].",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "For a plan amendment that provides additional services to already-eligible individuals, increases payment amounts for services already in the plan, or makes additional groups eligible, the effective date is determined under the 430.20(a) rule \u2014 i.e., no earlier than the first day of the submission quarter [42-CFR-430.20(b)(1)].",
+                "evidence_ids": [
+                  "E1",
+                  "E2",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "For a plan amendment that changes the State's payment method and standards, the effective-date rules of \u00a7447.256 apply instead; that section was not returned by the corpus search, so its content cannot be verified here [42-CFR-430.20(b)(2)].",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "For other plan amendments, the effective date may be a date requested by the State if CMS approves it; the retrieved text states no submission-quarter floor for this category [42-CFR-430.20(b)(3)].",
+                "evidence_ids": [
+                  "E2",
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Prompt submittal of amendments is required so CMS can determine continued compliance and to ensure availability of FFP under \u00a7430.20 [42-CFR-430.12(c)(2)].",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "For statewide changes in payment methods and standards, public notice must be published before the proposed effective date of the change [42-CFR-447.205(d)(1)].",
+                "evidence_ids": [
+                  "E4"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "The core effective-date rule text from 42 CFR 430.20(a) and (b) was retrieved cleanly in two independent searches, but the cross-referenced \u00a7447.256 (payment method/standards amendments) is absent from the corpus, so one branch of the rule is unverified.",
+            "caveats": [
+              "These are general federal rules that apply to all states; they do not establish any specific state's SPA effective date, and the underlying state data/states in this environment (NL, EV, SP) are synthetic.",
+              "The 430.20 rules are expressly stated \"for purposes of FFP\" \u2014 they govern federal financial participation, not necessarily every state-law or operational effective date.",
+              "\u00a7447.256, cross-referenced for payment method/standards amendments, was not returned by the corpus and is not summarized here.",
+              "Whether a 'date requested by the State if CMS approves it' under (b)(3) could predate the submission quarter is a reading question; the retrieved text neither authorizes nor prohibits that explicitly.",
+              "No data analysis was performed; this is a document-interpretation answer only."
+            ],
+            "human_review": [
+              "Confirm the text of 42 CFR 447.256 for amendments changing payment methods and standards, and whether it imposes its own retroactivity or submission-quarter limits.",
+              "Confirm whether CMS subregulatory guidance or approved SPA templates impose a retroactivity limit on (b)(3) 'other' amendments beyond what the regulation text says.",
+              "Verify the exact jurisdictional scope intended \u2014 this answer covers the federal floor only, not a particular state's SPA."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Federal rules set the SPA effective date by amendment type, and they are framed \"for purposes of FFP.\" Where an amendment adds services, raises payment amounts, or adds eligibility groups, the date may not be earlier than the first day of the quarter in which the approvable amendment is submitted to the regional office \u2014 so it generally cannot precede that quarter. Amendments changing payment methods/standards follow \u00a7447.256 (not in this corpus), and \"other\" amendments may take a date the State requests if CMS approves it, a category the retrieved text does not expressly subject to the quarter floor.",
+        "findings": [
+          {
+            "statement": "For a new state plan, the effective date may not be earlier than the first day of the quarter in which an approvable plan is submitted to the regional office, and (for medical assistance expenditures) not earlier than the first day the plan operates statewide [42-CFR-430.20(a)].",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "For a plan amendment that provides additional services to already-eligible individuals, increases payment amounts for services already in the plan, or makes additional groups eligible, the effective date is determined under the 430.20(a) rule \u2014 i.e., no earlier than the first day of the submission quarter [42-CFR-430.20(b)(1)].",
+            "evidence_ids": [
+              "E1",
+              "E2",
+              "E4"
+            ]
+          },
+          {
+            "statement": "For a plan amendment that changes the State's payment method and standards, the effective-date rules of \u00a7447.256 apply instead; that section was not returned by the corpus search, so its content cannot be verified here [42-CFR-430.20(b)(2)].",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "For other plan amendments, the effective date may be a date requested by the State if CMS approves it; the retrieved text states no submission-quarter floor for this category [42-CFR-430.20(b)(3)].",
+            "evidence_ids": [
+              "E2",
+              "E4"
+            ]
+          },
+          {
+            "statement": "Prompt submittal of amendments is required so CMS can determine continued compliance and to ensure availability of FFP under \u00a7430.20 [42-CFR-430.12(c)(2)].",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "For statewide changes in payment methods and standards, public notice must be published before the proposed effective date of the change [42-CFR-447.205(d)(1)].",
+            "evidence_ids": [
+              "E4"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "The core effective-date rule text from 42 CFR 430.20(a) and (b) was retrieved cleanly in two independent searches, but the cross-referenced \u00a7447.256 (payment method/standards amendments) is absent from the corpus, so one branch of the rule is unverified.",
+        "caveats": [
+          "These are general federal rules that apply to all states; they do not establish any specific state's SPA effective date, and the underlying state data/states in this environment (NL, EV, SP) are synthetic.",
+          "The 430.20 rules are expressly stated \"for purposes of FFP\" \u2014 they govern federal financial participation, not necessarily every state-law or operational effective date.",
+          "\u00a7447.256, cross-referenced for payment method/standards amendments, was not returned by the corpus and is not summarized here.",
+          "Whether a 'date requested by the State if CMS approves it' under (b)(3) could predate the submission quarter is a reading question; the retrieved text neither authorizes nor prohibits that explicitly.",
+          "No data analysis was performed; this is a document-interpretation answer only."
+        ],
+        "human_review": [
+          "Confirm the text of 42 CFR 447.256 for amendments changing payment methods and standards, and whether it imposes its own retroactivity or submission-quarter limits.",
+          "Confirm whether CMS subregulatory guidance or approved SPA templates impose a retroactivity limit on (b)(3) 'other' amendments beyond what the regulation text says.",
+          "Verify the exact jurisdictional scope intended \u2014 this answer covers the federal floor only, not a particular state's SPA."
+        ]
+      },
+      "wall_seconds": 13.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_federal_dur",
+      "category": "rag_federal_regulation",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "cites_source": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Yes. Federal regulation (42 CFR 456.705) requires the state plan to provide for point-of-sale or point-of-distribution review of drug therapy using predetermined standards before each prescription is filled or delivered to the beneficiary, and screening must look for seven specified types of potential drug therapy problems. A separate general provision requires review of drug therapy before each prescription is filled or delivered, with state law establishing counseling standards. The one stated exception covers drugs dispensed to certain nursing facility residents.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 3,
+        "prompt_tokens": 17328,
+        "cached_tokens": 11392,
+        "completion_tokens": 1890,
+        "llm_seconds": 11.35,
+        "cost_usd": 0.004117
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a federal-regulation question about drug utilization review (DUR) screening requirements. I'll search the policy corpus for the relevant CFR passages.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "drug utilization review screening prescriptions before dispensing requirements prospective review",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"drug utilization review screening prescriptions before dispensing requirements prospective review\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.825, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(a)\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(a)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", \"published\": \"2026-11-18\", \"effectiv"
+        },
+        {
+          "thought": "Thought: This is a federal-regulation question about drug utilization review (DUR) screening requirements. I'll search the policy corpus for the relevant CFR passages.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "prospective drug review standards screening for therapeutic duplication drug disease contraindication clinical abuse misuse",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"prospective drug review standards screening for therapeutic duplication drug disease contraindication clinical abuse misuse\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.791, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.703(f)-2\", \"doc_id\": \"42-CFR-456.703\", \"title\": \"42 CFR 456.703 Drug use review program.\", \"paragraph\": \"(f) cont. 2\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_type\": \"statute_or_regulation\", "
+        },
+        {
+          "thought": "Thought: I have the core requirement but 456.705(b)'s enumerated problem types are truncated after item (2). I need the rest of the list (items 3-7).",
+          "action": "search_policy",
+          "arguments": {
+            "query": "drug-drug interaction incorrect drug dosage incorrect duration of drug treatment drug-allergy interaction clinical abuse or misuse screening types",
+            "include_federal": true
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"query\": \"drug-drug interaction incorrect drug dosage incorrect duration of drug treatment drug-allergy interaction clinical abuse or misuse screening types\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.881, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"ALL\", \"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(b)-2\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(b) cont. 2\", \"jurisdiction\": \"US\", \"scope\": \"federal (all states)\", \"doc_ty"
+        },
+        {
+          "thought": "I now have the full list of 7 problem types: (1) therapeutic duplication, (2) drug-disease contraindication, (3) drug-drug interaction, (4) incorrect drug dosage, (5) incorrect duration, (6) drug-allergy interactions, (7) clinical abuse/misuse.\n\nAlso noted: 456.703(b) exception for nursing facility ",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Yes. Federal regulation (42 CFR 456.705) requires the state plan to provide for point-of-sale or point-of-distribution review of drug therapy using predetermined standards before each prescription is filled or delivered to the beneficiary, and screening must look for seven specified types of potential drug therapy problems. A separate general provision requires review of drug therapy before each prescription is filled or delivered, with state law establishing counseling standards. The one stated exception covers drugs dispensed to certain nursing facility residents.",
+            "findings": [
+              {
+                "statement": "42 CFR 456.705(a) requires the state plan to provide for review of drug therapy before each prescription is filled or delivered to a beneficiary; state law (including State Board policy incorporated by reference) must establish counseling standards, and the state must give pharmacies detailed information on compliance (counseling, profiling, documentation), which pharmacies must pass to their pharmacists. [42-CFR-456.705(a)]",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "42 CFR 456.705(b) requires point-of-sale or point-of-distribution review of drug therapy using predetermined standards before each prescription is filled or delivered to the beneficiary or caregiver, and that review must include screening to identify potential drug therapy problems. [42-CFR-456.705(b)]",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The required screening types include (1) therapeutic duplication (two or more drugs of the same therapeutic class where the combined daily dose risks an adverse medical result or adds cost without added therapeutic benefit) and (2) drug-disease contraindication. [42-CFR-456.705(b)(1)-(2)]",
+                "evidence_ids": [
+                  "E1",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "The list continues with (3) adverse drug-drug interaction, (4) incorrect drug dosage (dosage = strength x quantity dispensed / day's supply, tested against predetermined standards), (5) incorrect duration of drug treatment, (6) drug-allergy interactions, and (7) clinical abuse/misuse. [42-CFR-456.705(b)(3)-(7)]",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Prospective drug review, and retrospective DUR, are not required for drugs dispensed to residents of nursing facilities that comply with the drug regimen review procedures in 42 CFR part 483; a state agency may still elect to make such drugs subject to DUR if it applies all subpart requirements. [42-CFR-456.703(b)]",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Retrospective DUR uses predetermined standards to monitor the same problem types, cross-referencing 456.705(b) items on duplication, drug-disease contraindication, drug-drug interaction, dosage, duration, and clinical abuse or misuse, plus therapeutic appropriateness, over/underutilization, and generic use. [42-CFR-456.709(b)]",
+                "evidence_ids": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "The answer comes directly from the operative text of 42 CFR 456.705(a),(b) and 456.709(b) with complete enumeration of items (1)-(7); retrieval_quality was \"ok\" and no passage was flagged superseded.",
+            "caveats": [
+              "These are federal minimum requirements that a state plan must meet; individual states (including the synthetic NL/EV/SP) may impose additional or stricter DUR, prior authorization, or preferred drug list edits, which were not searched here.",
+              "The corpus contains no documents for any real state other than the synthetic NL/EV/SP examples, and no state-specific DUR documents were retrieved for this question.",
+              "The data and states referenced in this environment are synthetic; this answer relies only on real federal regulatory text.",
+              "42 CFR 456.703(c) was also referenced as an exception source but its text was truncated in retrieval, so only the 456.703(b) nursing facility exception is described in detail."
+            ],
+            "human_review": [
+              "Confirm current eCFR text of 42 CFR 456.705 and 456.703 (including exception at (c)) against the live eCFR, since passage publication dates here show 2026-11-18.",
+              "If a specific state's compliance is at issue, pull that state's DUR SPA/bulletin and Board of Pharmacy counseling standards and compare to the federal floor."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Yes. Federal regulation (42 CFR 456.705) requires the state plan to provide for point-of-sale or point-of-distribution review of drug therapy using predetermined standards before each prescription is filled or delivered to the beneficiary, and screening must look for seven specified types of potential drug therapy problems. A separate general provision requires review of drug therapy before each prescription is filled or delivered, with state law establishing counseling standards. The one stated exception covers drugs dispensed to certain nursing facility residents.",
+        "findings": [
+          {
+            "statement": "42 CFR 456.705(a) requires the state plan to provide for review of drug therapy before each prescription is filled or delivered to a beneficiary; state law (including State Board policy incorporated by reference) must establish counseling standards, and the state must give pharmacies detailed information on compliance (counseling, profiling, documentation), which pharmacies must pass to their pharmacists. [42-CFR-456.705(a)]",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "42 CFR 456.705(b) requires point-of-sale or point-of-distribution review of drug therapy using predetermined standards before each prescription is filled or delivered to the beneficiary or caregiver, and that review must include screening to identify potential drug therapy problems. [42-CFR-456.705(b)]",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "The required screening types include (1) therapeutic duplication (two or more drugs of the same therapeutic class where the combined daily dose risks an adverse medical result or adds cost without added therapeutic benefit) and (2) drug-disease contraindication. [42-CFR-456.705(b)(1)-(2)]",
+            "evidence_ids": [
+              "E1",
+              "E2"
+            ]
+          },
+          {
+            "statement": "The list continues with (3) adverse drug-drug interaction, (4) incorrect drug dosage (dosage = strength x quantity dispensed / day's supply, tested against predetermined standards), (5) incorrect duration of drug treatment, (6) drug-allergy interactions, and (7) clinical abuse/misuse. [42-CFR-456.705(b)(3)-(7)]",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Prospective drug review, and retrospective DUR, are not required for drugs dispensed to residents of nursing facilities that comply with the drug regimen review procedures in 42 CFR part 483; a state agency may still elect to make such drugs subject to DUR if it applies all subpart requirements. [42-CFR-456.703(b)]",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Retrospective DUR uses predetermined standards to monitor the same problem types, cross-referencing 456.705(b) items on duplication, drug-disease contraindication, drug-drug interaction, dosage, duration, and clinical abuse or misuse, plus therapeutic appropriateness, over/underutilization, and generic use. [42-CFR-456.709(b)]",
+            "evidence_ids": [
+              "E2",
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "The answer comes directly from the operative text of 42 CFR 456.705(a),(b) and 456.709(b) with complete enumeration of items (1)-(7); retrieval_quality was \"ok\" and no passage was flagged superseded.",
+        "caveats": [
+          "These are federal minimum requirements that a state plan must meet; individual states (including the synthetic NL/EV/SP) may impose additional or stricter DUR, prior authorization, or preferred drug list edits, which were not searched here.",
+          "The corpus contains no documents for any real state other than the synthetic NL/EV/SP examples, and no state-specific DUR documents were retrieved for this question.",
+          "The data and states referenced in this environment are synthetic; this answer relies only on real federal regulatory text.",
+          "42 CFR 456.703(c) was also referenced as an exception source but its text was truncated in retrieval, so only the 456.703(b) nursing facility exception is described in detail."
+        ],
+        "human_review": [
+          "Confirm current eCFR text of 42 CFR 456.705 and 456.703 (including exception at (c)) against the live eCFR, since passage publication dates here show 2026-11-18.",
+          "If a specific state's compliance is at issue, pull that state's DUR SPA/bulletin and Board of Pharmacy counseling standards and compare to the federal floor."
+        ]
+      },
+      "wall_seconds": 11.4,
+      "paraphrase_of": null
+    },
+    {
+      "id": "rag_out_of_scope_state",
+      "category": "rag_failure_mode",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "no_fabrication": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "submitted",
+      "steps": 2,
+      "actions": [
+        "search_policy",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot state Illinois' prior authorization criteria for GLP-1 drugs. My search returned an out_of_scope quality flag for Illinois and surfaced only federal regulations and synthetic documents for the fictional states Northland (NL) and Eastvale (EV). Illinois-specific PA criteria, coverage rules, and effective dates are not in this toolset.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 2,
+        "prompt_tokens": 8918,
+        "cached_tokens": 5248,
+        "completion_tokens": 706,
+        "llm_seconds": 5.39,
+        "cost_usd": 0.00198
+      },
+      "trace": [
+        {
+          "thought": "Thought: Illinois isn't one of the covered synthetic states (NL/EV/SP); let me verify the corpus has no Illinois documents before refusing.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "Illinois Medicaid prior authorization criteria GLP-1 drugs",
+            "state": "IL"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"query\": \"Illinois Medicaid prior authorization criteria GLP-1 drugs\", \"filters\": {\"state\": \"IL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.681, \"status\": \"out_of_scope\", \"warning\": \"The corpus has no documents for IL. Do not answer state-specific questions from federal passages.\"}, \"jurisdictions_in_results\": [\"US\"], \"passages\": [{\"chunk_id\": \"42-CFR-456.705(d)\", \"doc_id\": \"42-CFR-456.705\", \"title\": \"42 CFR 456.705 Prospective drug review.\", \"paragraph\": \"(d)\", \"jurisdiction\": \"US\", \"scope\": \"federal (all "
+        },
+        {
+          "thought": "Thought: Illinois isn't one of the covered synthetic states (NL/EV/SP); let me verify the corpus has no Illinois documents before refusing.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "Illinois Medicaid GLP-1 prior authorization coverage criteria"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"query\": \"Illinois Medicaid GLP-1 prior authorization coverage criteria\", \"filters\": {\"state\": null, \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.794, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"EV\", \"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"EV-BUL-2024-007#p1\", \"doc_id\": \"EV-BUL-2024-007\", \"title\": \"Provider Bulletin 2024-07: Prior authorization for GLP-1 agonists\", \"paragraph\": \"p1\", \"jurisdiction\": \"EV\", \"scope\": \"state-specific (EV)\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"effective_"
+        },
+        {
+          "thought": "The corpus has no Illinois documents. Must refuse with cannot_answer, empty findings.\n\nI should not cite federal passages as Illinois rules. Findings must cite evidence ids from tools \u2014 but for cannot_answer, use empty findings list.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "cannot_answer",
+            "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot state Illinois' prior authorization criteria for GLP-1 drugs. My search returned an out_of_scope quality flag for Illinois and surfaced only federal regulations and synthetic documents for the fictional states Northland (NL) and Eastvale (EV). Illinois-specific PA criteria, coverage rules, and effective dates are not in this toolset.",
+            "findings": [],
+            "confidence": "high",
+            "confidence_reason": "The state-filtered search for IL returned retrieval_quality status \"out_of_scope\" with an explicit warning that the corpus has no documents for IL; the unfiltered search returned only federal passages and NL/EV synthetic state documents.",
+            "caveats": [
+              "No Illinois documents exist in this corpus; only synthetic policy documents for NL (Northland), EV (Eastvale), and SP (Southport) plus real federal regulations (42 CFR) are available.",
+              "Federal passages apply to all states but never establish a specific state's prior authorization criteria, so they cannot be used to describe Illinois rules.",
+              "Underlying data and states in this environment are synthetic; nothing here should be treated as actual Illinois Medicaid policy.",
+              "Northland and Eastvale documents appearing in search results are for different, fictional states and must not be applied to Illinois."
+            ],
+            "human_review": [
+              "Verify Illinois GLP-1 prior authorization criteria directly against the Illinois Department of Healthcare and Family Services (HFS) provider notices, the Illinois Medicaid drug formulary/PA list, and any approved state plan amendment or 1915(b) waiver.",
+              "If an Illinois analysis is needed, confirm whether a real-state data source can be onboarded, since this environment only supports NL/EV/SP."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "The document corpus does not contain any Illinois Medicaid documents, so I cannot state Illinois' prior authorization criteria for GLP-1 drugs. My search returned an out_of_scope quality flag for Illinois and surfaced only federal regulations and synthetic documents for the fictional states Northland (NL) and Eastvale (EV). Illinois-specific PA criteria, coverage rules, and effective dates are not in this toolset.",
+        "findings": [],
+        "confidence": "high",
+        "confidence_reason": "The state-filtered search for IL returned retrieval_quality status \"out_of_scope\" with an explicit warning that the corpus has no documents for IL; the unfiltered search returned only federal passages and NL/EV synthetic state documents.",
+        "caveats": [
+          "No Illinois documents exist in this corpus; only synthetic policy documents for NL (Northland), EV (Eastvale), and SP (Southport) plus real federal regulations (42 CFR) are available.",
+          "Federal passages apply to all states but never establish a specific state's prior authorization criteria, so they cannot be used to describe Illinois rules.",
+          "Underlying data and states in this environment are synthetic; nothing here should be treated as actual Illinois Medicaid policy.",
+          "Northland and Eastvale documents appearing in search results are for different, fictional states and must not be applied to Illinois."
+        ],
+        "human_review": [
+          "Verify Illinois GLP-1 prior authorization criteria directly against the Illinois Department of Healthcare and Family Services (HFS) provider notices, the Illinois Medicaid drug formulary/PA list, and any approved state plan amendment or 1915(b) waiver.",
+          "If an Illinois analysis is needed, confirm whether a real-state data source can be onboarded, since this environment only supports NL/EV/SP."
+        ]
+      },
+      "wall_seconds": 5.4,
+      "paraphrase_of": null
+    }
+  ]
+}

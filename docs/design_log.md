@@ -46,3 +46,22 @@ Format: `D<week>.<n>`, the decision, why, and its status (active / superseded by
 | D2.10 | **MCP server** implemented (MCP SDK 2.x `MCPServer`) exposing tools, resources, and a prompt | Interoperability; completes the D1.9 stretch goal | Active |
 | D2.11 | **Deterministic eval graders** (no LLM judge) | Free, reproducible, and no judge bias; possible because ground truth is known | Active |
 | D2.12 | Repo name **`medicaidiq`**; commit locally now and push once the user authenticates `gh` | A public repo is required, but publishing needs the user's login | Active |
+
+---
+
+## Week 3: Retrieval (RAG) and data grounding
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D3.1 | **Retrieval is a tool, used for policy text only.** Numbers come from SQL and statistics; authoritative dates from the knowledge store | Each kind of question gets the grounding that fits it; retrieval never feeds arithmetic | Active |
+| D3.2 | **External source: eCFR API + data.medicaid.gov** (11 official documents, version-pinned, with provenance hashes). Medicaid.gov pages not used | Official and machine-accessible; Medicaid.gov returns HTTP 403 to automated clients and we don't get around that | Active (supersedes the prototype's Medicaid.gov telehealth pages) |
+| D3.3 | **Paragraph-level chunking** that follows regulation structure ((a), (b)…, with sub-items kept under their parent, split at ~180 words); title prepended for embedding | Keeps rules with their conditions; exact citations; DPR title+passage (Lab 3.1) | Active |
+| D3.4 | **Hybrid retrieval:** BM25 + bge-small-en-v1.5 dense, combined by Reciprocal Rank Fusion | Completes D1.3: meaning plus exact codes and citations | Active (completes D1.3) |
+| D3.5 | **MMR rerank (λ = 0.7), top 4, + adjacent paragraph, ≤ 6 passages** | Lab 3.2 diversity; the prototype's finding that an exception sits in the next paragraph | Active |
+| D3.6 | **Relevance and scope gate**: `low_relevance` below a best similarity of 0.68; `out_of_scope` when a requested state has no documents, regardless of score | Live run: an Illinois query scored 0.681 on federal text, so a similarity score alone is not enough | Active |
+| D3.7 | **Local embeddings (fastembed/ONNX) + cached NumPy index**, no vector database | Free, offline, 57 chunks; a vector database adds setup with no benefit at this size | Active; revisit if the corpus grows |
+| D3.8 | **Paragraph-level citations** (`[EV-MAN-2024-PH#p1]`, `[42-CFR-430.20(b)]`) required in findings | Every claim can be checked at paragraph level | Active |
+| D3.9 | **Multi-state questions: one search per state, every rule attributed to its jurisdiction** | Grader question on states with different rules; prevents cross-state contamination | Active |
+| D3.10 | **Deterministic write-intent guardrail** before any LLM call | Local 8B failed safety refusals; don't depend on the model | Active (closes the Week 2 item) |
+| D3.11 | **Reject unparseable final answers**; output limit raised to 4,096 tokens | Live bug: a cut-off JSON answer was accepted unverified | Active |
+| D3.12 | **Retrieval ablation is part of the eval** (`--no-retrieval`) | Shows retrieval's effect: 1/5 → 5/5 | Active |

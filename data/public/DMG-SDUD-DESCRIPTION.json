@@ -1,0 +1,15 @@
+{
+  "doc_id": "DMG-SDUD-DESCRIPTION",
+  "title": "data.medicaid.gov: State Drug Utilization Data 2026 (dataset description)",
+  "jurisdiction": "US",
+  "doc_type": "federal_guidance",
+  "source": "data.medicaid.gov metastore API",
+  "url": "https://data.medicaid.gov/dataset/2957a7f9-9a15-453e-9afd-3bbdcbac8fd3",
+  "version_date": "2026-07-10",
+  "paragraphs": [
+    "Drug utilization data are reported by states for covered outpatient drugs that are paid for by state Medicaid agencies since the start of the Medicaid Drug Rebate Program. The data includes state, drug name, National Drug Code, number of prescriptions and dollars reimbursed.",
+    "Data descriptions are available on Medicaid.gov: https://www.medicaid.gov/medicaid/prescription-drugs/state-drug-utilization-data/state-drug-utilization-data-faq/index.html"
+  ],
+  "retrieved_at": "2026-11-20T21:28:33+00:00",
+  "sha256": "8ad66e2658b4a265c146b61ef7a56f3bb5ba7590ddf3b3ee0ab97f576e6ede47"
+}

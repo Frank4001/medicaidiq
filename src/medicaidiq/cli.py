@@ -31,16 +31,24 @@ def build_data() -> None:
         ks.ingest_document(doc.meta)
     ks.save()
     print(f"Database: {db}\nLong-term memory: {KNOWLEDGE_PATH} ({len(ks.facts)} facts)")
+    try:
+        from .retrieval import PolicySearch
+        s = PolicySearch()
+        print(f"Retrieval index: {len(s.chunks)} chunks, mode={s.mode}")
+    except Exception as exc:  # retrieval is optional for the data build
+        print(f"Retrieval index not built ({exc}); search falls back to keyword mode.")
 
 
-def make_agent(provider: str | None = None, model: str | None = None, interactive: bool = False):
+def make_agent(provider: str | None = None, model: str | None = None, interactive: bool = False,
+               retrieval: bool = True):
     from .agent import MedicaidIQAgent
     from .db import ReadOnlyDB
     from .llm import ChatLLM
     from .tools import Toolbox
 
     clarify = (lambda q: input(f"\nMedicaidIQ asks: {q}\n> ").strip() or None) if interactive else None
-    return MedicaidIQAgent(ChatLLM(provider=provider, model=model), Toolbox(ReadOnlyDB()), clarify=clarify)
+    return MedicaidIQAgent(ChatLLM(provider=provider, model=model), Toolbox(ReadOnlyDB()), clarify=clarify,
+                           retrieval=retrieval)
 
 
 def render(result) -> str:
@@ -68,21 +76,28 @@ def main(argv: list[str] | None = None) -> int:
     load_dotenv()
     p = argparse.ArgumentParser(prog="medicaidiq")
     sub = p.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("build-data", help="Generate synthetic data, policy corpus, and long-term memory")
+    sub.add_parser("build-data", help="Generate synthetic data, policy corpus, long-term memory, retrieval index")
+    sub.add_parser("fetch-public", help="Re-download public eCFR + data.medicaid.gov documents (needs network)")
     ask = sub.add_parser("ask", help="Ask a question")
     ask.add_argument("question")
     ask.add_argument("--provider", default=None, help="deepseek | qwen | kimi | local")
     ask.add_argument("--model", default=None)
     ask.add_argument("--interactive", action="store_true", help="Answer clarifying questions")
     ask.add_argument("--json", action="store_true", help="Print the full result as JSON")
+    ask.add_argument("--no-retrieval", action="store_true", help="Ablation: disable search_policy (no RAG)")
     args = p.parse_args(argv)
 
     if args.cmd == "build-data":
         build_data()
         return 0
+    if args.cmd == "fetch-public":
+        from .ingest_public import fetch_all
+        for path in fetch_all():
+            print(f"saved {path}")
+        return 0
 
     try:
-        agent = make_agent(args.provider, args.model, args.interactive)
+        agent = make_agent(args.provider, args.model, args.interactive, retrieval=not args.no_retrieval)
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
         print(f"Setup error: {exc}", file=sys.stderr)
         return 2

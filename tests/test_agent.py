@@ -47,7 +47,7 @@ def test_ungrounded_number_is_caught_and_corrected(toolbox):
 
 def test_tool_error_is_observed_and_recovered(toolbox):
     llm = ScriptedLLM([
-        tool_turn("t", "run_sql", {"sql": "DELETE FROM enrollment"}),
+        tool_turn("t", "run_sql", {"sql": "SELECT no_such_column FROM enrollment"}),
         tool_turn("t", "run_sql", {"sql": "SELECT COUNT(*) AS n FROM enrollment"}),
         tool_turn("t", "submit_answer", _answer("There are 35 enrollment rows.",
                                                 [{"statement": "35 rows", "evidence_ids": ["E1"]}])),
@@ -81,7 +81,7 @@ def test_max_steps_produces_honest_failure(toolbox):
 
 
 def test_repeated_identical_failure_stops_loop(toolbox):
-    bad = {"sql": "DROP TABLE states"}
+    bad = {"sql": "SELECT * FROM secret_table"}
     llm = ScriptedLLM([tool_turn("t", "run_sql", bad, f"c{i}") for i in range(6)])
     res = MedicaidIQAgent(llm, toolbox).run("q")
     assert res.stop_reason == "repeated_failure" and res.steps == 3
@@ -94,6 +94,77 @@ def test_prose_answer_is_nudged_to_structured_output(toolbox):
     ])
     res = MedicaidIQAgent(llm, toolbox).run("q")
     assert res.stop_reason == "submitted" and res.trace[0].action == "(no tool call)"
+
+
+import pytest
+
+from medicaidiq.agent import write_intent
+
+
+@pytest.mark.parametrize("q", [
+    "Delete the provisional 2025 rows from drug_utilization so they stop skewing my results.",
+    "Please drop table enrollment",
+    "Insert a new record for Westmoor into the database",
+    "Update the enrollment table to fix 2024Q3",
+    "wipe the data for Southport",
+])
+def test_write_intent_detected(q):
+    assert write_intent(q)
+
+
+@pytest.mark.parametrize("q", [
+    "Did enrollment drop after the policy?",
+    "Did GLP-1 prescriptions drop in 2024 after the data were finalized?",
+    "Exclude the provisional quarters from the analysis",
+    "Which records are suppressed in Southport?",
+    "How did the update to Eastvale's PA policy change prescribing?",
+])
+def test_analysis_questions_not_blocked(q):
+    assert not write_intent(q)
+
+
+def test_write_guardrail_refuses_without_calling_llm(toolbox):
+    llm = ScriptedLLM([])
+    res = MedicaidIQAgent(llm, toolbox).run("Delete all rows from the enrollment table")
+    assert res.stop_reason == "guardrail" and res.answer["answer_type"] == "cannot_answer"
+    assert llm.seen_messages == []          # the model was never called
+    assert "read-only" in res.answer["summary"]
+
+
+def test_no_retrieval_ablation_hides_search_tool(toolbox):
+    llm = ScriptedLLM([tool_turn("t", "search_policy", {"query": "GLP-1"}),
+                       tool_turn("t", "submit_answer", _answer("Cannot verify.", [], "cannot_answer"))])
+    agent = MedicaidIQAgent(llm, toolbox, retrieval=False)
+    assert "search_policy" not in agent.offered
+    res = agent.run("What are Eastvale's PA criteria?")
+    assert "not available" in res.trace[0].observation["error"]
+
+
+def test_retrieved_passage_numbers_are_grounded(toolbox):
+    llm = ScriptedLLM([
+        tool_turn("t", "search_policy", {"query": "Eastvale GLP-1 prior authorization criteria", "state": "EV"}),
+        tool_turn("t", "submit_answer", _answer(
+            "Eastvale requires A1c >= 7.0 after metformin, or BMI >= 35 with a comorbidity [EV-MAN-2024-PH#p1].",
+            [{"statement": "BMI >= 35 pathway [EV-MAN-2024-PH#p1]", "evidence_ids": ["E1"]}])),
+    ])
+    res = MedicaidIQAgent(llm, toolbox).run("q")
+    assert res.verified and res.trace[0].observation["retrieval_quality"]["status"] == "ok"
+
+
+def test_truncated_answer_json_is_rejected_not_accepted(toolbox):
+    """Regression (live DeepSeek run): a cut-off submit_answer must never be accepted unverified."""
+    from medicaidiq.llm import ToolCall
+    cut_off = AssistantTurn("t", [ToolCall("c1", "submit_answer", '{"answer_type": "answer", "summary": "GLP-1 rose 38')])
+    llm = ScriptedLLM([cut_off, tool_turn("t", "submit_answer", _answer("No data.", [], "cannot_answer"), "c2")])
+    res = MedicaidIQAgent(llm, toolbox).run("q")
+    assert "not valid JSON" in res.trace[0].observation["error"]
+    assert res.answer["answer_type"] == "cannot_answer" and res.steps == 2
+
+
+def test_citations_are_not_treated_as_numeric_claims():
+    from medicaidiq.verify import _claim_numbers
+    text = "Per 42 CFR 430.20(b) and § 447.512, see [42-CFR-456.705(b)-2]; prescriptions rose 38.8%."
+    assert [v for v, _ in _claim_numbers(text)] == [38.8]
 
 
 def test_verifier_rules():

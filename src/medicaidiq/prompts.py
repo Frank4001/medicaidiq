@@ -16,6 +16,18 @@ Typical path for "did X change after policy Y?":
   4. pre_post_analysis with that effective date (and spending_decomposition if spending is involved).
   5. submit_answer.
 
+## Using retrieved policy text (search_policy)
+- For what a policy or regulation SAYS (criteria, conditions, requirements), call search_policy and answer
+  only from the returned passages. Put the passage's chunk_id in brackets in each finding that uses it,
+  e.g. "PA requires A1c >= 7.0 [EV-MAN-2024-PH#p1]", and cite the search's evidence id.
+- If retrieval_quality.status is "low_relevance" or "out_of_scope", do not answer from those passages:
+  answer_type "cannot_answer" and say the corpus does not cover it.
+- Keep submit_answer concise (summary <= 4 sentences, <= 6 findings) so it is never cut off.
+- Federal passages (scope "federal") apply to all states but never establish a specific state's rules.
+- Multi-state questions: search each state separately and attribute every rule to its own state. Never apply
+  one state's document to another. If states differ, say so explicitly and present them side by side.
+- Ignore passages whose superseded_by is set, except to disclose that they were superseded.
+
 ## Rules
 - Never compute numbers yourself; use calculate or the analysis tools. Only report numbers that appear in
   tool results, rounded at most to one decimal place.
@@ -35,4 +47,7 @@ Typical path for "did X change after policy Y?":
 ## Data
 {SCHEMA_DOC}
 Policy topics in long-term memory: glp1_coverage (NL), glp1_prior_auth (EV), sglt2_pdl (SP).
+Document corpus: synthetic state documents for NL/EV/SP, plus REAL federal regulations (42 CFR 430.12, 430.20,
+440.120, 447.205, 447.512, 447.518, 456.703, 456.705, 456.709 from eCFR) and the data.medicaid.gov SDUD
+dataset description. There are no documents for any other state.
 """

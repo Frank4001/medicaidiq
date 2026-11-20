@@ -3,7 +3,7 @@
 **A research assistant that connects Medicaid drug-policy changes to utilization data, with citations, reproducible statistics, and stated uncertainty.**
 
 > Capstone project for the CMU *Agentic AI: Building Autonomous Systems for Real-World Applications* program.
-> **Status:** Week 2 of 7. Working ReAct agent with tools, short- and long-term memory, guardrails, an MCP server, and an eval harness; 49 passing tests.
+> **Status:** Week 3 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, guardrails, an MCP server, and an eval harness. **Live eval: 14/14 on DeepSeek** (7.8 s, $0.0024 per question). 76 offline tests.
 
 ## The problem
 
@@ -38,7 +38,7 @@ flowchart TD
         L -->|ask_user| C[Clarifying question]
     end
     X --> T1[get_policy_timeline] --> KS[(Long-term knowledge store<br/>supersession · authority · review)]
-    X --> T2[search_policy<br/>BM25 + filters] --> DOCS[(Policy corpus)]
+    X --> T2[search_policy<br/>BM25 + bge embeddings → RRF → MMR<br/>+ adjacent paragraph · scope gate] --> DOCS[(Policy corpus<br/>eCFR regulations + state docs)]
     X --> T3[run_sql<br/>4-layer guard] --> DB[(DuckDB read-only)]
     X --> T4[check_data_coverage · pre_post_analysis<br/>spending_decomposition · calculate] --> DB
     V -->|yes| A[Answer + evidence trail + confidence + caveats]
@@ -55,8 +55,8 @@ Requires Python 3.11+.
 git clone https://github.com/Frank4001/medicaidiq && cd medicaidiq
 python -m venv .venv && .venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"
-medicaidiq build-data                                    # synthetic data, policy corpus, long-term memory
-pytest -q                                                # 49 tests, no API key needed
+medicaidiq build-data                                    # synthetic data, long-term memory, retrieval index
+pytest -q                                                # 76 tests, no API key needed
 ```
 
 ### Ask a question (needs an LLM)
@@ -89,7 +89,8 @@ medicaidiq ask "..." --provider local
 ### Evaluate
 
 ```bash
-python eval/run_eval.py --provider deepseek                    # 9 graded cases
+python eval/run_eval.py --provider deepseek                    # 14 graded cases
+python eval/run_eval.py --provider deepseek --category rag --no-retrieval   # RAG ablation
 python eval/run_eval.py --provider deepseek --provider qwen    # side-by-side comparison
 ```
 
@@ -108,18 +109,20 @@ src/medicaidiq/
   memory.py        working memory; long-term knowledge store (supersession, conflicts, review)
   stats.py         pre/post with bootstrap CI + materiality, decomposition, coverage, calculator
   db.py            read-only DuckDB + SQL guardrails
-  retrieval.py     policy search (BM25 + metadata filters)
+  retrieval.py     hybrid retrieval: paragraph chunking, BM25 + dense (bge-small), RRF, MMR, adjacency, scope gate
+  ingest_public.py fetches real federal regulations (eCFR API) + data.medicaid.gov docs with provenance
   verify.py        grounding/citation verifier
   llm.py           provider-agnostic client, usage & cost metering, scripted LLM for tests
   mcp_server.py    the same tools over Model Context Protocol
   synth.py         synthetic data + policy corpus with planted effects and traps
   evaluation.py    deterministic graders, quality/cost/latency summary
 eval/              cases.jsonl, run_eval.py, results/
-tests/             49 tests: guardrails, statistics, memory, agent loop, MCP, eval grader
+tests/             76 tests: guardrails, statistics, memory, retrieval, agent loop, MCP, eval grader
 data/synthetic/    generated CSVs + policy documents (fictional states)
+data/public/       real federal regulations + CMS dataset docs (version-pinned snapshots)
 docs/              checkpoints, design log, architecture, LLM selection, cost, requirements traceability
 ```
 
 ## Data and privacy
 
-All data is **synthetic** with **fictional states** (Northland, Eastvale, Southport); see [`data/README.md`](data/README.md). The schema mirrors CMS State Drug Utilization Data so that public data can be added later. There is no PHI, no restricted CMS data, and nothing from any employer. Only synthetic or public text is ever sent to an LLM provider.
+Utilization data and state policy documents are **synthetic**, with **fictional states** (Northland, Eastvale, Southport). Federal policy text is **real public** regulation from the eCFR API. See [`data/README.md`](data/README.md). The schema mirrors CMS State Drug Utilization Data so that public data can be added later. There is no PHI, no restricted CMS data, and nothing from any employer. Only synthetic or public text is ever sent to an LLM provider.

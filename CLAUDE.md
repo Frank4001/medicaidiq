@@ -5,7 +5,7 @@ Project memory for this workspace: what we're building, how we work, and what we
 
 ## What we're building
 
-**MedicaidIQ**, the capstone for the CMU Agentic AI program (Research Assistant option). A ReAct agent that answers Medicaid **drug-policy** questions (GLP-1 focus) by resolving policy effective dates from long-term memory, checking data coverage, running deterministic statistics on a read-only DuckDB, and returning a structured, verified answer with evidence IDs, confidence, and caveats, or clarifying or abstaining.
+**MedicaidIQ**, the capstone for the CMU Agentic AI program (Research Assistant option). A ReAct agent that answers Medicaid **drug-policy** questions (GLP-1 focus) by resolving policy effective dates from long-term memory, retrieving policy text with hybrid RAG (real eCFR regulations + synthetic state documents), running deterministic statistics on a read-only DuckDB, and returning a structured, verified answer with evidence IDs, paragraph-level citations, confidence, and caveats, or clarifying or abstaining.
 Goal: **100% on every rubric criterion.** Track coverage in `docs/requirements_traceability.md`.
 
 ## Final deliverables (end of Week 7; build them only then)
@@ -20,14 +20,16 @@ Goal: **100% on every rubric criterion.** Track coverage in `docs/requirements_t
 |---|---|---|
 | `course/weekN/{assignment,labs}`, `course/final_project/` | Private course materials (prompts, rubrics, submissions, feedback, labs, templates) | **No** |
 | `src/medicaidiq/` | Agent package (see README layout) | Yes |
-| `tests/` | 49 offline tests (scripted LLM; no key needed) | Yes |
+| `tests/` | 76 offline tests (scripted LLM; no key needed; the embedding model downloads once to `.tools/fastembed`) | Yes |
 | `eval/` | `cases.jsonl`, `run_eval.py`, `results/` (live results go here) | Yes |
 | `data/synthetic/` | Generated CSVs + policy docs (fictional states); `.duckdb` and `knowledge_store.json` are rebuilt | CSVs and docs yes |
+| `data/public/` | Real eCFR regulations + data.medicaid.gov SDUD description (JSON snapshots with URL, version, sha256) | Yes |
+| `data/index/` | Cached embedding matrix (rebuilt from a hash of the corpus) | No |
 | `docs/` | checkpoints, `design_log.md`, `architecture.md`, `llm_selection.md`, `cost_estimate.md`, `requirements_traceability.md` | Yes |
 | `.tools/` | Local llama.cpp (Vulkan) + Qwen3-8B GGUF | No |
 | `.venv/` | uv-created Python 3.11 env: `.venv/Scripts/python.exe` | No |
 
-New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/`. (An empty locked `Week2/` folder may linger; it's gitignored.)
+New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/`. (Empty locked `Week2/`/`Week3/` folders may linger; they're gitignored. A `Week4/` folder is waiting; don't process it until the user asks.)
 
 ## Weekly loop
 
@@ -42,7 +44,9 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 ```bash
 .venv/Scripts/python.exe -m medicaidiq.cli build-data     # rebuild synthetic env + memory
 .venv/Scripts/python.exe -m pytest -q                     # all tests
-.venv/Scripts/python.exe eval/run_eval.py --provider deepseek
+.venv/Scripts/python.exe eval/run_eval.py --provider deepseek                       # 14 cases, ~3 cents
+.venv/Scripts/python.exe eval/run_eval.py --provider deepseek --category rag --no-retrieval   # RAG ablation
+.venv/Scripts/python.exe -m medicaidiq.cli fetch-public                            # re-download eCFR corpus
 .venv/Scripts/python.exe -m medicaidiq.cli ask "..." --provider deepseek
 ```
 
@@ -54,6 +58,8 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - **DB (D2.4):** DuckDB read-only, replacing Postgres + pgvector, for one-step reproducibility.
 - **Loop (D2.5):** native function calling, no LangChain; `submit_answer` JSON schema; verifier with 2 retries.
 - **Memory (D2.7/D2.8):** working memory with evidence IDs; knowledge store with supersession, authority hierarchy, conflict state, staleness review, and human approval of agent interpretations.
+- **Retrieval (D3.1–D3.9):** RAG only for policy text; eCFR + data.medicaid.gov (Medicaid.gov returns 403; don't get around it); paragraph chunks; BM25 + bge-small → RRF → MMR λ 0.7 → top 4 + adjacent paragraph (≤ 6); `low_relevance` < 0.68; `out_of_scope` when a requested state has no docs; one search per state for comparisons.
+- **Guardrails (D3.10–D3.11):** deterministic write-intent refusal before the LLM; unparseable final answers rejected; output limit 4,096 tokens.
 - **Eval (D2.11):** deterministic graders, no LLM judge; decision rule = cheapest provider with ≥ 8/9 pass, no malformed tool calls, average < 30 s.
 - **Repo (D2.12):** public at https://github.com/Frank4001/medicaidiq (published 2026-11-20). Commits use the GitHub no-reply email (set in the repo-local git config).
 
@@ -83,19 +89,28 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 | 2 | Local vs. API model trade-offs | `docs/llm_selection.md` (RX 6700S: 8B is the ceiling) |
 | 2 | Custom MCP server with domain tools | `mcp_server.py` (7 tools, 2 resources, 1 prompt) |
 | 2 | Short- vs. long-term memory | `WorkingMemory` / `KnowledgeStore` |
+| 3 | RAG = parametric + non-parametric memory | `search_policy` tool; retrieval only where text matters (D3.1) |
+| 3 | DPR: title + passage, dense similarity | bge-small with title-prefixed paragraph chunks (D3.3) |
+| 3 | RAG-Sequence vs. RAG-Token | Our agent synthesizes across passages in one answer (token-style mixing) while citing each passage; no model training needed |
+| 3 | Long context vs. RAG vs. MemGPT | RAG for documents; MemGPT-style paging ≈ our working-memory scratchpad + tools loading evidence on demand |
+| 3 | MMR relevance/diversity | MMR rerank λ 0.7 (D3.5) |
 
 ## Lessons learned
 
 - A hand-computed expected value in a test was wrong (3,206,132 vs. 3,205,932). The calculator was right. It's a good demo anecdote for D1.2.
 - Measured prompt size (~14k tokens over a 5-step run) was 3× smaller than the Week 1 guess. Measure before budgeting.
 - **First live eval (local Qwen3-8B):** 7/9 raw, 8/9 after a grader keyword fix; 69 s average per question. Every analysis and trap case passed; the safety refusal (`unsafe_write`) failed in two different ways across runs. Lesson: keyword graders need synonyms, and small models are inconsistent on refusals. Next step: a deterministic write-intent pre-check (don't rely on the LLM alone).
+- **Week 3 live runs:** 12/14 → 14/14. Found and fixed a real bug (a cut-off JSON answer was accepted unverified), a retrieval scope gap (Illinois at 0.681 similarity), and 2 more grader false negatives (CFR numbers counted as claims; "opposite" missing from contrast words). Keyword grading is brittle; consider a structured rubric or LLM judge in the evaluation module.
+- The agent found a corpus gap itself (42 CFR 447.256 cited but missing) and declined to state it. We added it. That's good demo material for grounded behavior.
 - Southport shows a small, significant but immaterial dip (−3.5%) from noise. It's a useful live example of the significance × materiality quadrant.
 
 ## Open decisions / blockers
 
 - [x] **Live LLM validation done (2026-11-20):** DeepSeek 9/9, 9 s average, $0.0023 per question → confirmed primary. Local Qwen3-8B 8/9, 69 s. The user has a $5 prepaid DeepSeek balance (key in `.env`; never read or print it). Projected total ≈ $3.40.
 - [ ] Qwen fallback not yet validated (no key); optional before the demo.
-- [ ] Add a deterministic write-intent pre-check (DeepSeek refused correctly, but don't rely on the LLM alone).
+- [x] Deterministic write-intent guardrail (D3.10).
 - [x] **GitHub:** published at https://github.com/Frank4001/medicaidiq.
-- [ ] Week 3: hybrid retrieval (embeddings), chunking with section references, real public SDUD extract.
-- [ ] Expand the eval to about 40 cases; add a formal success-criteria list (A3).
+- [x] Week 3: hybrid RAG over eCFR + state documents; ablation 1/5 → 5/5; DeepSeek 14/14 (2026-11-20). DeepSeek spend so far ≈ $0.18.
+- [ ] Real state policy documents (most are PDFs or behind bot protection): PDF ingestion is a candidate.
+- [ ] Real public SDUD utilization extract (still synthetic).
+- [ ] Expand the eval to about 40 cases (now 14); add a formal success-criteria list (A3); replace brittle keyword checks.

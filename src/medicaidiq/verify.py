@@ -13,8 +13,12 @@ import re
 
 from .memory import WorkingMemory
 
-# Numbers that are structural, not claims: years, quarter labels, small ordinals, CI level.
-_IGNORE = re.compile(r"\b(19|20)\d{2}(?:-\d{2}-\d{2})?\b|\b\d{4}Q[1-4]\b|\bQ[1-4]\b|\bE\d+\b|95%|\b1,000\b")
+# Numbers that are structural, not claims: years, quarter labels, small ordinals, CI level, and
+# citations (42 CFR 430.20(b), § 447.512, chunk ids like 42-CFR-456.705(b)).
+_IGNORE = re.compile(r"\b\d+[\s-]*CFR[\s-]*(?:(?:part|§)\s*)?\d+(?:\.\d+)?(?:\([a-z0-9]+\))*(?:-\d+)?"
+                     r"|§+\s*\d+(?:\.\d+)?(?:\([a-z0-9]+\))*"
+                     r"|\b(19|20)\d{2}(?:-\d{2}-\d{2})?\b|\b\d{4}Q[1-4]\b|\bQ[1-4]\b|\bE\d+\b|95%|\b1,000\b",
+                     re.IGNORECASE)
 _NUM = re.compile(r"-?\$?\d[\d,]*(?:\.\d+)?")
 
 
