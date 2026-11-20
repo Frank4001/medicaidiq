@@ -17,7 +17,7 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (may still be polished)
 | A7 | Evaluation methods and results | `eval/`, `src/medicaidiq/evaluation.py` | 🟨 harness + 9 cases built; **live results pending an API key** |
 | A8 | Safety, reliability, human oversight | SQL guard, verifier, stop conditions, clarification, knowledge-store human approval | 🟨 human-review workflow and monitoring pending |
 | A9 | Limitations and next steps | checkpoint docs §5 | 🟨 running list |
-| A10 | Public GitHub link | — | ⬜ local repo ready; needs `gh auth login` + push |
+| A10 | Public GitHub link | https://github.com/Frank4001/medicaidiq | ✅ |
 
 ## B. Public GitHub repository
 
@@ -46,6 +46,6 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (may still be polished)
 
 - [x] Pieces fit together as one system (single agent loop; every component traced to a limitation)
 - [ ] Presentation focused on the key ideas (Week 7)
-- [ ] Repository public, organized, understandable (organized ✅; public ⬜)
+- [x] Repository public, organized, understandable (https://github.com/Frank4001/medicaidiq)
 - [ ] Results support the claims (needs live eval results)
 - [x] Strengths and limitations stated (checkpoint docs, LLM selection)
