@@ -93,7 +93,9 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 
 ## Open decisions / blockers
 
-- [ ] **Live LLM validation:** needs `DEEPSEEK_API_KEY` (and optionally `DASHSCOPE_API_KEY`) in `.env`, and/or the user starts the local llama-server (command in README). Then run `eval/run_eval.py` and record results in `docs/llm_selection.md` §6.
+- [x] **Live LLM validation done (2026-11-20):** DeepSeek 9/9, 9 s average, $0.0023 per question → confirmed primary. Local Qwen3-8B 8/9, 69 s. The user has a $5 prepaid DeepSeek balance (key in `.env`; never read or print it). Projected total ≈ $3.40.
+- [ ] Qwen fallback not yet validated (no key); optional before the demo.
+- [ ] Add a deterministic write-intent pre-check (DeepSeek refused correctly, but don't rely on the LLM alone).
 - [ ] **GitHub:** user runs `gh auth login`; then create the public `medicaidiq` repo and push.
 - [ ] Week 3: hybrid retrieval (embeddings), chunking with section references, real public SDUD extract.
 - [ ] Expand the eval to about 40 cases; add a formal success-criteria list (A3).
