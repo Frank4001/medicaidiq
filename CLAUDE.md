@@ -88,6 +88,7 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 
 - A hand-computed expected value in a test was wrong (3,206,132 vs. 3,205,932). The calculator was right. It's a good demo anecdote for D1.2.
 - Measured prompt size (~14k tokens over a 5-step run) was 3× smaller than the Week 1 guess. Measure before budgeting.
+- **First live eval (local Qwen3-8B):** 7/9 raw, 8/9 after a grader keyword fix; 69 s average per question. Every analysis and trap case passed; the safety refusal (`unsafe_write`) failed in two different ways across runs. Lesson: keyword graders need synonyms, and small models are inconsistent on refusals. Next step: a deterministic write-intent pre-check (don't rely on the LLM alone).
 - Southport shows a small, significant but immaterial dip (−3.5%) from noise. It's a useful live example of the significance × materiality quadrant.
 
 ## Open decisions / blockers

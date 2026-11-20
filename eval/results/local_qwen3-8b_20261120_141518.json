@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "label": "local:qwen3-8b",
+    "cases": 1,
+    "passed": 1,
+    "pass_rate": 1.0,
+    "checks": {
+      "answer_type": "1/1",
+      "effective_date": "1/1",
+      "mentions_any": "1/1",
+      "number": "1/1",
+      "required_tools": "1/1",
+      "tool_call_valid": "1/1",
+      "verified": "1/1"
+    },
+    "total_cost_usd": 0.0,
+    "avg_cost_per_question_usd": 0.0,
+    "avg_prompt_tokens": 11301,
+    "avg_completion_tokens": 2164,
+    "avg_seconds": 118.0,
+    "max_seconds": 118.0,
+    "consistency": "n/a"
+  },
+  "results": [
+    {
+      "id": "prepost_ev",
+      "category": "core_analysis",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "effective_date": true,
+        "number": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 4,
+      "actions": [
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "submit_answer"
+      ],
+      "expected_number": -18.6,
+      "summary": "GLP-1 prescribing in Eastvale decreased by 18.6% (95% CI: -20.8 to -16.2) after the prior authorization policy took effect on 2024-07-01. This change is both statistically significant and materially meaningful.",
+      "usage": {
+        "model": "local:qwen3-8b",
+        "llm_calls": 4,
+        "prompt_tokens": 11301,
+        "cached_tokens": 7760,
+        "completion_tokens": 2164,
+        "llm_seconds": 117.91,
+        "cost_usd": 0.0
+      },
+      "trace": [
+        {
+          "thought": "Thought: I need the effective date of Eastvale's GLP-1 prior authorization policy to compare prescribing before and after.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: Now I need to check data coverage for Eastvale to ensure the quarters around the effective date are final and not missing.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Okay, let's see. The user is asking if GLP-1 prescribing in Eastvale changed after the prior authorization requirement took effect. The effective date we found was July 1, 2024. Now, the data coverage for Eastvale shows that the final quarters up to 2025Q2 are available. The effective date is in 202",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "EV",
+            "drug_class": "GLP1",
+            "effective_date": "2024-07-01",
+            "metric": "rx_per_1000_mm"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"EV\", \"drug_class\": \"GLP1\", \"metric\": \"rx_per_1000_mm\", \"metric_label\": \"Prescriptions per 1,000 member-months\", \"effective_date\": \"2024-07-01\", \"timing_note\": \"Policy starts on the first day of 2024Q3; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\"], \"post_quarters\": [\"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 12.094, \"post_mean\": 9.846, \"pct_change\": -18.6, \"ci95_pct_change\": [-20.8, -16.2], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_m"
+        },
+        {
+          "thought": "Okay, let's break this down. The user asked if GLP-1 prescribing in Eastvale changed after the prior authorization requirement took effect. \n\nFirst, I needed the effective date of the policy. Using get_policy_timeline, I found it was July 1, 2024 (E1). Then, I checked data coverage (E2) to ensure th",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "GLP-1 prescribing in Eastvale decreased by 18.6% (95% CI: -20.8 to -16.2) after the prior authorization policy took effect on 2024-07-01. This change is both statistically significant and materially meaningful.",
+            "findings": [
+              {
+                "statement": "Prescriptions per 1,000 member-months fell 18.6% post-policy",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "The 95% confidence interval excludes zero, confirming statistical significance",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "The change exceeds the 5% materiality threshold",
+                "evidence_ids": [
+                  "E3"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Data coverage and policy timeline are confirmed; analysis excludes provisional/missing quarters",
+            "caveats": [
+              "Pre/post association does not prove causation",
+              "8 suppressed rows in analysis window",
+              "Synthetic data from fictional state EV"
+            ],
+            "human_review": [
+              "Verify that GLP-1 prior authorization policy is the most relevant factor",
+              "Confirm no other concurrent policies in the analysis window"
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "GLP-1 prescribing in Eastvale decreased by 18.6% (95% CI: -20.8 to -16.2) after the prior authorization policy took effect on 2024-07-01. This change is both statistically significant and materially meaningful.",
+        "findings": [
+          {
+            "statement": "Prescriptions per 1,000 member-months fell 18.6% post-policy",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "The 95% confidence interval excludes zero, confirming statistical significance",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "The change exceeds the 5% materiality threshold",
+            "evidence_ids": [
+              "E3"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Data coverage and policy timeline are confirmed; analysis excludes provisional/missing quarters",
+        "caveats": [
+          "Pre/post association does not prove causation",
+          "8 suppressed rows in analysis window",
+          "Synthetic data from fictional state EV"
+        ],
+        "human_review": [
+          "Verify that GLP-1 prior authorization policy is the most relevant factor",
+          "Confirm no other concurrent policies in the analysis window"
+        ]
+      },
+      "wall_seconds": 118.0,
+      "paraphrase_of": null
+    }
+  ]
+}
