@@ -111,6 +111,5 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - [x] Deterministic write-intent guardrail (D3.10).
 - [x] **GitHub:** published at https://github.com/Frank4001/medicaidiq.
 - [x] Week 3: hybrid RAG over eCFR + state documents; ablation 1/5 → 5/5; DeepSeek 14/14 (2026-11-20). DeepSeek spend so far ≈ $0.18.
-- [ ] Real state policy documents (most are PDFs or behind bot protection): PDF ingestion is a candidate.
-- [ ] Real public SDUD utilization extract (still synthetic).
+- [ ] **Real Illinois data (stretch, Weeks 5–6):** feasibility confirmed 2026-11-20, see `docs/real_data_feasibility_illinois.md`. SDUD + enrollment APIs work (968 IL GLP-1 rows 2022–2026; 95% MCO; 2026Q1 incomplete; 23% suppressed). HFS site allowed by robots.txt (be polite, ≥ 2 s between requests); PDL available as XLSX. GLP-1 PA criteria not yet located. Estimated 4–5 days. Never infer IL policy dates from claims; they must come from HFS docs plus human review.
 - [ ] Expand the eval to about 40 cases (now 14); add a formal success-criteria list (A3); replace brittle keyword checks.
