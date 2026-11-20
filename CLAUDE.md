@@ -55,7 +55,7 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - **Loop (D2.5):** native function calling, no LangChain; `submit_answer` JSON schema; verifier with 2 retries.
 - **Memory (D2.7/D2.8):** working memory with evidence IDs; knowledge store with supersession, authority hierarchy, conflict state, staleness review, and human approval of agent interpretations.
 - **Eval (D2.11):** deterministic graders, no LLM judge; decision rule = cheapest provider with ≥ 8/9 pass, no malformed tool calls, average < 30 s.
-- **Repo (D2.12):** name `medicaidiq`; committed locally; **not pushed** (gh is not authenticated).
+- **Repo (D2.12):** public at https://github.com/Frank4001/medicaidiq (published 2026-11-20). Commits use the GitHub no-reply email (set in the repo-local git config).
 
 ## Working rules
 
@@ -63,7 +63,7 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - Never publish course materials, grader names, or feedback text; paraphrase feedback themes.
 - Secrets live in `.env` (gitignored) only.
 - The LLM never does arithmetic (D1.2). Never claim an eval result we haven't measured.
-- Don't push or create the GitHub repo without the user's go-ahead.
+- Pushing routine weekly commits to origin is fine; ask before anything destructive (force-push, history rewrite, visibility change).
 - **MCP SDK is 2.x:** `from mcp.server.mcpserver import MCPServer` (FastMCP was renamed); tests use `mcp.Client(server)`. The course labs use the 1.x API.
 - Running downloaded binaries (llama-server) was blocked by the auto-mode permission classifier. Ask the user to start it rather than working around the block.
 
@@ -96,6 +96,6 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - [x] **Live LLM validation done (2026-11-20):** DeepSeek 9/9, 9 s average, $0.0023 per question → confirmed primary. Local Qwen3-8B 8/9, 69 s. The user has a $5 prepaid DeepSeek balance (key in `.env`; never read or print it). Projected total ≈ $3.40.
 - [ ] Qwen fallback not yet validated (no key); optional before the demo.
 - [ ] Add a deterministic write-intent pre-check (DeepSeek refused correctly, but don't rely on the LLM alone).
-- [ ] **GitHub:** user runs `gh auth login`; then create the public `medicaidiq` repo and push.
+- [x] **GitHub:** published at https://github.com/Frank4001/medicaidiq.
 - [ ] Week 3: hybrid retrieval (embeddings), chunking with section references, real public SDUD extract.
 - [ ] Expand the eval to about 40 cases; add a formal success-criteria list (A3).
