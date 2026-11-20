@@ -52,7 +52,7 @@ Details: [`docs/architecture.md`](docs/architecture.md). Design history: [`docs/
 Requires Python 3.11+.
 
 ```bash
-git clone https://github.com/<you>/medicaidiq && cd medicaidiq
+git clone https://github.com/Frank4001/medicaidiq && cd medicaidiq
 python -m venv .venv && .venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"
 medicaidiq build-data                                    # synthetic data, policy corpus, long-term memory
