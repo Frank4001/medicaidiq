@@ -18,6 +18,7 @@ import time
 from dataclasses import asdict, dataclass, field
 from typing import Callable
 
+from .guardrails import screen_input
 from .llm import AssistantTurn
 from .memory import WorkingMemory
 from .prompts import SYSTEM_PROMPT
@@ -61,6 +62,8 @@ class AgentResult:
     verified: bool
     steps: int
     usage: dict = field(default_factory=dict)
+    monitor: dict | None = None      # Week 6: trajectory suspicion score
+    oversight: dict | None = None    # Week 6: escalation decision (released / withheld, ticket)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -91,6 +94,16 @@ class MedicaidIQAgent:
     def run(self, question: str, memory: WorkingMemory | None = None) -> AgentResult:
         """memory: pass a shared WorkingMemory so several agents write to one evidence store (Week 5)."""
         memory = memory or WorkingMemory(question)
+        self.last_memory = memory
+        screen = screen_input(question)            # Week 6 pre-generation guardrail (PII, injection)
+        if not screen.allowed:
+            answer = {"answer_type": "cannot_answer", "summary": screen.message, "findings": [],
+                      "confidence": "high", "confidence_reason": "Deterministic input guardrail (no model call).",
+                      "caveats": [], "human_review": []}
+            trace = [TraceStep(0, "Guardrail: identifiable information detected before any model call.",
+                               "input_guardrail", {}, {"blocked": True, "pii": screen.pii,
+                                                       "injection": screen.injection}, 0.0)]
+            return self._result(question, answer, trace, memory, "guardrail", True, 0)
         if write_intent(question):
             answer = {"answer_type": "cannot_answer",
                       "summary": "I can't modify, delete, or insert data: MedicaidIQ has read-only access by design. "
@@ -105,6 +118,9 @@ class MedicaidIQAgent:
         messages = [{"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": question}]
         trace: list[TraceStep] = []
+        if screen.injection:   # allowed, but recorded: the question is treated as data, not instructions
+            trace.append(TraceStep(0, "Guardrail: injection-style text in the question (treated as data).",
+                                   "input_guardrail", {}, {"blocked": False, "pii": [], "injection": True}, 0.0))
         verify_retries = 0
         last_failed_call = None
         repeat_failures = 0

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import re
 
+from .guardrails import calibration_problems
 from .memory import WorkingMemory
 
 # Numbers that are structural, not claims: years, quarter labels, small ordinals, CI level, and
@@ -66,6 +67,7 @@ def verify_answer(answer: dict, memory: WorkingMemory) -> list[str]:
         if bad:
             problems.append(f"Finding cites unknown evidence ids {bad}; valid ids: {sorted(valid_ids)}.")
     if answer.get("answer_type") == "answer":
+        problems += calibration_problems(answer)   # Week 6: causal overclaim / overconfidence
         if not answer.get("findings"):
             problems.append("An 'answer' must include at least one finding with evidence ids.")
         elif not any(f.get("evidence_ids") for f in answer["findings"]):

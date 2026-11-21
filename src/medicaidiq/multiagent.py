@@ -32,6 +32,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from .agent import AgentResult, MedicaidIQAgent, TraceStep, write_intent
 from .db import SCHEMA_DOC
+from .guardrails import screen_input
 from .memory import WorkingMemory
 from .tools import Toolbox
 from .verify import verify_answer
@@ -116,14 +117,19 @@ class MultiAgentOrchestrator:
     # ------------------------------------------------------------------ public
     def run(self, question: str) -> AgentResult:
         t0 = time.perf_counter()
-        if write_intent(question):     # same deterministic guardrail as the single agent
-            return MedicaidIQAgent(self.llm, self.tb).run(question)
+        if write_intent(question) or not screen_input(question).allowed:   # same deterministic guardrails
+            single = MedicaidIQAgent(self.llm, self.tb)
+            res = single.run(question)
+            self.last_memory = single.last_memory
+            return res
         try:
             return self._run(question, t0)
         except Exception as exc:  # noqa: BLE001 - CONTROLLER FAILOVER (grader feedback, Checkpoint 5.1)
             if not self.fallback:
                 raise
-            res = MedicaidIQAgent(self.llm, self.tb).run(question)
+            single = MedicaidIQAgent(self.llm, self.tb)
+            res = single.run(question)
+            self.last_memory = single.last_memory
             res.trace.insert(0, TraceStep(0, f"[controller] multi-agent workflow failed "
                                              f"({type(exc).__name__}: {str(exc)[:120]}); failing over to single agent",
                                           "controller_failover", {}, {"error": str(exc)[:300]}, 0.0))
@@ -133,6 +139,7 @@ class MultiAgentOrchestrator:
     # ------------------------------------------------------------------ workflow
     def _run(self, question: str, t0: float) -> AgentResult:
         memory = WorkingMemory(question)          # shared blackboard for every agent
+        self.last_memory = memory
         trace: list[TraceStep] = []
         stage = lambda name, note, obs=None: trace.append(TraceStep(len(trace) + 1, note, name, {}, obs or {}, 0.0))
 
