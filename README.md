@@ -3,7 +3,7 @@
 **A research assistant that connects Medicaid drug-policy changes to utilization data, with citations, reproducible statistics, and stated uncertainty.**
 
 > Capstone project for the CMU *Agentic AI: Building Autonomous Systems for Real-World Applications* program.
-> **Status:** Week 3 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, guardrails, an MCP server, and an eval harness. **Live eval: 14/14 on DeepSeek** (7.8 s, $0.0024 per question). 76 offline tests.
+> **Status:** Week 4 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, an **opt-in Tree-of-Thought analysis planner**, guardrails, an MCP server, and an eval harness. **Live eval: 18/18 on DeepSeek** (9.4 s, $0.0025 per question). 87 offline tests.
 
 ## The problem
 
@@ -66,6 +66,7 @@ Copy `.env.example` to `.env` and set `DEEPSEEK_API_KEY` (or another provider; s
 ```bash
 medicaidiq ask "Did GLP-1 prescribing in Eastvale change after its prior authorization requirement took effect?"
 medicaidiq ask "Did spending go up after the policy?" --interactive    # answers clarifying questions
+medicaidiq ask "..." --plan                                             # Tree-of-Thought planner (opt-in)
 ```
 
 Each run prints the answer, its evidence trail, tokens, cost, and latency, and saves the full trace to `runs/`.
@@ -89,7 +90,8 @@ medicaidiq ask "..." --provider local
 ### Evaluate
 
 ```bash
-python eval/run_eval.py --provider deepseek                    # 14 graded cases
+python eval/run_eval.py --provider deepseek                    # 18 graded cases
+python eval/run_eval.py --provider deepseek --plan --category tot   # ToT benchmark
 python eval/run_eval.py --provider deepseek --category rag --no-retrieval   # RAG ablation
 python eval/run_eval.py --provider deepseek --provider qwen    # side-by-side comparison
 ```
@@ -104,7 +106,8 @@ python eval/run_eval.py --provider deepseek --provider qwen    # side-by-side co
 
 ```text
 src/medicaidiq/
-  agent.py         ReAct loop, stop conditions, verification retries
+  agent.py         ReAct loop, stop conditions, verification retries, write-intent guardrail, time limits
+  planner.py       Tree-of-Thought planner: beam search over analysis plans, tool-verified rubric, pruning
   tools.py         tool schemas + dispatch (each tool tied to an LLM limitation)
   memory.py        working memory; long-term knowledge store (supersession, conflicts, review)
   stats.py         pre/post with bootstrap CI + materiality, decomposition, coverage, calculator
@@ -117,7 +120,7 @@ src/medicaidiq/
   synth.py         synthetic data + policy corpus with planted effects and traps
   evaluation.py    deterministic graders, quality/cost/latency summary
 eval/              cases.jsonl, run_eval.py, results/
-tests/             76 tests: guardrails, statistics, memory, retrieval, agent loop, MCP, eval grader
+tests/             87 tests: guardrails, statistics, memory, retrieval, ToT planner, agent loop, MCP, eval grader
 data/synthetic/    generated CSVs + policy documents (fictional states)
 data/public/       real federal regulations + CMS dataset docs (version-pinned snapshots)
 docs/              checkpoints, design log, architecture, LLM selection, cost, requirements traceability

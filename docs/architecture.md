@@ -45,3 +45,36 @@ The answer states the change, the CI, that the result is an association and not 
 ## Planned additions
 
 - **Later weeks:** coordination and planning (per the course modules), richer guardrails and monitoring, human-oversight workflow, a larger eval set and results.
+
+## Week 4: Tree-of-Thought analysis planner
+
+ToT is a **tool** (`plan_analysis`), offered only when planning is enabled (`--plan`). The ReAct loop decides when to call it, and the system prompt limits it to before/after, spending-change, and period-comparison questions. Lookups and policy-text questions never enter the tree.
+
+```mermaid
+flowchart TD
+    Q[Analysis question] --> R[ReAct loop]
+    R -->|plan_analysis| ROOT((root: question))
+    subgraph ToT["ToT planner (planner.py): beam width 2, ≤3 children/node, depth 3, budget 30 LLM / 20 tool / 60 s"]
+        ROOT --> G1[G: propose ≤3 measures<br/>metric · population · denominator]
+        G1 --> E1{V: score<br/>scope 0-3 deterministic<br/>interpretation 0-2 critic}
+        E1 -->|top 2 ≥7| G2[G: propose ≤3 designs<br/>effective date · windows · checks]
+        G2 --> E2{V: + evidence 0-3, feasibility<br/>tool-verified: timeline, coverage}
+        E2 -->|missing facts only| TC[targeted tool check<br/>get_policy_timeline · check_data_coverage]
+        TC --> E2
+        E2 -->|top 2 ≥7| G3[G: propose ≤3 executable plans<br/>tool steps · interpretation limits]
+        G3 --> E3{V: + valid steps}
+        E3 -->|best complete plan| SEL[selected plan]
+        E1 & E2 & E3 -.->|<7 or hard failure| PR[pruned + reason]
+    end
+    SEL --> R
+    PR -->|none left| NV[no_valid_plan → cannot_answer / ask_user]
+    R --> EX[execute plan steps with tools] --> V[verifier] --> A[answer]
+    ToT -.->|branch records| ST[(runs/plans/*.json<br/>MCP resource plan://id)]
+```
+
+| ToT role | Implementation |
+|---|---|
+| Thought generator | `ToTPlanner._expand`: one "propose" call per parent (Lab 4.1), JSON mode |
+| Critic / evaluator | Deterministic checks for scope, evidence, and feasibility via real tool calls (`_deterministic`, `_targeted_evidence_checks`); LLM critic (`_critic`) only for interpretation |
+| Decision maker / controller | `ToTPlanner.plan`: beam selection, prune < 7, hard-failure override, tie-break (evidence → scope → fewer steps), budget |
+| Memory / state manager | `PlanNode` records (id, parent, depth, plan, score, breakdown, status, prune reason) persisted per run; readable over MCP (`plan://{plan_id}`) |

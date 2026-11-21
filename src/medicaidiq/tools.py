@@ -100,14 +100,26 @@ TOOL_SCHEMAS = [
                           "description": "Items a human analyst should verify"}},
         ["answer_type", "summary", "findings", "confidence", "confidence_reason", "caveats"]),
 ]
-TOOL_NAMES = {t["function"]["name"] for t in TOOL_SCHEMAS}
+PLAN_SCHEMA = _fn(
+    "plan_analysis",
+    "Tree-of-Thought planner. For before/after, spending-change, or period-comparison questions, call this FIRST "
+    "with the user's question. It explores alternative analysis plans (metric, denominator, effective date, "
+    "windows), verifies them with tool checks, prunes weak ones, and returns the best executable plan, or explains "
+    "why no valid plan exists. Do not use it for simple lookups or policy-text questions.",
+    {"question": {"type": "string", "description": "The user's question, verbatim"}}, ["question"])
+
+TOOL_NAMES = {t["function"]["name"] for t in TOOL_SCHEMAS} | {"plan_analysis"}
 TERMINAL_TOOLS = {"submit_answer", "ask_user"}
+AGENT_HANDLED = TERMINAL_TOOLS | {"plan_analysis"}     # executed by the agent, not the Toolbox
 RETRIEVAL_TOOLS = {"search_policy"}
 
 
-def tool_schemas(retrieval: bool = True) -> list[dict]:
-    """Tool list offered to the model; retrieval=False is the no-RAG ablation."""
-    return [t for t in TOOL_SCHEMAS if retrieval or t["function"]["name"] not in RETRIEVAL_TOOLS]
+def tool_schemas(retrieval: bool = True, planning: bool = False) -> list[dict]:
+    """Tool list offered to the model. retrieval=False is the no-RAG ablation; planning=True adds ToT."""
+    tools = [t for t in TOOL_SCHEMAS if retrieval or t["function"]["name"] not in RETRIEVAL_TOOLS]
+    if planning:
+        tools.insert(0, PLAN_SCHEMA)
+    return tools
 
 
 _SEARCH: PolicySearch | None = None
@@ -136,7 +148,7 @@ class Toolbox:
         except (json.JSONDecodeError, ValueError) as exc:
             memory.record_failure(f"{name}: invalid JSON arguments")
             return {"error": f"Invalid JSON arguments: {exc}. Retry with valid JSON."}
-        if name not in TOOL_NAMES or name in TERMINAL_TOOLS:
+        if name not in TOOL_NAMES or name in AGENT_HANDLED:
             return {"error": f"Unknown tool '{name}'."}
         try:
             result = getattr(self, f"_t_{name}")(memory, **args)

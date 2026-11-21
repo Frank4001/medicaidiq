@@ -1,0 +1,410 @@
+{
+  "plan_id": "plan_557c1ae8",
+  "question": "Compare Eastvale's GLP-1 prescriptions per 1,000 member-months in 2025Q2 versus 2025Q4. Did use fall?",
+  "status": "no_valid_plan",
+  "budget_used": {
+    "model_calls": 4,
+    "tool_calls": 2,
+    "seconds": 26.0,
+    "retries": 0,
+    "errors": []
+  },
+  "verified_facts": {
+    "coverage:EV": {
+      "final": [
+        "2023Q1",
+        "2023Q2",
+        "2023Q3",
+        "2023Q4",
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2"
+      ],
+      "provisional": [
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "timeline:EV:GLP1": {
+      "evidence_id": "E2",
+      "key": "EV:glp1_prior_auth:effective_date",
+      "status": "resolved",
+      "value": "2024-07-01",
+      "source_doc": "EV-MAN-2024-PH",
+      "conflicts": [],
+      "superseded": [
+        {
+          "key": "EV:glp1_prior_auth:effective_date",
+          "value": "2024-06-01",
+          "source_doc": "EV-BUL-2024-007",
+          "doc_type": "provider_bulletin",
+          "published": "2024-05-15",
+          "status": "superseded",
+          "superseded_by": "EV-BUL-2024-011",
+          "last_verified": "2026-11-20",
+          "note": "Replaced by EV-BUL-2024-011 (published 2024-06-10)."
+        }
+      ],
+      "explanation": "EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL-2024-007 (2024-06-01).",
+      "all_sources": [
+        "EV-MAN-2024-PH"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "depth": 0,
+      "plan": {
+        "question": "Compare Eastvale's GLP-1 prescriptions per 1,000 member-months in 2025Q2 versus 2025Q4. Did use fall?"
+      },
+      "score": 0.0,
+      "breakdown": {},
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "All member-months per quarter from enrollment; standard utilization rate.",
+        "assumptions": [
+          "2025Q2 and 2025Q4 data complete",
+          "Member-months cover same population"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Directly compares 2025Q2 to 2025Q4 using GLP-1 prescriptions per 1,000 member-months with standard all-member denominator; no causal claim and notes data completeness/population assumptions.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Compare 2024Q4 pre-policy baseline to 2025Q4 post-policy rate.",
+        "assumptions": [
+          "Prior auth effective in 2025",
+          "Seasonality stable across Q4"
+        ]
+      },
+      "score": 6.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Compares 2024Q4 to 2025Q4 rather than 2025Q2 vs 2025Q4, so it does not answer the stated question and would mislead.",
+      "status": "pruned",
+      "prune_reason": "score 6.0 < 7.0"
+    },
+    {
+      "id": "n3",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Restrict denominator to GLP1-eligible member-months, not all members.",
+        "assumptions": [
+          "Eligibility can be identified",
+          "Eligibility mix stable Q2 to Q4"
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Uses correct Q2 vs Q4 timing and metric name, but changes denominator to GLP1-eligible member-months rather than standard all member-months, so it only partly answers and depends on unverified eligibility data.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.1",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "All member-months per quarter from enrollment; standard utilization rate.",
+        "assumptions": [
+          "2025Q2 and 2025Q4 data complete",
+          "Member-months cover same population"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2025Q2",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "check_provisional_status",
+          "verify_effective_date",
+          "check_conflicting_sources"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    },
+    {
+      "id": "n1.2",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "All member-months per quarter from enrollment; standard utilization rate.",
+        "assumptions": [
+          "2025Q4 is provisional; report with caveat",
+          "Post-policy regime assumed stable through 2025Q4"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2024Q3",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "check_provisional_status",
+          "verify_effective_date",
+          "check_superseded_sources"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    },
+    {
+      "id": "n1.3",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member-months restricted to continuously enrolled members (>=6 months) to stabilize denominator.",
+        "assumptions": [
+          "Continuous-enrollment filter approximates stable population",
+          "2025Q4 provisional; compare against 2025Q2 final with sensitivity note"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2025Q2",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "check_provisional_status",
+          "check_denominator_coverage",
+          "verify_effective_date"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    },
+    {
+      "id": "n3.1",
+      "parent": "n3",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Restrict denominator to GLP1-eligible member-months, not all members.",
+        "assumptions": [
+          "Eligibility can be identified",
+          "Eligibility mix stable Q2 to Q4"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 3,
+          "start_quarter": "2025Q2",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "verify_provisional_status",
+          "check_data_completeness",
+          "compute_rate"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    },
+    {
+      "id": "n3.2",
+      "parent": "n3",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Restrict denominator to GLP1-eligible member-months, not all members.",
+        "assumptions": [
+          "Seasonality stable year over year",
+          "2024Q4 final data comparable to 2025Q4"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2024Q4",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "check_policy_timeline",
+          "compute_rate",
+          "compare_yoy"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    },
+    {
+      "id": "n3.3",
+      "parent": "n3",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Use all member-months as sensitivity to test eligibility-mix assumption.",
+        "assumptions": [
+          "Total member-months available",
+          "All-member denominator approximates exposure"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 3,
+          "start_quarter": "2025Q2",
+          "end_quarter": "2025Q4"
+        },
+        "checks": [
+          "denominator_sensitivity",
+          "compute_rate",
+          "verify_provisional_status"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)"
+    }
+  ]
+}
