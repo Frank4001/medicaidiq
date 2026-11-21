@@ -1,0 +1,1146 @@
+{
+  "summary": {
+    "label": "deepseek:deepseek-flash+tot",
+    "cases": 7,
+    "passed": 4,
+    "pass_rate": 0.571,
+    "checks": {
+      "answer_type": "4/6",
+      "completed": "0/1",
+      "effective_date": "1/3",
+      "mentions_any": "5/5",
+      "number": "1/3",
+      "required_tools": "3/5",
+      "tool_call_valid": "6/6",
+      "verified": "3/3"
+    },
+    "total_cost_usd": 0.0955,
+    "avg_cost_per_question_usd": 0.01365,
+    "avg_prompt_tokens": 22380,
+    "avg_completion_tokens": 9757,
+    "avg_seconds": 477.9,
+    "max_seconds": 2965.4,
+    "consistency": "n/a"
+  },
+  "results": [
+    {
+      "id": "prepost_ev",
+      "category": "core_analysis",
+      "passed": false,
+      "checks": {
+        "answer_type": false,
+        "required_tools": false,
+        "effective_date": false,
+        "number": false,
+        "mentions_any": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "get_policy_timeline",
+        "plan_analysis",
+        "check_data_coverage",
+        "submit_answer"
+      ],
+      "expected_number": -18.6,
+      "summary": "I can't produce a defensible before/after estimate for Eastvale GLP-1 prescribing. The prior authorization requirement's authoritative effective date is 2024-07-01 (EV-MAN-2024-PH, replacing an earlier bulletin date of 2024-06-01), and final EV quarters run through 2025Q2 \u2014 but every candidate analysis I tested failed the planner's validity/materiality checks, so no pre/post result is reportable. Running one anyway would mean reporting a comparison the checks already rejected.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 8,
+        "prompt_tokens": 14324,
+        "cached_tokens": 9728,
+        "completion_tokens": 8106,
+        "llm_seconds": 48.54,
+        "cost_usd": 0.011164
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a before/after question for EV GLP-1, so I need the authoritative effective date of EV's prior authorization policy first.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "Thought: Effective date resolved to 2024-07-01 (superseding the 2024-06-01 bulletin). Now I need coverage status for EV and an analysis plan.",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "Did GLP-1 prescribing in Eastvale change after its prior authorization requirement took effect?"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"plan_id\": \"plan_9bee98fd\", \"status\": \"no_valid_plan\", \"budget_used\": {\"model_calls\": 5, \"tool_calls\": 2, \"seconds\": 37.5, \"retries\": 0}, \"nodes_explored\": 9, \"pruned\": [{\"id\": \"n3\", \"depth\": 1, \"reason\": \"outside beam (width 2)\", \"summary\": {\"metric\": \"spending_decomposition\"}}, {\"id\": \"n1.1\", \"depth\": 2, \"reason\": \"score 5.6 < 7.0\", \"summary\": {\"metric\": \"rx_per_1000_mm\", \"effective_date\": null, \"comparison\": {\"type\": \"pre_post\", \"window_quarters\": 4, \"start_quarter\": null, \"end_quarter\": null}}}, {\"id\": \"n1.2\", \"depth\": 2, \"reason\": \"score 4.4 < 7.0\", \"summary\": {\"metr"
+        },
+        {
+          "thought": "Thought: Effective date resolved to 2024-07-01 (superseding the 2024-06-01 bulletin). Now I need coverage status for EV and an analysis plan.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: The planner rejected every candidate analytic plan, so per protocol I must not run a pre/post comparison; I'll report the resolved date, coverage limits, and the specific rejection reasons.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "cannot_answer",
+            "summary": "I can't produce a defensible before/after estimate for Eastvale GLP-1 prescribing. The prior authorization requirement's authoritative effective date is 2024-07-01 (EV-MAN-2024-PH, replacing an earlier bulletin date of 2024-06-01), and final EV quarters run through 2025Q2 \u2014 but every candidate analysis I tested failed the planner's validity/materiality checks, so no pre/post result is reportable. Running one anyway would mean reporting a comparison the checks already rejected.",
+            "findings": [
+              {
+                "statement": "EV's GLP-1 prior authorization effective date resolves to 2024-07-01 under EV-MAN-2024-PH, the highest-authority current source; an earlier date of 2024-06-01 from EV-BUL-2024-007 is superseded by EV-BUL-2024-011.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "Eastvale data are final for 2023Q1 through 2025Q2, with 2025Q3 and 2025Q4 provisional, and 12 suppressed rows that must not be read as zero.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "The analysis planner returned no valid plan after exploring 9 nodes: all 7 candidate specifications scored below the 7.0 threshold (e.g. GLP-1 and spend-PMPM pre/post variants around 2024-07-01), and a further candidate using a GLP-1 share-of-diabetes-fills metric failed because that metric is unavailable in the data.",
+                "evidence_ids": [
+                  "E2"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "The policy effective date and data coverage are firmly established by tool results, but the planner rejected all analytic specifications, so no utilization effect estimate exists to report.",
+            "caveats": [
+              "No pre/post result is reported because the planner rejected every candidate plan; this is not evidence that GLP-1 prescribing did or did not change.",
+              "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from any comparison; 12 suppressed EV rows are NULL, not zero.",
+              "The 2024-06-01 effective date in EV-BUL-2024-007 is superseded and was not used.",
+              "All states, payers, and utilization figures are synthetic (NL Northland, EV Eastvale, SP Southport) and do not describe real Medicaid programs."
+            ],
+            "human_review": [
+              "Confirm with the analyst which metric should govern the question (prescriptions per 1,000 member months vs spend per member per month) and whether a narrower 4-quarter window each side of 2024-07-01 is acceptable, since that is the specification the planner scored highest but still rejected.",
+              "Verify the EV-MAN-2024-PH effective date of 2024-07-01 against the source document and confirm EV-BUL-2024-011 fully replaced the June 2024 bulletin.",
+              "Check whether the 12 suppressed EV GLP-1 rows cluster in a specific quarter or product, which could distort any aggregate even if a plan were approved."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "I can't produce a defensible before/after estimate for Eastvale GLP-1 prescribing. The prior authorization requirement's authoritative effective date is 2024-07-01 (EV-MAN-2024-PH, replacing an earlier bulletin date of 2024-06-01), and final EV quarters run through 2025Q2 \u2014 but every candidate analysis I tested failed the planner's validity/materiality checks, so no pre/post result is reportable. Running one anyway would mean reporting a comparison the checks already rejected.",
+        "findings": [
+          {
+            "statement": "EV's GLP-1 prior authorization effective date resolves to 2024-07-01 under EV-MAN-2024-PH, the highest-authority current source; an earlier date of 2024-06-01 from EV-BUL-2024-007 is superseded by EV-BUL-2024-011.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "Eastvale data are final for 2023Q1 through 2025Q2, with 2025Q3 and 2025Q4 provisional, and 12 suppressed rows that must not be read as zero.",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "The analysis planner returned no valid plan after exploring 9 nodes: all 7 candidate specifications scored below the 7.0 threshold (e.g. GLP-1 and spend-PMPM pre/post variants around 2024-07-01), and a further candidate using a GLP-1 share-of-diabetes-fills metric failed because that metric is unavailable in the data.",
+            "evidence_ids": [
+              "E2"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "The policy effective date and data coverage are firmly established by tool results, but the planner rejected all analytic specifications, so no utilization effect estimate exists to report.",
+        "caveats": [
+          "No pre/post result is reported because the planner rejected every candidate plan; this is not evidence that GLP-1 prescribing did or did not change.",
+          "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from any comparison; 12 suppressed EV rows are NULL, not zero.",
+          "The 2024-06-01 effective date in EV-BUL-2024-007 is superseded and was not used.",
+          "All states, payers, and utilization figures are synthetic (NL Northland, EV Eastvale, SP Southport) and do not describe real Medicaid programs."
+        ],
+        "human_review": [
+          "Confirm with the analyst which metric should govern the question (prescriptions per 1,000 member months vs spend per member per month) and whether a narrower 4-quarter window each side of 2024-07-01 is acceptable, since that is the specification the planner scored highest but still rejected.",
+          "Verify the EV-MAN-2024-PH effective date of 2024-07-01 against the source document and confirm EV-BUL-2024-011 fully replaced the June 2024 bulletin.",
+          "Check whether the 12 suppressed EV GLP-1 rows cluster in a specific quarter or product, which could distort any aggregate even if a plan were approved."
+        ]
+      },
+      "wall_seconds": 48.6,
+      "paraphrase_of": null
+    },
+    {
+      "id": "conflict_nl",
+      "category": "memory_conflict",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "effective_date": true,
+        "number": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 5,
+      "actions": [
+        "plan_analysis",
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "run_sql",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": 38.8,
+      "summary": "Using January 1, 2024 as the start date, Northland's GLP-1 utilization rose 38.8% (95% CI 36.4% to 41.0%), from a pre-period mean of 11.8 to a post-period mean of 16.4 prescriptions per 1,000 member-months \u2014 a change the tool rates significant and material (well above the 5% threshold). The quarterly series shows a discrete step up in 2024Q1 (11.81 to 16.67) that then held roughly flat through 2025Q2, rather than a gradual drift. I used 2024-01-01 because the approved State Plan Amendment 23-014 is the highest-authority source and states that effective date; a provider manual lists 2024-02-01, so that conflict is disclosed. This is a pre/post association, not proof the coverage expansion caused the increase.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 11,
+        "prompt_tokens": 31821,
+        "cached_tokens": 22656,
+        "completion_tokens": 8051,
+        "llm_seconds": 47.97,
+        "cost_usd": 0.012547
+      },
+      "trace": [
+        {
+          "thought": "I'll start by planning this before/after analysis and resolving the authoritative effective date.",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "How did GLP-1 use in Northland change after weight-management coverage began? Tell me which start date you used and why."
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"plan_id\": \"plan_aabfc472\", \"status\": \"selected\", \"budget_used\": {\"model_calls\": 6, \"tool_calls\": 2, \"seconds\": 33.4, \"retries\": 0}, \"nodes_explored\": 9, \"pruned\": [{\"id\": \"n2\", \"depth\": 1, \"reason\": \"score 6.0 < 7.0\", \"summary\": {\"metric\": \"spend_per_rx\"}}, {\"id\": \"n3\", \"depth\": 1, \"reason\": \"score 6.0 < 7.0\", \"summary\": {\"metric\": \"spend_pmpm\"}}, {\"id\": \"n1.2\", \"depth\": 2, \"reason\": \"score 6.7 < 7.0\", \"summary\": {\"metric\": \"rx_per_1000_mm\", \"effective_date\": \"2024-01-01\", \"comparison\": {\"type\": \"two_quarters\", \"window_quarters\": 1, \"start_quarter\": \"2023Q4\", \"end_quarte"
+        },
+        {
+          "thought": "I'll start by planning this before/after analysis and resolving the authoritative effective date.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: The plan is selected and the authoritative date is 2024-01-01. Next I need to check NL's data coverage before running the pre/post comparison.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"NL\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: Coverage is final through 2025Q2; 2025Q3\u2013Q4 are provisional and must be excluded. Now I'll run the pre/post analysis on GLP-1 rate per 1,000 member-months.",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "NL",
+            "drug_class": "GLP1",
+            "effective_date": "2024-01-01",
+            "metric": "rx_per_1000_mm",
+            "materiality_pct": 5
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"state\": \"NL\", \"drug_class\": \"GLP1\", \"metric\": \"rx_per_1000_mm\", \"metric_label\": \"Prescriptions per 1,000 member-months\", \"effective_date\": \"2024-01-01\", \"timing_note\": \"Policy starts on the first day of 2024Q1; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\"], \"post_quarters\": [\"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 11.834, \"post_mean\": 16.42, \"pct_change\": 38.8, \"ci95_pct_change\": [36.4, 41.0], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_mate"
+        },
+        {
+          "thought": "Thought: The analysis shows a significant increase. Let me pull the quarterly series for context and confirm the policy's substance (that NL-SPA-2023-014 is indeed the weight-management coverage expansion) from the policy text.",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT d.year, d.quarter, SUM(d.prescriptions) AS rx, e.member_months, ROUND(1000.0*SUM(d.prescriptions)/e.member_months, 2) AS rx_per_1000_mm, r.status FROM drug_utilization d JOIN enrollment e ON e.state=d.state AND e.year=d.year AND e.quarter=d.quarter JOIN reporting_status r ON r.state=d.state AND r.year=d.year AND r.quarter=d.quarter WHERE d.state='NL' AND d.drug_class='GLP1' AND d.suppressed=FALSE GROUP BY d.year, d.quarter, e.member_months, r.status ORDER BY d.year, d.quarter"
+          },
+          "observation": "{\"evidence_id\": \"E5\", \"columns\": [\"year\", \"quarter\", \"rx\", \"member_months\", \"rx_per_1000_mm\", \"status\"], \"rows\": [[2023, 1, 10830, 894895, 12.1, \"final\"], [2023, 2, 10586, 901811, 11.74, \"final\"], [2023, 3, 10527, 900977, 11.68, \"final\"], [2023, 4, 10670, 903358, 11.81, \"final\"], [2024, 1, 15079, 904490, 16.67, \"final\"], [2024, 2, 14653, 889959, 16.46, \"final\"], [2024, 3, 14627, 900363, 16.25, \"final\"], [2024, 4, 14743, 904516, 16.3, \"final\"], [2025, 1, 14518, 895306, 16.22, \"final\"], [2025, 2, 14360, 897734, 16.0, \"final\"], [2025, 3, 14170, 898515, 15.77, \"provisional\"], [2025, 4, 10353, 8934"
+        },
+        {
+          "thought": "Thought: The analysis shows a significant increase. Let me pull the quarterly series for context and confirm the policy's substance (that NL-SPA-2023-014 is indeed the weight-management coverage expansion) from the policy text.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "Northland GLP-1 coverage for weight management effective date",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E6\", \"query\": \"Northland GLP-1 coverage for weight management effective date\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.862, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"ALL\", \"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\": \""
+        },
+        {
+          "thought": "The quarterly series shows a discrete jump exactly at 2024Q1 (11.81 -> 16.67), and it holds flat through 2025Q2. Good interrupted-time-series evidence.\n\nSpending wasn't asked. Should I run spending_decomposition? The question asks about \"GLP-1 use\" \u2014 utilization, not spending. Plan doesn't include i",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Using January 1, 2024 as the start date, Northland's GLP-1 utilization rose 38.8% (95% CI 36.4% to 41.0%), from a pre-period mean of 11.8 to a post-period mean of 16.4 prescriptions per 1,000 member-months \u2014 a change the tool rates significant and material (well above the 5% threshold). The quarterly series shows a discrete step up in 2024Q1 (11.81 to 16.67) that then held roughly flat through 2025Q2, rather than a gradual drift. I used 2024-01-01 because the approved State Plan Amendment 23-014 is the highest-authority source and states that effective date; a provider manual lists 2024-02-01, so that conflict is disclosed. This is a pre/post association, not proof the coverage expansion caused the increase.",
+            "findings": [
+              {
+                "statement": "Start date used: 2024-01-01. NL-SPA-2023-014 (state plan amendment, published 2023-11-20) is the highest-authority source and states the weight-management GLP-1 coverage 'is effective January 1, 2024' [NL-SPA-2023-014#p1]. It covers GLP-1 agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, and leaves type 2 diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E6"
+                ]
+              },
+              {
+                "statement": "Conflicting date disclosed: NL-MAN-2024-RX, a provider manual published 2024-02-01, says weight-management coverage begins February 1, 2024 [NL-MAN-2024-RX#p1]. It is lower authority than the approved SPA and was not used as the start date. Federal rules tie plan-amendment effective dates to the rules for new plans [42-CFR-430.20(b)], consistent with the SPA controlling here.",
+                "evidence_ids": [
+                  "E2",
+                  "E6"
+                ]
+              },
+              {
+                "statement": "GLP-1 prescriptions per 1,000 member-months: pre-period (2023Q1-2023Q4) mean 11.8 vs post-period (2024Q1-2024Q4) mean 16.4, a +38.8% change, 95% CI [36.4, 41.0], verdict significant_and_material at a 5% materiality threshold.",
+                "evidence_ids": [
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Quarterly rates were stable at 11.68-12.10 through 2023, then stepped to 16.67 in 2024Q1 and stayed in a 16.00-16.67 band through 2025Q2 (all final quarters), indicating a level shift at the policy quarter rather than a pre-existing trend.",
+                "evidence_ids": [
+                  "E5",
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Data coverage: NL quarters 2023Q1-2025Q2 are final; 2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from the analysis. 12 suppressed rows exist statewide, including 8 in the analysis window.",
+                "evidence_ids": [
+                  "E3",
+                  "E4"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Authoritative effective date resolved from a high-authority SPA with a disclosed lower-authority conflict, all four pre and four post quarters are final, and the result is a large, statistically precise effect corroborated by a visible step change in the quarterly series.",
+            "caveats": [
+              "Pre/post association only; co-moving GLP-1 market trends (e.g., broader obesity-drug uptake) could contribute. This does not establish that the coverage change caused the increase.",
+              "Date conflict: the provider manual says 2024-02-01. If that date were used, part of 2024Q1 would be unexposed and the measured effect would shift modestly; 2024Q1 was treated as the first post quarter per the SPA.",
+              "Estimates exclude 2025Q3-2025Q4 because they are provisional; persistence beyond 2025Q2 is not assessed.",
+              "8 suppressed rows (counts < 11) inside the analysis window are omitted, which slightly understates totals but is unlikely to affect the rate-level conclusion.",
+              "Figures come from synthetic NL Northland data modeled on CMS State Drug Utilization Data, not real Northland (a fictional state) experience."
+            ],
+            "human_review": [
+              "Confirm with CMS/Northland which effective date governs operational billing (SPA 2024-01-01 vs manual 2024-02-01) so the pre/post boundary is defensible.",
+              "Verify member-month denominators for 2024Q1-2024Q2, since enrollment completeness drives the per-1,000 rate.",
+              "Consider a comparison-state or trend-break check (e.g., EV/SP GLP-1 rates) to rule out market-wide growth as the driver."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Using January 1, 2024 as the start date, Northland's GLP-1 utilization rose 38.8% (95% CI 36.4% to 41.0%), from a pre-period mean of 11.8 to a post-period mean of 16.4 prescriptions per 1,000 member-months \u2014 a change the tool rates significant and material (well above the 5% threshold). The quarterly series shows a discrete step up in 2024Q1 (11.81 to 16.67) that then held roughly flat through 2025Q2, rather than a gradual drift. I used 2024-01-01 because the approved State Plan Amendment 23-014 is the highest-authority source and states that effective date; a provider manual lists 2024-02-01, so that conflict is disclosed. This is a pre/post association, not proof the coverage expansion caused the increase.",
+        "findings": [
+          {
+            "statement": "Start date used: 2024-01-01. NL-SPA-2023-014 (state plan amendment, published 2023-11-20) is the highest-authority source and states the weight-management GLP-1 coverage 'is effective January 1, 2024' [NL-SPA-2023-014#p1]. It covers GLP-1 agonists for chronic weight management in adults with BMI >= 30, or BMI >= 27 with at least one weight-related comorbidity, and leaves type 2 diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E2",
+              "E6"
+            ]
+          },
+          {
+            "statement": "Conflicting date disclosed: NL-MAN-2024-RX, a provider manual published 2024-02-01, says weight-management coverage begins February 1, 2024 [NL-MAN-2024-RX#p1]. It is lower authority than the approved SPA and was not used as the start date. Federal rules tie plan-amendment effective dates to the rules for new plans [42-CFR-430.20(b)], consistent with the SPA controlling here.",
+            "evidence_ids": [
+              "E2",
+              "E6"
+            ]
+          },
+          {
+            "statement": "GLP-1 prescriptions per 1,000 member-months: pre-period (2023Q1-2023Q4) mean 11.8 vs post-period (2024Q1-2024Q4) mean 16.4, a +38.8% change, 95% CI [36.4, 41.0], verdict significant_and_material at a 5% materiality threshold.",
+            "evidence_ids": [
+              "E4"
+            ]
+          },
+          {
+            "statement": "Quarterly rates were stable at 11.68-12.10 through 2023, then stepped to 16.67 in 2024Q1 and stayed in a 16.00-16.67 band through 2025Q2 (all final quarters), indicating a level shift at the policy quarter rather than a pre-existing trend.",
+            "evidence_ids": [
+              "E5",
+              "E3"
+            ]
+          },
+          {
+            "statement": "Data coverage: NL quarters 2023Q1-2025Q2 are final; 2025Q3 and 2025Q4 are provisional (claims lag) and were excluded from the analysis. 12 suppressed rows exist statewide, including 8 in the analysis window.",
+            "evidence_ids": [
+              "E3",
+              "E4"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Authoritative effective date resolved from a high-authority SPA with a disclosed lower-authority conflict, all four pre and four post quarters are final, and the result is a large, statistically precise effect corroborated by a visible step change in the quarterly series.",
+        "caveats": [
+          "Pre/post association only; co-moving GLP-1 market trends (e.g., broader obesity-drug uptake) could contribute. This does not establish that the coverage change caused the increase.",
+          "Date conflict: the provider manual says 2024-02-01. If that date were used, part of 2024Q1 would be unexposed and the measured effect would shift modestly; 2024Q1 was treated as the first post quarter per the SPA.",
+          "Estimates exclude 2025Q3-2025Q4 because they are provisional; persistence beyond 2025Q2 is not assessed.",
+          "8 suppressed rows (counts < 11) inside the analysis window are omitted, which slightly understates totals but is unlikely to affect the rate-level conclusion.",
+          "Figures come from synthetic NL Northland data modeled on CMS State Drug Utilization Data, not real Northland (a fictional state) experience."
+        ],
+        "human_review": [
+          "Confirm with CMS/Northland which effective date governs operational billing (SPA 2024-01-01 vs manual 2024-02-01) so the pre/post boundary is defensible.",
+          "Verify member-month denominators for 2024Q1-2024Q2, since enrollment completeness drives the per-1,000 rate.",
+          "Consider a comparison-state or trend-break check (e.g., EV/SP GLP-1 rates) to rule out market-wide growth as the driver."
+        ]
+      },
+      "wall_seconds": 48.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "decomp_sp",
+      "category": "spending_vs_care",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 7,
+      "actions": [
+        "plan_analysis",
+        "check_data_coverage",
+        "spending_decomposition",
+        "run_sql",
+        "calculate",
+        "calculate",
+        "calculate",
+        "calculate",
+        "calculate",
+        "submit_answer",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Not really \u2014 the spending rise was mostly the plan covering more people, not more GLP-1 treatment per member. Southport GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2 ($6,772,662.07 to $7,656,893.90), but enrollment (+15.7%) more than accounts for that; GLP-1 utilization per member fell 7.6% and price per prescription rose 5.7%. Raw prescriptions were up 6.9%, well below the 15.7% growth in member months, so members on average were getting less GLP-1 treatment and each prescription cost slightly more.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 14,
+        "prompt_tokens": 46601,
+        "cached_tokens": 37632,
+        "completion_tokens": 16883,
+        "llm_seconds": 91.01,
+        "cost_usd": 0.023176
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a spending-change attribution question \u2014 I should plan the analysis before running it, then decompose the spending change into enrollment, utilization, and price.",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "Southport's GLP-1 spending rose between 2023Q4 and 2025Q2. Does that mean members were getting more GLP-1 treatment?"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"plan_id\": \"plan_d7f36219\", \"status\": \"selected\", \"budget_used\": {\"model_calls\": 7, \"tool_calls\": 1, \"seconds\": 72.8, \"retries\": 0}, \"nodes_explored\": 15, \"pruned\": [{\"id\": \"n2\", \"depth\": 1, \"reason\": \"outside beam (width 2)\", \"summary\": {\"metric\": \"rx_per_1000_mm\"}}, {\"id\": \"n1.3\", \"depth\": 2, \"reason\": \"outside beam (width 2)\", \"summary\": {\"metric\": \"spending_decomposition\", \"effective_date\": null, \"comparison\": {\"type\": \"two_quarters\", \"window_quarters\": 1, \"start_quarter\": \"2023Q4\", \"end_quarter\": \"2025Q2\"}}}, {\"id\": \"n3.1\", \"depth\": 2, \"reason\": \"score 6.7 < 7.0\", \"s"
+        },
+        {
+          "thought": "Thought: The plan is selected. Data coverage is known from the planner, but I'll verify it and run the decomposition plus a quarterly prescription/unit-price lookup \u2014 adapting the plan's SQL to the real schema (there is no `sp_glp1` table).",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "SP"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"state\": \"SP\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"missing\": [\"2024Q3\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 11, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: The plan is selected. Data coverage is known from the planner, but I'll verify it and run the decomposition plus a quarterly prescription/unit-price lookup \u2014 adapting the plan's SQL to the real schema (there is no `sp_glp1` table).",
+          "action": "spending_decomposition",
+          "arguments": {
+            "state": "SP",
+            "drug_class": "GLP1",
+            "start_quarter": "2023Q4",
+            "end_quarter": "2025Q2"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"SP\", \"drug_class\": \"GLP1\", \"start_quarter\": \"2023Q4\", \"end_quarter\": \"2025Q2\", \"spending_start_usd\": 6772662.07, \"spending_end_usd\": 7656893.9, \"total_spending_pct_change\": 13.1, \"component_pct_change\": {\"enrollment\": 15.7, \"utilization_per_member\": -7.6, \"price_per_rx\": 5.7}, \"share_of_change_pct\": {\"enrollment\": 118.8, \"utilization_per_member\": -64.1, \"price_per_rx\": 45.3}}"
+        },
+        {
+          "thought": "Thought: The plan is selected. Data coverage is known from the planner, but I'll verify it and run the decomposition plus a quarterly prescription/unit-price lookup \u2014 adapting the plan's SQL to the real schema (there is no `sp_glp1` table).",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT d.year, d.quarter, e.member_months, SUM(d.prescriptions) AS rx, SUM(d.units) AS units, SUM(d.reimbursement_usd) AS spend, SUM(CASE WHEN d.suppressed THEN 1 ELSE 0 END) AS suppressed_rows FROM drug_utilization d JOIN enrollment e ON e.state=d.state AND e.year=d.year AND e.quarter=d.quarter WHERE d.state='SP' AND d.drug_class='GLP1' GROUP BY d.year, d.quarter, e.member_months ORDER BY d.year, d.quarter"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"columns\": [\"year\", \"quarter\", \"member_months\", \"rx\", \"units\", \"spend\", \"suppressed_rows\"], \"rows\": [[2023, 1, 601390, 7224, 28896, 6590667.34, 1], [2023, 2, 595721, 6882, 27528, 6321249.64, 1], [2023, 3, 603603, 7132, 28528, 6573931.45, 1], [2023, 4, 599829, 7422, 29688, 6772662.07, 1], [2024, 1, 615507, 7574, 30296, 7090824.4, 1], [2024, 2, 628508, 7522, 30088, 7077845.9, 1], [2024, 4, 664182, 7767, 31068, 7442694.42, 1], [2025, 1, 680377, 8122, 32488, 7835451.39, 1], [2025, 2, 693940, 7937, 31748, 7656893.9, 1], [2025, 3, 715750, 8020, 32080, 7799766.06, 1], [2025, 4, "
+        },
+        {
+          "thought": "Thought: The decomposition shows enrollment drove the increase while utilization per member fell. Let me compute the per-member prescription rates and price per Rx to make that concrete (note 2024Q3 is missing, so 2025Q2 vs 2024Q4 may also be worth a check).",
+          "action": "calculate",
+          "arguments": {
+            "expression": "2023Q4 = 7422/599829*1000; 2024Q4 = 7767/664182*1000; 2025Q2 = 7937/693940*1000; (2025Q2-2023Q4)/2023Q4*100"
+          },
+          "observation": "{\"error\": \"Cannot evaluate: invalid decimal literal (<unknown>, line 1)\"}"
+        },
+        {
+          "thought": "Thought: The decomposition shows enrollment drove the increase while utilization per member fell. Let me compute the per-member prescription rates and price per Rx to make that concrete (note 2024Q3 is missing, so 2025Q2 vs 2024Q4 may also be worth a check).",
+          "action": "calculate",
+          "arguments": {
+            "expression": "p1 = 6772662.07/7422; p2 = 7656893.9/7937; p1; p2; (p2-p1)/p1*100"
+          },
+          "observation": "{\"error\": \"Cannot evaluate: invalid syntax (<unknown>, line 1)\"}"
+        },
+        {
+          "thought": "Thought: The calculator wants single expressions without assignments \u2014 retrying with plain arithmetic.",
+          "action": "calculate",
+          "arguments": {
+            "expression": "((7937/693940*1000) - (7422/599829*1000)) / (7422/599829*1000) * 100"
+          },
+          "observation": "{\"evidence_id\": \"E5\", \"expression\": \"((7937/693940*1000) - (7422/599829*1000)) / (7422/599829*1000) * 100\", \"result\": -7.564038}"
+        },
+        {
+          "thought": "Thought: The calculator wants single expressions without assignments \u2014 retrying with plain arithmetic.",
+          "action": "calculate",
+          "arguments": {
+            "expression": "((7656893.9/7937) - (6772662.07/7422)) / (6772662.07/7422) * 100"
+          },
+          "observation": "{\"evidence_id\": \"E6\", \"expression\": \"((7656893.9/7937) - (6772662.07/7422)) / (6772662.07/7422) * 100\", \"result\": 5.720155}"
+        },
+        {
+          "thought": "Thought: I have the full picture \u2014 spend +13.1% was driven by enrollment (+15.7%), with per-member utilization down. One quick check on the raw prescription count change, then I'll answer.",
+          "action": "calculate",
+          "arguments": {
+            "expression": "(7937 - 7422) / 7422 * 100"
+          },
+          "observation": "{\"evidence_id\": \"E7\", \"expression\": \"(7937 - 7422) / 7422 * 100\", \"result\": 6.938831}"
+        },
+        {
+          "thought": "",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Not really \u2014 the spending rise was mostly the plan covering more people, not more GLP-1 treatment per member. Southport GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2 ($6.77M to $7.66M), but enrollment (+15.7%) more than accounts for that; GLP-1 utilization per member fell 7.6% and price per prescription rose 5.7%. Raw prescriptions were up 6.9%, well below the 15.7% growth in member months, so members were on average getting less GLP-1 treatment, and each prescription cost slightly more.",
+            "findings": [
+              {
+                "statement": "Total SP GLP-1 spending rose 13.1%, from $6,772,662.07 in 2023Q4 to $7,656,893.90 in 2025Q2.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Decomposition of that spending change: enrollment +15.7%, utilization per member -7.6%, price per prescription +5.7%; enrollment accounts for 118.8% of the change, utilization -64.1%, price 45.3%.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Prescriptions rose only 6.9% (7,422 to 7,937) while member months rose 15.7% (599,829 to 693,940), so prescriptions per 1,000 member months fell 7.6%.",
+                "evidence_ids": [
+                  "E4",
+                  "E5",
+                  "E7"
+                ]
+              },
+              {
+                "statement": "Spending per prescription rose 5.7% between 2023Q4 and 2025Q2, i.e. part of the spending growth is higher cost per fill, not more treatment.",
+                "evidence_ids": [
+                  "E6"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Decomposition and per-member rates are internally consistent and based on final quarters only, but this is a two-quarter comparison with an intervening missing quarter (2024Q3), so trend shape between the endpoints is uncertain.",
+            "caveats": [
+              "2024Q3 is missing for SP and 2025Q3-2025Q4 are provisional (claims lag); only final quarters were used, so this is a two-endpoint comparison, not a continuous trend.",
+              "11 SP drug-utilization rows are privacy-suppressed (<11 prescriptions) and were never treated as zero; suppression may slightly understate volume.",
+              "Prescription counts are a proxy for treatment volume \u2014 dose intensity, adherence, and member-level initiation/discontinuation are not measured here.",
+              "These are associations, not causal effects; no Southport GLP-1 policy effective date could be verified, so no policy attribution is made.",
+              "Data are synthetic (SP = Southport, a fictional state) and mirror CMS State Drug Utilization Data structure.",
+              "Data source: E1 planner selected plan d7f36219; alternative plans using unavailable metrics (total_spend, utilization_rate, rx_per_1000_members) were pruned."
+            ],
+            "human_review": [
+              "Confirm whether a Southport GLP-1 coverage or PDL policy took effect in this window and obtain its authoritative effective date before any causal claim.",
+              "Validate that the 2023Q4 and 2025Q2 enrollment denominators reflect the same population definition (e.g. no eligibility-expansion or retro-eligibility restatement).",
+              "Check whether the increase in price per prescription reflects brand/product mix shift; the decomposition is aggregate and does not split mix from unit price."
+            ]
+          },
+          "observation": "{\"verification_failed\": [\"Numbers not found in any tool result: 6.77, 7.66. Compute them with a tool (calculate/pre_post_analysis) or remove them.\"], \"instruction\": \"Fix these issues and call submit_answer again.\"}"
+        },
+        {
+          "thought": "Thought: The rounded dollar figures weren't in tool output \u2014 I'll use the exact dollar values from E3 instead.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "caveats": [
+              "2024Q3 is missing for SP and 2025Q3-2025Q4 are provisional (claims lag); only final quarters were used, so this is a two-endpoint comparison, not a continuous trend.",
+              "11 SP drug-utilization rows are privacy-suppressed (<11 prescriptions) and were never treated as zero; suppression may slightly understate volume.",
+              "Prescription counts are a proxy for treatment volume \u2014 dose intensity, adherence, and member-level initiation/discontinuation are not measured here.",
+              "These are associations, not causal effects; no Southport GLP-1 policy effective date could be verified, so no policy attribution is made.",
+              "Data are synthetic (SP = Southport, a fictional state) and mirror CMS State Drug Utilization Data structure.",
+              "Alternative plans from the planner using unavailable metrics (total_spend, utilization_rate, rx_per_1000_members) were pruned; the selected plan was d7f36219."
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Decomposition and per-member rates are internally consistent and based on final quarters only, but this is a two-quarter comparison with an intervening missing quarter (2024Q3), so the trend shape between the endpoints is uncertain.",
+            "findings": [
+              {
+                "evidence_ids": [
+                  "E3"
+                ],
+                "statement": "Total SP GLP-1 spending rose 13.1%, from $6,772,662.07 in 2023Q4 to $7,656,893.90 in 2025Q2."
+              },
+              {
+                "evidence_ids": [
+                  "E3"
+                ],
+                "statement": "Decomposition of that spending change: enrollment +15.7%, utilization per member -7.6%, price per prescription +5.7%; enrollment accounts for 118.8% of the change, utilization -64.1%, price 45.3%."
+              },
+              {
+                "evidence_ids": [
+                  "E4",
+                  "E5",
+                  "E7"
+                ],
+                "statement": "Prescriptions rose only 6.9% (7,422 to 7,937) while member months rose 15.7% (599,829 to 693,940), so prescriptions per 1,000 member months fell 7.6%."
+              },
+              {
+                "evidence_ids": [
+                  "E6"
+                ],
+                "statement": "Spending per prescription rose 5.7% between 2023Q4 and 2025Q2, i.e. part of the spending growth is higher cost per fill, not more treatment."
+              }
+            ],
+            "human_review": [
+              "Confirm whether a Southport GLP-1 coverage or PDL policy took effect in this window and obtain its authoritative effective date before any causal claim.",
+              "Validate that the 2023Q4 and 2025Q2 enrollment denominators reflect the same population definition (e.g. no eligibility-expansion or retro-eligibility restatement).",
+              "Check whether the increase in price per prescription reflects brand/product mix shift; the aggregate decomposition does not split mix from unit price."
+            ],
+            "summary": "Not really \u2014 the spending rise was mostly the plan covering more people, not more GLP-1 treatment per member. Southport GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2 ($6,772,662.07 to $7,656,893.90), but enrollment (+15.7%) more than accounts for that; GLP-1 utilization per member fell 7.6% and price per prescription rose 5.7%. Raw prescriptions were up 6.9%, well below the 15.7% growth in member months, so members on average were getting less GLP-1 treatment and each prescription cost slightly more."
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "caveats": [
+          "2024Q3 is missing for SP and 2025Q3-2025Q4 are provisional (claims lag); only final quarters were used, so this is a two-endpoint comparison, not a continuous trend.",
+          "11 SP drug-utilization rows are privacy-suppressed (<11 prescriptions) and were never treated as zero; suppression may slightly understate volume.",
+          "Prescription counts are a proxy for treatment volume \u2014 dose intensity, adherence, and member-level initiation/discontinuation are not measured here.",
+          "These are associations, not causal effects; no Southport GLP-1 policy effective date could be verified, so no policy attribution is made.",
+          "Data are synthetic (SP = Southport, a fictional state) and mirror CMS State Drug Utilization Data structure.",
+          "Alternative plans from the planner using unavailable metrics (total_spend, utilization_rate, rx_per_1000_members) were pruned; the selected plan was d7f36219."
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Decomposition and per-member rates are internally consistent and based on final quarters only, but this is a two-quarter comparison with an intervening missing quarter (2024Q3), so the trend shape between the endpoints is uncertain.",
+        "findings": [
+          {
+            "evidence_ids": [
+              "E3"
+            ],
+            "statement": "Total SP GLP-1 spending rose 13.1%, from $6,772,662.07 in 2023Q4 to $7,656,893.90 in 2025Q2."
+          },
+          {
+            "evidence_ids": [
+              "E3"
+            ],
+            "statement": "Decomposition of that spending change: enrollment +15.7%, utilization per member -7.6%, price per prescription +5.7%; enrollment accounts for 118.8% of the change, utilization -64.1%, price 45.3%."
+          },
+          {
+            "evidence_ids": [
+              "E4",
+              "E5",
+              "E7"
+            ],
+            "statement": "Prescriptions rose only 6.9% (7,422 to 7,937) while member months rose 15.7% (599,829 to 693,940), so prescriptions per 1,000 member months fell 7.6%."
+          },
+          {
+            "evidence_ids": [
+              "E6"
+            ],
+            "statement": "Spending per prescription rose 5.7% between 2023Q4 and 2025Q2, i.e. part of the spending growth is higher cost per fill, not more treatment."
+          }
+        ],
+        "human_review": [
+          "Confirm whether a Southport GLP-1 coverage or PDL policy took effect in this window and obtain its authoritative effective date before any causal claim.",
+          "Validate that the 2023Q4 and 2025Q2 enrollment denominators reflect the same population definition (e.g. no eligibility-expansion or retro-eligibility restatement).",
+          "Check whether the increase in price per prescription reflects brand/product mix shift; the aggregate decomposition does not split mix from unit price."
+        ],
+        "summary": "Not really \u2014 the spending rise was mostly the plan covering more people, not more GLP-1 treatment per member. Southport GLP-1 spending rose 13.1% from 2023Q4 to 2025Q2 ($6,772,662.07 to $7,656,893.90), but enrollment (+15.7%) more than accounts for that; GLP-1 utilization per member fell 7.6% and price per prescription rose 5.7%. Raw prescriptions were up 6.9%, well below the 15.7% growth in member months, so members on average were getting less GLP-1 treatment and each prescription cost slightly more."
+      },
+      "wall_seconds": 91.0,
+      "paraphrase_of": null
+    },
+    {
+      "id": "tot_announced_date",
+      "category": "tot_premature_commitment",
+      "passed": false,
+      "checks": {
+        "answer_type": false,
+        "required_tools": false,
+        "effective_date": false,
+        "number": false,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "plan_analysis",
+        "get_policy_timeline",
+        "check_data_coverage",
+        "run_sql",
+        "submit_answer"
+      ],
+      "expected_number": -18.6,
+      "summary": "I could not produce a valid before/after estimate of the GLP-1 prior-authorization policy in Eastvale (EV). The authoritative effective date is 2024-07-01 (provider manual EV-MAN-2024-PH), not the May 2024 announcement date; the May 2024 bulletin (EV-BUL-2024-007, 2024-06-01) was superseded. Every candidate analysis plan was rejected by the planning checks, so no pre/post percent change, confidence interval, or significance verdict is available. Raw quarterly GLP-1 prescription counts are shown for orientation only and are not a validated policy effect.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 9,
+        "prompt_tokens": 17691,
+        "cached_tokens": 11776,
+        "completion_tokens": 11175,
+        "llm_seconds": 61.21,
+        "cost_usd": 0.015255
+      },
+      "trace": [
+        {
+          "thought": "Thought: The state (EV) and drug class (GLP1) are clear, but I must use the authoritative effective date rather than the May 2024 announcement date, and this is a before/after question \u2014 so I'll plan the analysis and resolve the policy timeline.",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "Eastvale announced its GLP-1 prior authorization requirement in May 2024. How did GLP-1 prescribing change after the policy?"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"plan_id\": \"plan_dbe660d8\", \"status\": \"no_valid_plan\", \"budget_used\": {\"model_calls\": 6, \"tool_calls\": 2, \"seconds\": 43.7, \"retries\": 1}, \"nodes_explored\": 9, \"pruned\": [{\"id\": \"n2\", \"depth\": 1, \"reason\": \"score 6.0 < 7.0\", \"summary\": {\"metric\": \"spend_per_rx\"}}, {\"id\": \"n1.1\", \"depth\": 2, \"reason\": \"score 6.7 < 7.0\", \"summary\": {\"metric\": \"rx_per_1000_mm\", \"effective_date\": \"2024-04-01\", \"comparison\": {\"type\": \"pre_post\", \"window_quarters\": 4, \"start_quarter\": \"2023Q2\", \"end_quarter\": \"2025Q1\"}}}, {\"id\": \"n1.2\", \"depth\": 2, \"reason\": \"score 4.4 < 7.0\", \"summary\": {\"metri"
+        },
+        {
+          "thought": "Thought: The state (EV) and drug class (GLP1) are clear, but I must use the authoritative effective date rather than the May 2024 announcement date, and this is a before/after question \u2014 so I'll plan the analysis and resolve the policy timeline.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "EV",
+            "topic": "glp1_prior_auth"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"key\": \"EV:glp1_prior_auth:effective_date\", \"status\": \"resolved\", \"value\": \"2024-07-01\", \"source_doc\": \"EV-MAN-2024-PH\", \"conflicts\": [], \"superseded\": [{\"key\": \"EV:glp1_prior_auth:effective_date\", \"value\": \"2024-06-01\", \"source_doc\": \"EV-BUL-2024-007\", \"doc_type\": \"provider_bulletin\", \"published\": \"2024-05-15\", \"status\": \"superseded\", \"superseded_by\": \"EV-BUL-2024-011\", \"last_verified\": \"2026-11-20\", \"note\": \"Replaced by EV-BUL-2024-011 (published 2024-06-10).\"}], \"explanation\": \"EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL"
+        },
+        {
+          "thought": "The planner rejected every candidate design, so I must not run the pre/post comparison. Let me confirm what the data supports before explaining why.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "The planner rejected every candidate design, so I must not run the pre/post comparison. Let me confirm what the data supports before explaining why.",
+          "action": "run_sql",
+          "arguments": {
+            "sql": "SELECT year, quarter, COUNT(*) AS rows_all, SUM(CASE WHEN suppressed THEN 1 ELSE 0 END) AS suppressed_rows, SUM(prescriptions) AS rx_reported FROM drug_utilization WHERE state='EV' AND drug_class='GLP1' GROUP BY year, quarter ORDER BY year, quarter"
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"columns\": [\"year\", \"quarter\", \"rows_all\", \"suppressed_rows\", \"rx_reported\"], \"rows\": [[2023, 1, 4, 1, 17667], [2023, 2, 4, 1, 18146], [2023, 3, 4, 1, 18508], [2023, 4, 4, 1, 17533], [2024, 1, 4, 1, 17851], [2024, 2, 4, 1, 18467], [2024, 3, 4, 1, 14767], [2024, 4, 4, 1, 15000], [2025, 1, 4, 1, 14257], [2025, 2, 4, 1, 14770], [2025, 3, 4, 1, 13191], [2025, 4, 4, 1, 10207]], \"row_count\": 12, \"truncated\": false}"
+        },
+        {
+          "thought": "Thought: The plan search rejected all seven candidate designs and none tested the resolved 2024-07-01 date, so I must not report a pre/post result \u2014 I'll answer cannot_answer while disclosing the resolved date, coverage limits, and the raw descriptive counts.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "cannot_answer",
+            "summary": "I could not produce a valid before/after estimate of the GLP-1 prior-authorization policy in Eastvale (EV). The authoritative effective date is 2024-07-01 (provider manual EV-MAN-2024-PH), not the May 2024 announcement date; the May 2024 bulletin (EV-BUL-2024-007, 2024-06-01) was superseded. Every candidate analysis plan was rejected by the planning checks, so no pre/post percent change, confidence interval, or significance verdict is available. Raw quarterly GLP-1 prescription counts are shown for orientation only and are not a validated policy effect.",
+            "findings": [
+              {
+                "statement": "The ToT planner explored 9 design nodes and rejected all 7 candidates (metrics: spend_per_rx; rx_per_1000_mm and spending_decomposition at effective dates 2024-04-01 and 2024-05-01, with 1-, 4-, 5-, 6- and 10-quarter windows); no plan passed the quality threshold, so no pre/post or decomposition result was run.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The authoritative effective date for EV's GLP-1 prior authorization is 2024-07-01 from EV-MAN-2024-PH (highest-authority current source); the earlier 2024-06-01 date in bulletin EV-BUL-2024-007 (published 2024-05-15) is superseded by EV-BUL-2024-011. The May 2024 date is an announcement date, not an effective date.",
+                "evidence_ids": [
+                  "E2",
+                  "E1"
+                ]
+              },
+              {
+                "statement": "EV data are final for 2023Q1 through 2025Q2 and provisional (claims lag, incomplete) for 2025Q3 and 2025Q4, which must be excluded from any comparison; 12 GLP-1 product rows are privacy-suppressed and must not be treated as zero.",
+                "evidence_ids": [
+                  "E3"
+                ]
+              },
+              {
+                "statement": "Descriptive only, not a validated effect: total reported EV GLP-1 prescriptions per quarter were 17,851 (2024Q1), 18,467 (2024Q2), 14,767 (2024Q3) and 15,000 (2024Q4), i.e. a drop beginning in the quarter the 2024-07-01 policy took effect; no percent change or significance test was computed.",
+                "evidence_ids": [
+                  "E4"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "The effective date is resolved by authority rules with no conflicts, and coverage status is explicit; the blocker is that the planner returned no_valid_plan, which this assistant must not override by running a rejected design.",
+            "caveats": [
+              "No before/after estimate is reported because the planning step rejected every candidate design; none of the tested candidates used the resolved 2024-07-01 effective date, and post-period final data cover only four quarters (2024Q3-2025Q2).",
+              "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; 12 GLP-1 rows are privacy-suppressed (<11) and are missing, not zero.",
+              "The May 2024 source (EV-BUL-2024-007, effective 2024-06-01) is superseded and should not be used as the cut point.",
+              "The quarterly counts listed are descriptive aggregates of reported prescriptions, not an enrollment-adjusted rate, and even a valid pre/post difference would be an association, not proof the prior authorization caused the change.",
+              "All states and data are synthetic (EV = Eastvale); the federal regulation corpus does not establish EV's prior-authorization rules."
+            ],
+            "human_review": [
+              "Decide whether to accept an alternative design (e.g. a 4-final-quarter pre window 2023Q3-2024Q2 vs 4-final-quarter post window 2024Q3-2025Q2 on rx_per_1000_mm) or to wait for additional final quarters, then rerun the formal pre/post test.",
+              "Confirm the 2024-07-01 effective date against EV-MAN-2024-PH and confirm EV-BUL-2024-011 is the governing bulletin.",
+              "Assess whether the 12 suppressed GLP-1 product rows materially affect a class-level prescription count before interpreting any rate.",
+              "If spending questions follow, run spending_decomposition on final quarters only so spending is not conflated with utilization."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "I could not produce a valid before/after estimate of the GLP-1 prior-authorization policy in Eastvale (EV). The authoritative effective date is 2024-07-01 (provider manual EV-MAN-2024-PH), not the May 2024 announcement date; the May 2024 bulletin (EV-BUL-2024-007, 2024-06-01) was superseded. Every candidate analysis plan was rejected by the planning checks, so no pre/post percent change, confidence interval, or significance verdict is available. Raw quarterly GLP-1 prescription counts are shown for orientation only and are not a validated policy effect.",
+        "findings": [
+          {
+            "statement": "The ToT planner explored 9 design nodes and rejected all 7 candidates (metrics: spend_per_rx; rx_per_1000_mm and spending_decomposition at effective dates 2024-04-01 and 2024-05-01, with 1-, 4-, 5-, 6- and 10-quarter windows); no plan passed the quality threshold, so no pre/post or decomposition result was run.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The authoritative effective date for EV's GLP-1 prior authorization is 2024-07-01 from EV-MAN-2024-PH (highest-authority current source); the earlier 2024-06-01 date in bulletin EV-BUL-2024-007 (published 2024-05-15) is superseded by EV-BUL-2024-011. The May 2024 date is an announcement date, not an effective date.",
+            "evidence_ids": [
+              "E2",
+              "E1"
+            ]
+          },
+          {
+            "statement": "EV data are final for 2023Q1 through 2025Q2 and provisional (claims lag, incomplete) for 2025Q3 and 2025Q4, which must be excluded from any comparison; 12 GLP-1 product rows are privacy-suppressed and must not be treated as zero.",
+            "evidence_ids": [
+              "E3"
+            ]
+          },
+          {
+            "statement": "Descriptive only, not a validated effect: total reported EV GLP-1 prescriptions per quarter were 17,851 (2024Q1), 18,467 (2024Q2), 14,767 (2024Q3) and 15,000 (2024Q4), i.e. a drop beginning in the quarter the 2024-07-01 policy took effect; no percent change or significance test was computed.",
+            "evidence_ids": [
+              "E4"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "The effective date is resolved by authority rules with no conflicts, and coverage status is explicit; the blocker is that the planner returned no_valid_plan, which this assistant must not override by running a rejected design.",
+        "caveats": [
+          "No before/after estimate is reported because the planning step rejected every candidate design; none of the tested candidates used the resolved 2024-07-01 effective date, and post-period final data cover only four quarters (2024Q3-2025Q2).",
+          "2025Q3 and 2025Q4 are provisional (claims lag) and were excluded; 12 GLP-1 rows are privacy-suppressed (<11) and are missing, not zero.",
+          "The May 2024 source (EV-BUL-2024-007, effective 2024-06-01) is superseded and should not be used as the cut point.",
+          "The quarterly counts listed are descriptive aggregates of reported prescriptions, not an enrollment-adjusted rate, and even a valid pre/post difference would be an association, not proof the prior authorization caused the change.",
+          "All states and data are synthetic (EV = Eastvale); the federal regulation corpus does not establish EV's prior-authorization rules."
+        ],
+        "human_review": [
+          "Decide whether to accept an alternative design (e.g. a 4-final-quarter pre window 2023Q3-2024Q2 vs 4-final-quarter post window 2024Q3-2025Q2 on rx_per_1000_mm) or to wait for additional final quarters, then rerun the formal pre/post test.",
+          "Confirm the 2024-07-01 effective date against EV-MAN-2024-PH and confirm EV-BUL-2024-011 is the governing bulletin.",
+          "Assess whether the 12 suppressed GLP-1 product rows materially affect a class-level prescription count before interpreting any rate.",
+          "If spending questions follow, run spending_decomposition on final quarters only so spending is not conflated with utilization."
+        ]
+      },
+      "wall_seconds": 61.2,
+      "paraphrase_of": null
+    },
+    {
+      "id": "tot_provisional_window",
+      "category": "tot_premature_commitment",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "mentions_any": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "cannot_answer",
+      "stop_reason": "submitted",
+      "steps": 3,
+      "actions": [
+        "check_data_coverage",
+        "plan_analysis",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Eastvale's 2025Q4 GLP-1 data is only provisional (claims lag, quarterly data still incomplete), so a 2025Q2 vs 2025Q4 comparison cannot be validly computed. The planning step rejected every variant of the requested comparison for this reason. The latest final quarter for Eastvale is 2025Q2.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 8,
+        "prompt_tokens": 14173,
+        "cached_tokens": 9216,
+        "completion_tokens": 10542,
+        "llm_seconds": 56.34,
+        "cost_usd": 0.014193
+      },
+      "trace": [
+        {
+          "thought": "Thought: This is a two-quarter comparison, so I need to know whether 2025Q2 and 2025Q4 are final for EV before comparing.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "EV"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"state\": \"EV\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "2025Q4 is provisional. So we cannot compare directly \u2014 the comparison is invalid. 2025Q2 is final, 2025Q4 is provisional (claims lag). Guidance says compare only final quarters.\n\nNote: this question is not about a policy effective date \u2014 it's a period comparison. plan_analysis could be used, but the",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "Compare Eastvale's GLP-1 prescriptions per 1,000 member-months in 2025Q2 versus 2025Q4. Did use fall?"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"plan_id\": \"plan_e445fcf3\", \"status\": \"no_valid_plan\", \"budget_used\": {\"model_calls\": 5, \"tool_calls\": 2, \"seconds\": 49.0, \"retries\": 0}, \"nodes_explored\": 9, \"pruned\": [{\"id\": \"n3\", \"depth\": 1, \"reason\": \"score 6.0 < 7.0\", \"summary\": {\"metric\": \"spend_per_rx\"}}, {\"id\": \"n1.1\", \"depth\": 2, \"reason\": \"hard failure: compares non-final quarter(s) ['2025Q4'] (provisional or missing)\", \"summary\": {\"metric\": \"rx_per_1000_mm\", \"effective_date\": \"2025-07-01\", \"comparison\": {\"type\": \"two_quarters\", \"window_quarters\": 3, \"start_quarter\": \"2025Q2\", \"end_quarter\": \"2025Q4\"}}}, {\"id\":"
+        },
+        {
+          "thought": "The plan rejects 2025Q4 as provisional. So I can't answer the requested comparison. I should answer cannot_answer with reasons. Could I offer E1 coverage and note the most recent comparable final quarter pair? The instructions say don't run rejected analysis. I could optionally mention 2025Q1 vs 202",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "cannot_answer",
+            "summary": "Eastvale's 2025Q4 GLP-1 data is only provisional (claims lag, quarterly data still incomplete), so a 2025Q2 vs 2025Q4 comparison cannot be validly computed. The planning step rejected every variant of the requested comparison for this reason. The latest final quarter for Eastvale is 2025Q2.",
+            "findings": [
+              {
+                "statement": "For Eastvale (EV), 2025Q2 is final but both 2025Q3 and 2025Q4 are provisional, so a Q2-vs-Q4 utilization comparison would mix finalized and incomplete quarters.",
+                "evidence_ids": [
+                  "E1"
+                ]
+              },
+              {
+                "statement": "The analysis planner pruned all candidate plans that ended in 2025Q4 (two-quarter and pre/post variants alike) because they compared a non-final quarter; no valid plan exists for this request.",
+                "evidence_ids": [
+                  "E2"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "confidence_reason": "Coverage status is explicit in the reporting_status data and the planner independently confirmed that every variant including 2025Q4 fails the final-quarter requirement.",
+            "caveats": [
+              "2025Q3 and 2025Q4 are provisional (incomplete due to claims lag); provisional quarters understate true utilization and cannot be compared with final quarters.",
+              "Eastvale has 12 suppressed rows; suppressed prescription counts (<11) are NULL and should never be treated as zero.",
+              "All states and data are synthetic (NL Northland, EV Eastvale, SP Southport), mirroring CMS SDUD structure for research purposes."
+            ],
+            "human_review": [
+              "Re-run this comparison once 2025Q4 is restated to 'final' in reporting_status, or substitute the latest final quarter pair (2025Q1 vs 2025Q2) if the user accepts a different period.",
+              "Confirm whether the user's 'did use fall?' question was intended to test a specific EV policy; the resolved EV GLP-1 prior-authorization effective date is 2024-07-01 (source EV-MAN-2024-PH), which supersedes the earlier 2024-06-01 bulletin date."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "cannot_answer",
+        "summary": "Eastvale's 2025Q4 GLP-1 data is only provisional (claims lag, quarterly data still incomplete), so a 2025Q2 vs 2025Q4 comparison cannot be validly computed. The planning step rejected every variant of the requested comparison for this reason. The latest final quarter for Eastvale is 2025Q2.",
+        "findings": [
+          {
+            "statement": "For Eastvale (EV), 2025Q2 is final but both 2025Q3 and 2025Q4 are provisional, so a Q2-vs-Q4 utilization comparison would mix finalized and incomplete quarters.",
+            "evidence_ids": [
+              "E1"
+            ]
+          },
+          {
+            "statement": "The analysis planner pruned all candidate plans that ended in 2025Q4 (two-quarter and pre/post variants alike) because they compared a non-final quarter; no valid plan exists for this request.",
+            "evidence_ids": [
+              "E2"
+            ]
+          }
+        ],
+        "confidence": "high",
+        "confidence_reason": "Coverage status is explicit in the reporting_status data and the planner independently confirmed that every variant including 2025Q4 fails the final-quarter requirement.",
+        "caveats": [
+          "2025Q3 and 2025Q4 are provisional (incomplete due to claims lag); provisional quarters understate true utilization and cannot be compared with final quarters.",
+          "Eastvale has 12 suppressed rows; suppressed prescription counts (<11) are NULL and should never be treated as zero.",
+          "All states and data are synthetic (NL Northland, EV Eastvale, SP Southport), mirroring CMS SDUD structure for research purposes."
+        ],
+        "human_review": [
+          "Re-run this comparison once 2025Q4 is restated to 'final' in reporting_status, or substitute the latest final quarter pair (2025Q1 vs 2025Q2) if the user accepts a different period.",
+          "Confirm whether the user's 'did use fall?' question was intended to test a specific EV policy; the resolved EV GLP-1 prior-authorization effective date is 2024-07-01 (source EV-MAN-2024-PH), which supersedes the earlier 2024-06-01 bulletin date."
+        ]
+      },
+      "wall_seconds": 56.4,
+      "paraphrase_of": null
+    },
+    {
+      "id": "tot_spending_driver",
+      "category": "tot_premature_commitment",
+      "passed": true,
+      "checks": {
+        "answer_type": true,
+        "required_tools": true,
+        "mentions_any": true,
+        "verified": true,
+        "tool_call_valid": true
+      },
+      "answer_type": "answer",
+      "stop_reason": "submitted",
+      "steps": 5,
+      "actions": [
+        "plan_analysis",
+        "get_policy_timeline",
+        "check_data_coverage",
+        "pre_post_analysis",
+        "spending_decomposition",
+        "search_policy",
+        "submit_answer"
+      ],
+      "expected_number": null,
+      "summary": "Yes \u2014 Northland's GLP-1 spending per member per month rose 42.4% from the four quarters before the weight-management coverage (2024-01-01) to the four after, a statistically significant and material change. The decomposition shows this was overwhelmingly driven by more use per member (34.7% up; 82.6% of the spending change), with price per prescription a minor contributor (5.4%; 14.5% of change) and enrollment essentially flat (1.1%; 3.0%). These are pre/post associations, not proof of causation.",
+      "usage": {
+        "model": "deepseek:deepseek-flash",
+        "llm_calls": 12,
+        "prompt_tokens": 32051,
+        "cached_tokens": 22656,
+        "completion_tokens": 13545,
+        "llm_seconds": 74.34,
+        "cost_usd": 0.019208
+      },
+      "trace": [
+        {
+          "thought": "This is a before/after + spending-change question. Call plan_analysis first.",
+          "action": "plan_analysis",
+          "arguments": {
+            "question": "Did Northland's GLP-1 spending rise after its weight-management coverage began, and was that driven by more members, more use per member, or higher prices?"
+          },
+          "observation": "{\"evidence_id\": \"E1\", \"plan_id\": \"plan_7b1059cf\", \"status\": \"selected\", \"budget_used\": {\"model_calls\": 7, \"tool_calls\": 2, \"seconds\": 63.0, \"retries\": 1}, \"nodes_explored\": 12, \"pruned\": [{\"id\": \"n2\", \"depth\": 1, \"reason\": \"score 6.0 < 7.0\", \"summary\": {\"metric\": \"rx_per_1000_mm\"}}, {\"id\": \"n1.2\", \"depth\": 2, \"reason\": \"score 6.7 < 7.0\", \"summary\": {\"metric\": \"spend_pmpm\", \"effective_date\": \"2024-01-01\", \"comparison\": {\"type\": \"two_quarters\", \"window_quarters\": 2, \"start_quarter\": \"2023Q4\", \"end_quarter\": \"2024Q1\"}}}, {\"id\": \"n1.3\", \"depth\": 2, \"reason\": \"score 5.6 < 7.0\", \"summary\": {\"metric\""
+        },
+        {
+          "thought": "Thought: The planner selected a pre/post on spend PMPM around 2024-01-01 plus a decomposition; I need the timeline and coverage details as my own evidence.",
+          "action": "get_policy_timeline",
+          "arguments": {
+            "state": "NL",
+            "topic": "glp1_coverage"
+          },
+          "observation": "{\"evidence_id\": \"E2\", \"key\": \"NL:glp1_coverage:effective_date\", \"status\": \"resolved\", \"value\": \"2024-01-01\", \"source_doc\": \"NL-SPA-2023-014\", \"conflicts\": [{\"key\": \"NL:glp1_coverage:effective_date\", \"value\": \"2024-02-01\", \"source_doc\": \"NL-MAN-2024-RX\", \"doc_type\": \"provider_manual\", \"published\": \"2024-02-01\", \"status\": \"verified\", \"superseded_by\": \"\", \"last_verified\": \"2026-11-20\", \"note\": \"\"}], \"superseded\": [], \"explanation\": \"NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this confli"
+        },
+        {
+          "thought": "Thought: The planner selected a pre/post on spend PMPM around 2024-01-01 plus a decomposition; I need the timeline and coverage details as my own evidence.",
+          "action": "check_data_coverage",
+          "arguments": {
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E3\", \"state\": \"NL\", \"available\": true, \"quarters_by_status\": {\"final\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\", \"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\", \"2025Q1\", \"2025Q2\"], \"provisional\": [\"2025Q3\", \"2025Q4\"]}, \"suppressed_rows\": 12, \"guidance\": \"Compare only 'final' quarters; disclose provisional/missing quarters.\"}"
+        },
+        {
+          "thought": "Thought: Timeline resolved to 2024-01-01 (with a conflicting manual date to disclose) and only final quarters 2023Q1\u20132025Q2 should be used; next run the pre/post on spend PMPM and the decomposition.",
+          "action": "pre_post_analysis",
+          "arguments": {
+            "state": "NL",
+            "drug_class": "GLP1",
+            "effective_date": "2024-01-01",
+            "metric": "spend_pmpm",
+            "materiality_pct": 5
+          },
+          "observation": "{\"evidence_id\": \"E4\", \"state\": \"NL\", \"drug_class\": \"GLP1\", \"metric\": \"spend_pmpm\", \"metric_label\": \"Reimbursement per member per month (USD)\", \"effective_date\": \"2024-01-01\", \"timing_note\": \"Policy starts on the first day of 2024Q1; that quarter is the first post-period quarter.\", \"pre_quarters\": [\"2023Q1\", \"2023Q2\", \"2023Q3\", \"2023Q4\"], \"post_quarters\": [\"2024Q1\", \"2024Q2\", \"2024Q3\", \"2024Q4\"], \"excluded_quarters\": [], \"status\": \"ok\", \"pre_mean\": 10.889, \"post_mean\": 15.503, \"pct_change\": 42.4, \"ci95_pct_change\": [40.1, 44.6], \"materiality_threshold_pct\": 5.0, \"verdict\": \"significant_and_mate"
+        },
+        {
+          "thought": "Thought: Timeline resolved to 2024-01-01 (with a conflicting manual date to disclose) and only final quarters 2023Q1\u20132025Q2 should be used; next run the pre/post on spend PMPM and the decomposition.",
+          "action": "spending_decomposition",
+          "arguments": {
+            "state": "NL",
+            "drug_class": "GLP1",
+            "start_quarter": "2023Q1",
+            "end_quarter": "2024Q4"
+          },
+          "observation": "{\"evidence_id\": \"E5\", \"state\": \"NL\", \"drug_class\": \"GLP1\", \"start_quarter\": \"2023Q1\", \"end_quarter\": \"2024Q4\", \"spending_start_usd\": 9866906.79, \"spending_end_usd\": 14152242.14, \"total_spending_pct_change\": 43.4, \"component_pct_change\": {\"enrollment\": 1.1, \"utilization_per_member\": 34.7, \"price_per_rx\": 5.4}, \"share_of_change_pct\": {\"enrollment\": 3.0, \"utilization_per_member\": 82.6, \"price_per_rx\": 14.5}}"
+        },
+        {
+          "thought": "Thought: Spending rose sharply and the decomposition attributes most of it to use per member; a quick policy search would confirm what the coverage expansion actually did.",
+          "action": "search_policy",
+          "arguments": {
+            "query": "GLP-1 coverage for weight management / obesity criteria effective date",
+            "state": "NL"
+          },
+          "observation": "{\"evidence_id\": \"E6\", \"query\": \"GLP-1 coverage for weight management / obesity criteria effective date\", \"filters\": {\"state\": \"NL\", \"as_of\": null, \"include_federal\": true}, \"retrieval_quality\": {\"mode\": \"hybrid\", \"best_dense_similarity\": 0.804, \"status\": \"ok\"}, \"jurisdictions_in_results\": [\"NL\", \"US\"], \"passages\": [{\"chunk_id\": \"NL-SPA-2023-014#p1\", \"doc_id\": \"NL-SPA-2023-014\", \"title\": \"State Plan Amendment 23-014: Coverage of GLP-1 agonists for chronic weight management\", \"paragraph\": \"p1\", \"jurisdiction\": \"NL\", \"scope\": \"state-specific (NL)\", \"doc_type\": \"state_plan_amendment\", \"published\":"
+        },
+        {
+          "thought": "Submit answer.",
+          "action": "submit_answer",
+          "arguments": {
+            "answer_type": "answer",
+            "summary": "Yes \u2014 Northland's GLP-1 spending per member per month rose 42.4% from the four quarters before the weight-management coverage (2024-01-01) to the four after, a statistically significant and material change. The decomposition shows this was overwhelmingly driven by more use per member (34.7% up; 82.6% of the spending change), with price per prescription a minor contributor (5.4%; 14.5% of change) and enrollment essentially flat (1.1%; 3.0%). These are pre/post associations, not proof of causation.",
+            "findings": [
+              {
+                "statement": "NL SPA 23-014 covers GLP-1 receptor agonists for chronic weight management (BMI >= 30, or BMI >= 27 with a weight-related comorbidity), effective 2024-01-01; diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+                "evidence_ids": [
+                  "E6",
+                  "E2"
+                ]
+              },
+              {
+                "statement": "GLP-1 reimbursement per member per month rose from 10.889 USD (2023Q1\u2013Q4) to 15.503 USD (2024Q1\u2013Q4): +42.4% (95% CI 40.1% to 44.6%), verdict significant_and_material at a 5% materiality threshold.",
+                "evidence_ids": [
+                  "E4"
+                ]
+              },
+              {
+                "statement": "Total GLP-1 spending rose 43.4% from 2023Q1 (9,866,906.79 USD) to 2024Q4 (14,152,242.14 USD).",
+                "evidence_ids": [
+                  "E5"
+                ]
+              },
+              {
+                "statement": "Of the spending change, utilization per member contributed 82.6% (up 34.7%), price per prescription 14.5% (up 5.4%), and enrollment 3.0% (up 1.1%) \u2014 i.e., volume of use per member dominated, not membership growth or price.",
+                "evidence_ids": [
+                  "E5"
+                ]
+              },
+              {
+                "statement": "The effective-date question is contested: the state plan amendment (higher authority) gives 2024-01-01, while the Pharmacy Provider Manual \u00a77.4 states weight-management coverage begins 2024-02-01 [NL-MAN-2024-RX#p1].",
+                "evidence_ids": [
+                  "E2",
+                  "E6"
+                ]
+              }
+            ],
+            "confidence": "medium",
+            "confidence_reason": "Timeline and utilization data are solid and consistent between the two analyses, but the direction of the estimate depends on the effective date, and the manual disagrees with the SPA by one month.",
+            "caveats": [
+              "Pre/post differences are associations; they do not prove the coverage expansion caused the change.",
+              "Effective date conflict: SPA 23-014 says 2024-01-01; the provider manual says 2024-02-01. Using 2024-02-01 would shift part of 2024Q1 into the pre-period and likely dampen the measured change.",
+              "Provisional quarters 2025Q3 and 2025Q4 were excluded; only final quarters 2023Q1\u20132025Q2 were available.",
+              "8 suppressed rows (counts <11, treated as missing, not zero) fell inside the analysis window.",
+              "The planner pruned alternatives (e.g., rx per 1,000 member-months, 6-quarter windows to 2025Q4) as lower-scoring; the 2- vs 4-quarter window choice affects magnitude, not the direction.",
+              "Data and states (NL, EV, SP) are synthetic and illustrative."
+            ],
+            "human_review": [
+              "Confirm which effective date (2024-01-01 vs 2024-02-01) governs claims payment by checking CMS approval letter for NL-SPA-2023-014 and any subsequent manual correction.",
+              "Verify that the utilization-per-member rise reflects new weight-management starts rather than a shift in diabetes prescribing or a mix change toward higher-strength products.",
+              "Check for seasonality and any concurrent 2024 program changes (e.g., prior authorization, benefit design) that could explain the utilization jump."
+            ]
+          },
+          "observation": "{\"accepted\": true}"
+        }
+      ],
+      "answer": {
+        "answer_type": "answer",
+        "summary": "Yes \u2014 Northland's GLP-1 spending per member per month rose 42.4% from the four quarters before the weight-management coverage (2024-01-01) to the four after, a statistically significant and material change. The decomposition shows this was overwhelmingly driven by more use per member (34.7% up; 82.6% of the spending change), with price per prescription a minor contributor (5.4%; 14.5% of change) and enrollment essentially flat (1.1%; 3.0%). These are pre/post associations, not proof of causation.",
+        "findings": [
+          {
+            "statement": "NL SPA 23-014 covers GLP-1 receptor agonists for chronic weight management (BMI >= 30, or BMI >= 27 with a weight-related comorbidity), effective 2024-01-01; diabetes coverage unchanged [NL-SPA-2023-014#p1].",
+            "evidence_ids": [
+              "E6",
+              "E2"
+            ]
+          },
+          {
+            "statement": "GLP-1 reimbursement per member per month rose from 10.889 USD (2023Q1\u2013Q4) to 15.503 USD (2024Q1\u2013Q4): +42.4% (95% CI 40.1% to 44.6%), verdict significant_and_material at a 5% materiality threshold.",
+            "evidence_ids": [
+              "E4"
+            ]
+          },
+          {
+            "statement": "Total GLP-1 spending rose 43.4% from 2023Q1 (9,866,906.79 USD) to 2024Q4 (14,152,242.14 USD).",
+            "evidence_ids": [
+              "E5"
+            ]
+          },
+          {
+            "statement": "Of the spending change, utilization per member contributed 82.6% (up 34.7%), price per prescription 14.5% (up 5.4%), and enrollment 3.0% (up 1.1%) \u2014 i.e., volume of use per member dominated, not membership growth or price.",
+            "evidence_ids": [
+              "E5"
+            ]
+          },
+          {
+            "statement": "The effective-date question is contested: the state plan amendment (higher authority) gives 2024-01-01, while the Pharmacy Provider Manual \u00a77.4 states weight-management coverage begins 2024-02-01 [NL-MAN-2024-RX#p1].",
+            "evidence_ids": [
+              "E2",
+              "E6"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_reason": "Timeline and utilization data are solid and consistent between the two analyses, but the direction of the estimate depends on the effective date, and the manual disagrees with the SPA by one month.",
+        "caveats": [
+          "Pre/post differences are associations; they do not prove the coverage expansion caused the change.",
+          "Effective date conflict: SPA 23-014 says 2024-01-01; the provider manual says 2024-02-01. Using 2024-02-01 would shift part of 2024Q1 into the pre-period and likely dampen the measured change.",
+          "Provisional quarters 2025Q3 and 2025Q4 were excluded; only final quarters 2023Q1\u20132025Q2 were available.",
+          "8 suppressed rows (counts <11, treated as missing, not zero) fell inside the analysis window.",
+          "The planner pruned alternatives (e.g., rx per 1,000 member-months, 6-quarter windows to 2025Q4) as lower-scoring; the 2- vs 4-quarter window choice affects magnitude, not the direction.",
+          "Data and states (NL, EV, SP) are synthetic and illustrative."
+        ],
+        "human_review": [
+          "Confirm which effective date (2024-01-01 vs 2024-02-01) governs claims payment by checking CMS approval letter for NL-SPA-2023-014 and any subsequent manual correction.",
+          "Verify that the utilization-per-member rise reflects new weight-management starts rather than a shift in diabetes prescribing or a mix change toward higher-strength products.",
+          "Check for seasonality and any concurrent 2024 program changes (e.g., prior authorization, benefit design) that could explain the utilization jump."
+        ]
+      },
+      "wall_seconds": 74.4,
+      "paraphrase_of": null
+    },
+    {
+      "id": "tot_raw_vs_rate",
+      "category": "tot_premature_commitment",
+      "passed": false,
+      "checks": {
+        "completed": false
+      },
+      "error": "APIConnectionError: Connection error.",
+      "usage": {},
+      "answer_type": null,
+      "steps": 0,
+      "actions": [],
+      "wall_seconds": 2965.4,
+      "paraphrase_of": null
+    }
+  ]
+}

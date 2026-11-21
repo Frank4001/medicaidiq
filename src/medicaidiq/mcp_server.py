@@ -104,6 +104,16 @@ def policy_document(doc_id: str) -> str:
     return f"Unknown document id: {doc_id}"
 
 
+@mcp.resource("plan://{plan_id}")
+def plan_tree(plan_id: str) -> str:
+    """Branch records of one Tree-of-Thought planning run (nodes, scores, pruning reasons, budget used)."""
+    from .planner import PLANS_DIR
+    if not plan_id.replace("_", "").isalnum():
+        return f"Unknown plan id: {plan_id}"
+    path = PLANS_DIR / f"{plan_id}.json"
+    return path.read_text(encoding="utf-8") if path.exists() else f"Unknown plan id: {plan_id}"
+
+
 @mcp.prompt()
 def pre_post_policy_analysis(state: str, drug_class: str, topic: str) -> str:
     """Saved workflow: did utilization change after a policy took effect?"""

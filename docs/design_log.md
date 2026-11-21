@@ -65,3 +65,18 @@ Format: `D<week>.<n>`, the decision, why, and its status (active / superseded by
 | D3.10 | **Deterministic write-intent guardrail** before any LLM call | Local 8B failed safety refusals; don't depend on the model | Active (closes the Week 2 item) |
 | D3.11 | **Reject unparseable final answers**; output limit raised to 4,096 tokens | Live bug: a cut-off JSON answer was accepted unverified | Active |
 | D3.12 | **Retrieval ablation is part of the eval** (`--no-retrieval`) | Shows retrieval's effect: 1/5 → 5/5 | Active |
+
+---
+
+## Week 4: Tree-of-Thought and agentic harnesses
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D4.1 | **ToT planner for analysis-plan selection, as an opt-in tool** (`plan_analysis`, `--plan`); linear ReAct stays the default | Benchmark: linear 7/7 at 14 s vs. ToT 6/7 at 83 s (5.9x latency, 5.4x cost). The traps ToT searches over are already settled by deterministic tools (D1.2, D1.11, D2.8) | Active |
+| D4.2 | **Thought = structured JSON plan**; depth 1 measure, 2 comparison design, 3 executable steps; at most 3 children; beam width 2; at most 15 nodes | Shallow, constraint-heavy tree (like the paper's Game of 24); beam keeps one alternative alive without explosion | Active |
+| D4.3 | **10-point rubric, mostly deterministic**: scope, evidence, and feasibility verified by tool calls; LLM critic only for interpretation; prune below 7; hard failures override | Lab 4.1: code settles what it can; the critic judges what code can't | Active |
+| D4.4 | **Ground before generating**: fetch the verified timeline and coverage after depth 1 | Live v2 failure: ungrounded date guesses led to the whole beam being pruned | Active |
+| D4.5 | **Retry empty or unparseable planner replies once**; larger output budget; concise-output instructions | Live v1 failure: `finish=length`, empty content | Active |
+| D4.6 | **Hard time limits**: per-call timeout from the remaining budget (planner); 240 s per question and 90 s per call (agent); provider errors become an honest `cannot_answer` | Live: a 49-minute hang on a connection error | Active |
+| D4.7 | **CrewAI and LangChain evaluated, not adopted**; roles implemented natively; **MCP used for branch state** (`plan://{plan_id}`) | Simplest scaffolding (harness lab / Building Effective Agents); no duplicate loop; full inspectability | Active (deviation from the Checkpoint 4.1 proposal) |
+| D4.8 | A policy question with a single-quarter design gets no window-feasibility credit | One quarter per side gives no uncertainty estimate; a weaker plan was observed winning on citation points | Active |

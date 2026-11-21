@@ -40,7 +40,7 @@ def build_data() -> None:
 
 
 def make_agent(provider: str | None = None, model: str | None = None, interactive: bool = False,
-               retrieval: bool = True):
+               retrieval: bool = True, planning: bool = False):
     from .agent import MedicaidIQAgent
     from .db import ReadOnlyDB
     from .llm import ChatLLM
@@ -48,7 +48,7 @@ def make_agent(provider: str | None = None, model: str | None = None, interactiv
 
     clarify = (lambda q: input(f"\nMedicaidIQ asks: {q}\n> ").strip() or None) if interactive else None
     return MedicaidIQAgent(ChatLLM(provider=provider, model=model), Toolbox(ReadOnlyDB()), clarify=clarify,
-                           retrieval=retrieval)
+                           retrieval=retrieval, planning=planning)
 
 
 def render(result) -> str:
@@ -85,6 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     ask.add_argument("--interactive", action="store_true", help="Answer clarifying questions")
     ask.add_argument("--json", action="store_true", help="Print the full result as JSON")
     ask.add_argument("--no-retrieval", action="store_true", help="Ablation: disable search_policy (no RAG)")
+    ask.add_argument("--plan", action="store_true", help="Enable the Tree-of-Thought analysis planner")
     args = p.parse_args(argv)
 
     if args.cmd == "build-data":
@@ -97,7 +98,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     try:
-        agent = make_agent(args.provider, args.model, args.interactive, retrieval=not args.no_retrieval)
+        agent = make_agent(args.provider, args.model, args.interactive, retrieval=not args.no_retrieval,
+                           planning=args.plan)
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
         print(f"Setup error: {exc}", file=sys.stderr)
         return 2

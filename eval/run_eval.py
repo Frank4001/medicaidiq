@@ -36,16 +36,18 @@ def main() -> int:
     p.add_argument("--max-steps", type=int, default=10)
     p.add_argument("--no-retrieval", action="store_true", help="Ablation: agent without search_policy")
     p.add_argument("--category", default=None, help="Only cases whose category starts with this (e.g. rag)")
+    p.add_argument("--plan", action="store_true", help="Enable the Tree-of-Thought planner")
     args = p.parse_args()
 
     RESULTS.mkdir(exist_ok=True)
     summaries = []
     for provider in args.provider:
         factory = lambda: ChatLLM(provider=provider, model=args.model, base_url=args.base_url)
-        label = factory().label + ("+no-retrieval" if args.no_retrieval else "")
+        label = (factory().label + ("+no-retrieval" if args.no_retrieval else "")
+                 + ("+tot" if args.plan else ""))
         print(f"\n### {label}")
         run = run_eval(factory, label, ids=args.ids, max_steps=args.max_steps,
-                       retrieval=not args.no_retrieval, category=args.category)
+                       retrieval=not args.no_retrieval, category=args.category, planning=args.plan)
         summary = run.summary()
         summaries.append(summary)
         out = RESULTS / f"{label.replace(':', '_').replace('/', '-')}_{datetime.now():%Y%m%d_%H%M%S}.json"

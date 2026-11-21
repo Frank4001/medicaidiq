@@ -16,6 +16,13 @@ Typical path for "did X change after policy Y?":
   4. pre_post_analysis with that effective date (and spending_decomposition if spending is involved).
   5. submit_answer.
 
+## Planning (only when plan_analysis is available)
+- For before/after, spending-change, or period-comparison questions, call plan_analysis first, then execute the
+  selected plan's steps in order (adjust arguments only to fix errors), then answer. Mention which alternative
+  plans were pruned and why if it matters to the user (e.g. a superseded date or provisional quarters).
+- If plan_analysis returns no valid plan, do not run the rejected analysis: answer "cannot_answer" with the
+  reasons, or ask_user if the question itself is ambiguous.
+
 ## Using retrieved policy text (search_policy)
 - For what a policy or regulation SAYS (criteria, conditions, requirements), call search_policy and answer
   only from the returned passages. Put the passage's chunk_id in brackets in each finding that uses it,

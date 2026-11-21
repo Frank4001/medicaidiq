@@ -1,0 +1,705 @@
+{
+  "plan_id": "plan_1ef7ad2b",
+  "question": "Did Northland's GLP-1 spending rise after its weight-management coverage began, and was that driven by more members, more use per member, or higher prices?",
+  "status": "selected",
+  "budget_used": {
+    "model_calls": 6,
+    "tool_calls": 2,
+    "seconds": 67.9,
+    "retries": 0,
+    "errors": []
+  },
+  "verified_facts": {
+    "coverage:NL": {
+      "final": [
+        "2023Q1",
+        "2023Q2",
+        "2023Q3",
+        "2023Q4",
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2"
+      ],
+      "provisional": [
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "timeline:NL:GLP1": {
+      "evidence_id": "E2",
+      "key": "NL:glp1_coverage:effective_date",
+      "status": "resolved",
+      "value": "2024-01-01",
+      "source_doc": "NL-SPA-2023-014",
+      "conflicts": [
+        {
+          "key": "NL:glp1_coverage:effective_date",
+          "value": "2024-02-01",
+          "source_doc": "NL-MAN-2024-RX",
+          "doc_type": "provider_manual",
+          "published": "2024-02-01",
+          "status": "verified",
+          "superseded_by": "",
+          "last_verified": "2026-11-20",
+          "note": ""
+        }
+      ],
+      "superseded": [],
+      "explanation": "NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this conflict.",
+      "all_sources": [
+        "NL-SPA-2023-014"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "depth": 0,
+      "plan": {
+        "question": "Did Northland's GLP-1 spending rise after its weight-management coverage began, and was that driven by more members, more use per member, or higher prices?"
+      },
+      "score": 0.0,
+      "breakdown": {},
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Directly measures pre/post GLP-1 spending and decomposes PMPM into member count, scripts per member, and spend per script, which maps to the three requested drivers. It avoids causal wording and states key assumptions/data limits.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Total NL member-months per quarter across 2023Q1-2025Q4.",
+        "assumptions": [
+          "Coverage start splits pre/post at a single quarter",
+          "No concurrent GLP-1 benefit design changes"
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Measures whether GLP-1 spending PMPM rose pre/post coverage, but does not decompose the change into members, use per member, or price, so it only partly answers the question.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n3",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Per 1,000 NL member-months to capture member count and use intensity.",
+        "assumptions": [
+          "All GLP-1 claims counted regardless of indication",
+          "Member-month exposure constant within quarter"
+        ]
+      },
+      "score": 6.0,
+      "breakdown": {
+        "scope": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Utilization per 1,000 member-months can inform member/use intensity but does not measure spending or price, so it cannot fully answer whether spending rose or which driver dominated.",
+      "status": "pruned",
+      "prune_reason": "score 6.0 < 7.0"
+    },
+    {
+      "id": "n1.1",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 10,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "parallel_pre_trend",
+          "seasonality_adjustment",
+          "provisional_data_exclusion"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Metric is a true spending decomposition (member-months x scripts/member x spend/script), directly answering the 'more members vs more use vs higher prices' question. 10-quarter pre/post window with parallel pre-trend and seasonality checks ",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.2",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2023Q4",
+          "end_quarter": "2024Q1"
+        },
+        "checks": [
+          "quarterly_jump_test",
+          "seasonality_check"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Keeps the right decomposition metric but collapses to a single 2023Q4->2024Q1 comparison, discarding nine quarters of baseline and offering no pre-trend check; a Q4-to-Q1 jump is exactly where deductible reset/seasonality bites, so attribut",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.3",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-02-01",
+        "date_source": "NL-MAN-2024-RX",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 10,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "date_conflict_sensitivity",
+          "parallel_pre_trend",
+          "provisional_data_exclusion"
+        ]
+      },
+      "score": 5.56,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 0,
+        "feasibility": 1,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+    },
+    {
+      "id": "n2.1",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Total NL member-months per quarter across 2023Q1-2025Q4.",
+        "assumptions": [
+          "Coverage start splits pre/post at a single quarter",
+          "No concurrent GLP-1 benefit design changes"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "verify_effective_date",
+          "disclose_source_conflict",
+          "member_month_denominator",
+          "data_completeness",
+          "decompose_members_use_price"
+        ]
+      },
+      "score": 8.89,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Answers the 'did spending rise' half well: PMPM normalizes for enrollment and the plan verifies the effective date and discloses the source conflict. But the headline metric is a level (spend PMPM), with decomposition only as a secondary ch",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2.2",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Total NL member-months per quarter across 2023Q1-2025Q4.",
+        "assumptions": [
+          "Coverage start splits pre/post at a single quarter",
+          "No concurrent GLP-1 benefit design changes"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2023Q4",
+          "end_quarter": "2024Q1"
+        },
+        "checks": [
+          "verify_effective_date",
+          "disclose_source_conflict",
+          "quarter_boundary_check",
+          "decompose_members_use_price"
+        ]
+      },
+      "score": 6.67,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Reduces the whole question to a single 2023Q4->2024Q1 PMPM jump. That is a seasonally confounded boundary (Q1 cost-sharing reset, Q4 fill-up) with no baseline trend, so it cannot separate coverage effect from seasonality, and decomposition ",
+      "status": "pruned",
+      "prune_reason": "score 6.7 < 7.0"
+    },
+    {
+      "id": "n2.3",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Total NL member-months per quarter across 2023Q1-2025Q4.",
+        "assumptions": [
+          "Coverage start splits pre/post at a single quarter",
+          "No concurrent GLP-1 benefit design changes"
+        ],
+        "effective_date": "2024-02-01",
+        "date_source": "NL-MAN-2024-RX",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q1"
+        },
+        "checks": [
+          "verify_effective_date",
+          "disclose_source_conflict",
+          "exclude_transition_quarter",
+          "decompose_members_use_price"
+        ]
+      },
+      "score": 5.56,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 0,
+        "feasibility": 1,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+    },
+    {
+      "id": "n1.1.1",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 10,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "parallel_pre_trend",
+          "seasonality_adjustment",
+          "provisional_data_exclusion"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2025Q2"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT quarter, member_months, scripts, spend FROM nl_glp1_utilization WHERE quarter BETWEEN '2023Q1' AND '2025Q2' ORDER BY quarter"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "spend / member_months"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "scripts / member_months"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "effective_date": "2024-01-01",
+              "metric": "spending_decomposition",
+              "materiality_pct": 5
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Cannot attribute spending change causally to coverage policy.",
+          "Excludes provisional 2025Q3-Q4 from primary inference.",
+          "Discloses conflicting effective date 2024-02-01 in provider manual.",
+          "Decomposition does not separate drug mix from net price."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "selected",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.1.2",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-02-01",
+        "date_source": "NL-MAN-2024-RX",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 10,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "parallel_pre_trend",
+          "seasonality_adjustment",
+          "provisional_data_exclusion"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "search_policy",
+            "args": {
+              "query": "Northland GLP-1 coverage effective date provider manual",
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2025Q2"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT quarter, member_months, scripts, spend FROM nl_glp1_utilization WHERE quarter BETWEEN '2023Q1' AND '2025Q2' ORDER BY quarter"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "spend / member_months"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "effective_date": "2024-02-01",
+              "metric": "pmpm",
+              "materiality_pct": 5
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Sensitivity date uses lower-authority manual; cannot resolve conflict fully.",
+          "Cannot attribute spending change causally to coverage policy.",
+          "Excludes provisional 2025Q3-Q4 from primary inference.",
+          "PMPM alone does not separate member growth from use per member."
+        ]
+      },
+      "score": 6.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 0,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+    },
+    {
+      "id": "n1.1.3",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Member-months per quarter; split PMPM into members x scripts/member x spend/script.",
+        "assumptions": [
+          "NL GLP-1 coverage start quarter is identifiable",
+          "Enrollment member-month counts are complete"
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 8,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "parallel_pre_trend",
+          "seasonality_adjustment",
+          "provisional_data_exclusion"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2024Q4"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT quarter, member_months, scripts, spend FROM nl_glp1_utilization WHERE quarter BETWEEN '2023Q1' AND '2024Q4' ORDER BY quarter"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "scripts / member_months"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "spend / scripts"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "effective_date": "2024-01-01",
+              "metric": "spend_per_script",
+              "materiality_pct": 5
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Trims 2025, so cannot assess sustained post-coverage trend.",
+          "Excludes all provisional quarters by design.",
+          "Cannot attribute spending change causally to coverage policy.",
+          "Spend per script does not isolate rebates or drug mix."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    }
+  ]
+}

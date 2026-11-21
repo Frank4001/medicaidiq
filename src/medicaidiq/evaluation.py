@@ -131,13 +131,14 @@ def _consistency(results: list[dict]) -> str:
 
 
 def run_eval(llm_factory, label: str, ids: list[str] | None = None, max_steps: int = 10,
-             progress=print, retrieval: bool = True, category: str | None = None) -> EvalRun:
+             progress=print, retrieval: bool = True, category: str | None = None,
+             planning: bool = False) -> EvalRun:
     db = ReadOnlyDB()
     run = EvalRun(label)
     cases = [c for c in load_cases(ids=ids) if not category or c["category"].startswith(category)]
     for case in cases:
         llm = llm_factory()
-        agent = MedicaidIQAgent(llm, Toolbox(db), max_steps=max_steps, retrieval=retrieval)
+        agent = MedicaidIQAgent(llm, Toolbox(db), max_steps=max_steps, retrieval=retrieval, planning=planning)
         t0 = time.perf_counter()
         try:
             result = agent.run(case["question"])

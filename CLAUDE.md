@@ -20,7 +20,7 @@ Goal: **100% on every rubric criterion.** Track coverage in `docs/requirements_t
 |---|---|---|
 | `course/weekN/{assignment,labs}`, `course/final_project/` | Private course materials (prompts, rubrics, submissions, feedback, labs, templates) | **No** |
 | `src/medicaidiq/` | Agent package (see README layout) | Yes |
-| `tests/` | 76 offline tests (scripted LLM; no key needed; the embedding model downloads once to `.tools/fastembed`) | Yes |
+| `tests/` | 87 offline tests (scripted LLM; no key needed; the embedding model downloads once to `.tools/fastembed`) | Yes |
 | `eval/` | `cases.jsonl`, `run_eval.py`, `results/` (live results go here) | Yes |
 | `data/synthetic/` | Generated CSVs + policy docs (fictional states); `.duckdb` and `knowledge_store.json` are rebuilt | CSVs and docs yes |
 | `data/public/` | Real eCFR regulations + data.medicaid.gov SDUD description (JSON snapshots with URL, version, sha256) | Yes |
@@ -29,7 +29,7 @@ Goal: **100% on every rubric criterion.** Track coverage in `docs/requirements_t
 | `.tools/` | Local llama.cpp (Vulkan) + Qwen3-8B GGUF | No |
 | `.venv/` | uv-created Python 3.11 env: `.venv/Scripts/python.exe` | No |
 
-New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/`. (Empty locked `Week2/`/`Week3/` folders may linger; they're gitignored. A `Week4/` folder is waiting; don't process it until the user asks.)
+New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/`. (Empty locked `WeekN/` folders may linger; they're gitignored.)
 
 ## Weekly loop
 
@@ -59,7 +59,8 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - **Loop (D2.5):** native function calling, no LangChain; `submit_answer` JSON schema; verifier with 2 retries.
 - **Memory (D2.7/D2.8):** working memory with evidence IDs; knowledge store with supersession, authority hierarchy, conflict state, staleness review, and human approval of agent interpretations.
 - **Retrieval (D3.1–D3.9):** RAG only for policy text; eCFR + data.medicaid.gov (Medicaid.gov returns 403; don't get around it); paragraph chunks; BM25 + bge-small → RRF → MMR λ 0.7 → top 4 + adjacent paragraph (≤ 6); `low_relevance` < 0.68; `out_of_scope` when a requested state has no docs; one search per state for comparisons.
-- **Guardrails (D3.10–D3.11):** deterministic write-intent refusal before the LLM; unparseable final answers rejected; output limit 4,096 tokens.
+- **ToT (D4.1–D4.8):** `planner.py`, opt-in via `--plan`; beam 2, at most 3 children, depth 3, at most 15 nodes; rubric = scope/evidence/feasibility (tool-verified) + interpretation (LLM critic); prune below 7; ground facts after depth 1; budget 30 LLM / 20 tool / 60 s. CrewAI/LangChain NOT adopted (deviation from Checkpoint 4.1, justified); MCP serves branch records as `plan://{id}`; final benchmark trees committed in `eval/results/plan_trees/`.
+- **Guardrails (D3.10–D3.11, D4.6):** deterministic write-intent refusal before the LLM; unparseable final answers rejected; output limit 4,096 tokens; 240 s per question, 90 s per call; provider errors become `cannot_answer`.
 - **Eval (D2.11):** deterministic graders, no LLM judge; decision rule = cheapest provider with ≥ 8/9 pass, no malformed tool calls, average < 30 s.
 - **Repo (D2.12):** public at https://github.com/Frank4001/medicaidiq (published 2026-11-20). Commits use the GitHub no-reply email (set in the repo-local git config).
 
@@ -94,6 +95,10 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 | 3 | RAG-Sequence vs. RAG-Token | Our agent synthesizes across passages in one answer (token-style mixing) while citing each passage; no model training needed |
 | 3 | Long context vs. RAG vs. MemGPT | RAG for documents; MemGPT-style paging ≈ our working-memory scratchpad + tools loading evidence on demand |
 | 3 | MMR relevance/diversity | MMR rerank λ 0.7 (D3.5) |
+| 4 | ToT: thought decomposition, propose/value, BFS/beam | `planner.py` (D4.2–D4.3) |
+| 4 | Generation quality is the bottleneck | Ground before generating (D4.4) |
+| 4 | When is ToT worth the compute? | Benchmark: not here (D4.1) |
+| 4 | Harness = prompt, tools, loop, context, permissions, environment | Mapped in the Week 4 checkpoint §8; time limits added (D4.6) |
 
 ## Lessons learned
 
@@ -101,6 +106,7 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - Measured prompt size (~14k tokens over a 5-step run) was 3× smaller than the Week 1 guess. Measure before budgeting.
 - **First live eval (local Qwen3-8B):** 7/9 raw, 8/9 after a grader keyword fix; 69 s average per question. Every analysis and trap case passed; the safety refusal (`unsafe_write`) failed in two different ways across runs. Lesson: keyword graders need synonyms, and small models are inconsistent on refusals. Next step: a deterministic write-intent pre-check (don't rely on the LLM alone).
 - **Week 3 live runs:** 12/14 → 14/14. Found and fixed a real bug (a cut-off JSON answer was accepted unverified), a retrieval scope gap (Illinois at 0.681 similarity), and 2 more grader false negatives (CFR numbers counted as claims; "opposite" missing from contrast words). Keyword grading is brittle; consider a structured rubric or LLM judge in the evaluation module.
+- **Week 4 live ToT runs:** v1 4/7 (empty generations, `finish=length`); v2 4/7 (ungrounded date guesses, whole beam pruned; a 49-minute network hang); v3 6/7 after grounding and time limits. Linear 7/7 at 14 s vs. ToT 83 s, so ToT is opt-in only. Lesson: ToT only helps where deterministic tools can't already settle the choice.
 - The agent found a corpus gap itself (42 CFR 447.256 cited but missing) and declined to state it. We added it. That's good demo material for grounded behavior.
 - Southport shows a small, significant but immaterial dip (−3.5%) from noise. It's a useful live example of the significance × materiality quadrant.
 
@@ -110,6 +116,8 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - [ ] Qwen fallback not yet validated (no key); optional before the demo.
 - [x] Deterministic write-intent guardrail (D3.10).
 - [x] **GitHub:** published at https://github.com/Frank4001/medicaidiq.
-- [x] Week 3: hybrid RAG over eCFR + state documents; ablation 1/5 → 5/5; DeepSeek 14/14 (2026-11-20). DeepSeek spend so far ≈ $0.18.
+- [x] Week 3: hybrid RAG over eCFR + state documents; ablation 1/5 → 5/5; DeepSeek 14/14 (2026-11-20). DeepSeek spend so far ≈ $0.18 (≈ $0.65 after the Week 4 benchmarks).
 - [ ] **Real Illinois data (stretch, Weeks 5–6):** feasibility confirmed 2026-11-20, see `docs/real_data_feasibility_illinois.md`. SDUD + enrollment APIs work (968 IL GLP-1 rows 2022–2026; 95% MCO; 2026Q1 incomplete; 23% suppressed). HFS site allowed by robots.txt (be polite, ≥ 2 s between requests); PDL available as XLSX. GLP-1 PA criteria not yet located. Estimated 4–5 days. Never infer IL policy dates from claims; they must come from HFS docs plus human review.
-- [ ] Expand the eval to about 40 cases (now 14); add a formal success-criteria list (A3); replace brittle keyword checks.
+- [x] Week 4: ToT planner built and benchmarked (opt-in); 18/18 default eval.
+- [ ] Week 4 checkpoint has no grader feedback yet; check when it arrives.
+- [ ] Expand the eval to about 40 cases (now 18); add a formal success-criteria list (A3); replace brittle keyword checks.

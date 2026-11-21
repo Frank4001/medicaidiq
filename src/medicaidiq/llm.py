@@ -101,13 +101,16 @@ class ChatLLM:
         return f"{self.provider}:{self.model}"
 
     def chat(self, messages: list[dict], tools: Iterable[dict] | None = None,
-             max_tokens: int = 2048) -> AssistantTurn:
+             max_tokens: int = 2048, json_mode: bool = False, timeout: float | None = None) -> AssistantTurn:
         kwargs = dict(model=self.model, messages=messages, temperature=self.temperature,
                       max_tokens=max_tokens)
         if tools:
             kwargs.update(tools=list(tools), tool_choice="auto")
+        if json_mode:   # provider-enforced JSON object output (prompt must also ask for JSON)
+            kwargs["response_format"] = {"type": "json_object"}
         t0 = time.perf_counter()
-        resp = self.client.chat.completions.create(**kwargs)
+        client = self.client.with_options(timeout=timeout, max_retries=1) if timeout else self.client
+        resp = client.chat.completions.create(**kwargs)
         dt = time.perf_counter() - t0
         msg = resp.choices[0].message
         usage = {}
@@ -134,7 +137,7 @@ class ScriptedLLM:
         self.label = "scripted"
         self.seen_messages: list[list[dict]] = []
 
-    def chat(self, messages, tools=None, max_tokens=2048) -> AssistantTurn:
+    def chat(self, messages, tools=None, max_tokens=2048, json_mode=False, timeout=None) -> AssistantTurn:
         self.seen_messages.append(json.loads(json.dumps(messages)))
         if not self.turns:
             return AssistantTurn("Out of scripted turns.", [])

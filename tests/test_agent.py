@@ -167,6 +167,20 @@ def test_citations_are_not_treated_as_numeric_claims():
     assert [v for v, _ in _claim_numbers(text)] == [38.8]
 
 
+def test_provider_error_becomes_honest_failure(toolbox):
+    class Broken(ScriptedLLM):
+        def chat(self, *a, **k):
+            raise ConnectionError("network down")
+    res = MedicaidIQAgent(Broken([]), toolbox).run("q")
+    assert res.stop_reason == "provider_error" and res.answer["answer_type"] == "cannot_answer"
+
+
+def test_wall_clock_limit_stops_loop(toolbox):
+    llm = ScriptedLLM([tool_turn("t", "calculate", {"expression": f"{i}+1"}, f"c{i}") for i in range(5)])
+    res = MedicaidIQAgent(llm, toolbox, max_seconds=0.0).run("q")
+    assert res.stop_reason == "timeout"
+
+
 def test_verifier_rules():
     m = WorkingMemory("q")
     m.add_evidence("pre_post_analysis", "s", {"pct_change": -18.63, "pre_mean": 12.04})

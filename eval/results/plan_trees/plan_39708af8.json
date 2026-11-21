@@ -1,0 +1,395 @@
+{
+  "plan_id": "plan_39708af8",
+  "question": "Eastvale announced its GLP-1 prior authorization requirement in May 2024. How did GLP-1 prescribing change after the policy?",
+  "status": "budget_exhausted",
+  "budget_used": {
+    "model_calls": 6,
+    "tool_calls": 2,
+    "seconds": 60.3,
+    "retries": 0,
+    "errors": []
+  },
+  "verified_facts": {
+    "coverage:EV": {
+      "final": [
+        "2023Q1",
+        "2023Q2",
+        "2023Q3",
+        "2023Q4",
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2"
+      ],
+      "provisional": [
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "timeline:EV:GLP1": {
+      "evidence_id": "E2",
+      "key": "EV:glp1_prior_auth:effective_date",
+      "status": "resolved",
+      "value": "2024-07-01",
+      "source_doc": "EV-MAN-2024-PH",
+      "conflicts": [],
+      "superseded": [
+        {
+          "key": "EV:glp1_prior_auth:effective_date",
+          "value": "2024-06-01",
+          "source_doc": "EV-BUL-2024-007",
+          "doc_type": "provider_bulletin",
+          "published": "2024-05-15",
+          "status": "superseded",
+          "superseded_by": "EV-BUL-2024-011",
+          "last_verified": "2026-11-20",
+          "note": "Replaced by EV-BUL-2024-011 (published 2024-06-10)."
+        }
+      ],
+      "explanation": "EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL-2024-007 (2024-06-01).",
+      "all_sources": [
+        "EV-MAN-2024-PH"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "depth": 0,
+      "plan": {
+        "question": "Eastvale announced its GLP-1 prior authorization requirement in May 2024. How did GLP-1 prescribing change after the policy?"
+      },
+      "score": 0.0,
+      "breakdown": {},
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member-months normalize GLP-1 volume across enrollment shifts.",
+        "assumptions": [
+          "Policy effective at start of 2024Q2.",
+          "Enrollment mix stable across pre/post windows."
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Pre/post GLP-1 prescriptions per 1,000 member-months directly measures prescribing change and normalizes for enrollment; caveat May announcement vs Q2 start and need for non-causal wording.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Member-months capture per-enrollee cost burden after prior auth.",
+        "assumptions": [
+          "Spend reflects net ingredient cost.",
+          "Policy affects utilization within two quarters."
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Spend PMPM is indirect for prescribing and conflates price/utilization; only partly relevant and should not substitute for utilization metrics.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n3",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "spending_decomposition",
+        "denominator_rationale": "Separates volume versus price/mix effects per prescription.",
+        "assumptions": [
+          "Price and volume components are identifiable.",
+          "Prior auth mainly shifts volume, not unit price."
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Spending decomposition can isolate a volume component, but it is indirect and assumption-dependent for answering prescribing change.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.1",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member-months normalize GLP-1 volume across enrollment shifts.",
+        "assumptions": [
+          "Policy effective 2024-07-01 per provider manual.",
+          "Enrollment mix stable across four-quarter pre/post windows."
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q3",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "timeline_check",
+          "coverage_check",
+          "denominator_check"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Uses the correct prescribing metric (rx per 1000 member-months), correct effective date, and balanced 4-quarter pre/post windows. Does not claim causation; denominator check addresses enrollment shifts.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.2",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member-months normalize GLP-1 volume across enrollment shifts.",
+        "assumptions": [
+          "May 2024 announcement may shift prescribing before formal effective date.",
+          "Superseded bulletin approximates announcement timing."
+        ],
+        "effective_date": "2024-05-15",
+        "date_source": "EV-BUL-2024-007",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2024Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "timeline_check",
+          "sensitivity_check"
+        ]
+      },
+      "score": 4.44,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 0,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Attempts to capture May 2024 announcement timing, but uses a superseded bulletin date as the effective date. Useful only as a sensitivity check, not as the primary policy analysis.",
+      "status": "pruned",
+      "prune_reason": "score 4.4 < 7.0"
+    },
+    {
+      "id": "n1.3",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member-months normalize GLP-1 volume across enrollment shifts.",
+        "assumptions": [
+          "Policy effective 2024-07-01 per provider manual.",
+          "Adjacent quarters lack differential seasonality."
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2024Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "timeline_check",
+          "seasonality_check"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Correct metric and effective date, but the 2-quarter window is narrow and relies on a strong no-differential-seasonality assumption. Partly answers short-term prescribing change.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2.1",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Member-months capture per-enrollee cost burden after prior auth.",
+        "assumptions": [
+          "Spend reflects net ingredient cost.",
+          "Policy affects utilization within two quarters."
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q3",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "coverage_check",
+          "timeline_check",
+          "event_study"
+        ]
+      },
+      "score": 6.67,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Measures spend PMPM, not GLP-1 prescribing. Spending is not the same as utilization and would mislead if used to answer how prescribing changed.",
+      "status": "pruned",
+      "prune_reason": "score 6.7 < 7.0"
+    },
+    {
+      "id": "n2.2",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "Member-months capture per-enrollee cost burden after prior auth.",
+        "assumptions": [
+          "Spend reflects net ingredient cost.",
+          "Policy affects utilization within two quarters."
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2024Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "coverage_check",
+          "difference_in_differences"
+        ]
+      },
+      "score": 6.67,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Also measures spend PMPM rather than prescribing. Difference-in-differences does not fix the wrong outcome metric for this question.",
+      "status": "pruned",
+      "prune_reason": "score 6.7 < 7.0"
+    },
+    {
+      "id": "n2.3",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "scripts_per_1000_member_months",
+        "denominator_rationale": "Member-months normalize prescribing volume for enrollment changes.",
+        "assumptions": [
+          "Utilization measured as scripts per 1,000 member-months.",
+          "Policy affects utilization within two quarters."
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 3,
+          "start_quarter": "2023Q4",
+          "end_quarter": "2025Q1"
+        },
+        "checks": [
+          "coverage_check",
+          "event_study",
+          "placebo_test"
+        ]
+      },
+      "score": 3.33,
+      "breakdown": {
+        "scope": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "metric 'scripts_per_1000_member_months' unavailable"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: metric 'scripts_per_1000_member_months' unavailable"
+    }
+  ]
+}

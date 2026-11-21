@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from dataclasses import asdict, dataclass, field
 from typing import Callable
 
@@ -67,14 +68,20 @@ class AgentResult:
 
 class MedicaidIQAgent:
     def __init__(self, llm, toolbox: Toolbox, max_steps: int = 10, max_verify_retries: int = 2,
-                 clarify: Callable[[str], str | None] | None = None, retrieval: bool = True):
+                 clarify: Callable[[str], str | None] | None = None, retrieval: bool = True,
+                 planning: bool = False, planner=None, max_seconds: float = 240.0, call_timeout: float = 90.0):
         self.llm = llm
+        self.max_seconds, self.call_timeout = max_seconds, call_timeout
         self.tools = toolbox
-        self.max_steps = max_steps
+        self.max_steps = max_steps + (2 if planning else 0)   # the plan call + one extra execution step
         self.max_verify_retries = max_verify_retries
         self.clarify = clarify  # None -> non-interactive: stop and return the clarifying question
-        self.schemas = tool_schemas(retrieval)
+        self.schemas = tool_schemas(retrieval, planning)
         self.offered = {t["function"]["name"] for t in self.schemas}
+        self.planner = planner
+        if planning and planner is None:
+            from .planner import ToTPlanner
+            self.planner = ToTPlanner(llm, toolbox)
 
     def run(self, question: str) -> AgentResult:
         memory = WorkingMemory(question)
@@ -96,8 +103,18 @@ class MedicaidIQAgent:
         last_failed_call = None
         repeat_failures = 0
 
+        t_start = time.perf_counter()
         for step in range(1, self.max_steps + 1):
-            turn: AssistantTurn = self.llm.chat(messages, tools=self.schemas, max_tokens=4096)
+            if time.perf_counter() - t_start > self.max_seconds:
+                return self._result(question, _limit_answer(memory, f"the {self.max_seconds:.0f}-second time limit "
+                                                                    "was reached"), trace, memory, "timeout", False, step)
+            try:
+                turn: AssistantTurn = self.llm.chat(messages, tools=self.schemas, max_tokens=4096,
+                                                    timeout=self.call_timeout)
+            except Exception as exc:  # noqa: BLE001 - provider/network failure -> honest failure, not a crash
+                return self._result(question, _limit_answer(memory, f"the model provider failed "
+                                                                    f"({type(exc).__name__})"),
+                                    trace, memory, "provider_error", False, step)
             thought = (turn.content or turn.reasoning or "").strip()
             messages.append(turn.as_message())
 
@@ -157,6 +174,16 @@ class MedicaidIQAgent:
                 if call.name not in self.offered:
                     obs = {"error": f"Tool '{call.name}' is not available in this configuration."}
                     memory.record_failure(f"{call.name}: not available")
+                elif call.name == "plan_analysis":
+                    if not parsed:
+                        obs = {"error": "plan_analysis arguments were not valid JSON."}
+                    else:
+                        plan = self.planner.plan(args.get("question") or question)
+                        summary = (f"ToT {plan['status']}: {plan.get('nodes_explored')} nodes, "
+                                   f"{len(plan.get('pruned', []))} pruned"
+                                   + (f", selected score {plan.get('score')}" if plan.get("selected_plan") else ""))
+                        eid = memory.add_evidence("plan_analysis", summary, plan)
+                        obs = {"evidence_id": eid, **plan}
                 else:
                     obs = self.tools.execute(call.name, call.arguments, memory)
                 trace.append(TraceStep(step, thought, call.name, args, obs, turn.latency_s))

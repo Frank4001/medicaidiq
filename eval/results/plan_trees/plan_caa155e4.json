@@ -1,0 +1,669 @@
+{
+  "plan_id": "plan_caa155e4",
+  "question": "Compare Eastvale (EV) GLP-1 prescriptions per 1000 member months before vs after the prior authorization effective date 2024-07-01, final quarters only, to measure prescribing volume change.",
+  "status": "selected",
+  "budget_used": {
+    "model_calls": 7,
+    "tool_calls": 2,
+    "seconds": 79.3,
+    "retries": 1,
+    "errors": []
+  },
+  "verified_facts": {
+    "coverage:EV": {
+      "final": [
+        "2023Q1",
+        "2023Q2",
+        "2023Q3",
+        "2023Q4",
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2"
+      ],
+      "provisional": [
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "timeline:EV:GLP1": {
+      "evidence_id": "E2",
+      "key": "EV:glp1_prior_auth:effective_date",
+      "status": "resolved",
+      "value": "2024-07-01",
+      "source_doc": "EV-MAN-2024-PH",
+      "conflicts": [],
+      "superseded": [
+        {
+          "key": "EV:glp1_prior_auth:effective_date",
+          "value": "2024-06-01",
+          "source_doc": "EV-BUL-2024-007",
+          "doc_type": "provider_bulletin",
+          "published": "2024-05-15",
+          "status": "superseded",
+          "superseded_by": "EV-BUL-2024-011",
+          "last_verified": "2026-11-20",
+          "note": "Replaced by EV-BUL-2024-011 (published 2024-06-10)."
+        }
+      ],
+      "explanation": "EV-MAN-2024-PH (provider_manual) is the highest-authority current source. Superseded: EV-BUL-2024-007 (2024-06-01).",
+      "all_sources": [
+        "EV-MAN-2024-PH"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "depth": 0,
+      "plan": {
+        "question": "Compare Eastvale (EV) GLP-1 prescriptions per 1000 member months before vs after the prior authorization effective date 2024-07-01, final quarters only, to measure prescribing volume change."
+      },
+      "score": 0.0,
+      "breakdown": {},
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only; exclude partial quarters",
+          "No seasonality or trend adjustment"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Pre/post design with the correct metric and final-quarter restriction; avoids causal claims and notes no seasonality/trend adjustment as a limitation.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Quarterly member months for each comparison quarter",
+        "assumptions": [
+          "Adjacent final quarters 2024Q2 vs 2024Q3",
+          "Policy effect immediate with no lag"
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Uses correct metric but only adjacent quarters and assumes immediate policy effect, which can conflate seasonality/trend and implies causation.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n3",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Quarterly member months in same quarter of prior year",
+        "assumptions": [
+          "Compare 2024Q3 to 2023Q3 to control seasonality",
+          "Final quarters only"
+        ]
+      },
+      "score": 8.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Correct metric and controls seasonality, but comparing 2024Q3 to 2023Q3 is not a clean before/after comparison around the 2024-07-01 effective date and may capture long-term trends.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.1",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "No seasonality or trend adjustment"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q3",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_member_months",
+          "check_concurrent_policy_changes"
+        ],
+        "design_note": "Symmetric 4 pre vs 4 post final quarters, balanced exposure"
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Balanced 4 pre/4 post final quarters; correct metric; no causal claim.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.2",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "Immediate step-change assumed, no lag"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2024Q2",
+          "end_quarter": "2024Q3"
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_quarter_boundary_alignment"
+        ],
+        "design_note": "Last pre quarter vs first post quarter; isolates immediate jump"
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Single adjacent quarters; correct metric but noisy and narrow.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.3",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "Long baseline captures secular trend"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 5,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_member_months",
+          "check_enrollment_shift"
+        ],
+        "design_note": "Full 6-quarter baseline vs all 4 final post quarters"
+      },
+      "score": 8.89,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Asymmetric 6-vs-4 despite window label; trend risk.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2.1",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Quarterly member months for each comparison quarter",
+        "assumptions": [
+          "Adjacent final quarters 2024Q2 vs 2024Q3",
+          "Policy effect immediate with no lag"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2024Q2",
+          "end_quarter": "2024Q3"
+        },
+        "checks": [
+          "verify_policy_timeline",
+          "check_quarter_finality",
+          "compute_rx_per_1000_mm",
+          "compare_quarters"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Adjacent quarters; correct metric but immediate-only and noisy.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n2.2",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Quarterly member months aggregated across each comparison window",
+        "assumptions": [
+          "Equal two-quarter pre and post windows",
+          "Policy effect immediate with no lag"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2024Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "verify_policy_timeline",
+          "check_quarter_finality",
+          "compute_rx_per_1000_mm",
+          "compare_windows"
+        ]
+      },
+      "score": 8.89,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Balanced 2 pre/2 post final quarters; correct metric.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n2.3",
+      "parent": "n2",
+      "depth": 2,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Quarterly member months for each comparison quarter",
+        "assumptions": [
+          "Skip 2024Q3 as one-quarter implementation ramp-up",
+          "Policy effect measured after one quarter"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 2,
+          "start_quarter": "2024Q2",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "verify_policy_timeline",
+          "check_quarter_finality",
+          "compute_rx_per_1000_mm",
+          "compare_quarters",
+          "check_lag_assumption"
+        ]
+      },
+      "score": 7.78,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 0,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Arbitrarily skips 2024Q3; unverified ramp assumption.",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.1.1",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "No seasonality or trend adjustment"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q3",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_member_months",
+          "check_concurrent_policy_changes"
+        ],
+        "design_note": "Symmetric 4 pre vs 4 post final quarters, balanced exposure",
+        "variant": "parent_as_is",
+        "steps": [
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "EV"
+            }
+          },
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "EV",
+              "topic": "glp1_prior_auth"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT quarter, SUM(prescriptions) rx, SUM(member_months) mm FROM ev_glp1_quarterly WHERE quarter BETWEEN '2023Q3' AND '2025Q2' AND final=1 GROUP BY quarter ORDER BY quarter"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "EV",
+              "drug_class": "GLP1",
+              "effective_date": "2024-07-01",
+              "metric": "rx_per_1000_mm",
+              "materiality_pct": 5
+            }
+          },
+          {
+            "tool": "search_policy",
+            "args": {
+              "query": "Eastvale GLP-1 concurrent policy changes 2024",
+              "state": "EV"
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Pre-post comparison cannot establish causality.",
+          "No seasonality or trend adjustment applied.",
+          "Final quarters only; 2025Q3-Q4 provisional excluded."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.1.2",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "Extended 6-quarter baseline"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2",
+          "pre_window_quarters": 6,
+          "post_window_quarters": 4
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_member_months",
+          "check_concurrent_policy_changes"
+        ],
+        "design_note": "6 pre vs 4 post final quarters; tests baseline rate stability",
+        "variant": "extended_baseline_6pre",
+        "steps": [
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "EV"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT CASE WHEN quarter<='2024Q2' THEN 'pre' ELSE 'post' END period, SUM(prescriptions) rx, SUM(member_months) mm FROM ev_glp1_quarterly WHERE quarter BETWEEN '2023Q1' AND '2025Q2' AND final=1 GROUP BY period"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "pre_rx/pre_mm*1000"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "post_rx/post_mm*1000"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "(post_rate-pre_rate)/pre_rate*100"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "EV",
+              "drug_class": "GLP1",
+              "effective_date": "2024-07-01",
+              "metric": "rx_per_1000_mm",
+              "materiality_pct": 5
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Cannot separate policy effect from secular trends.",
+          "Extended baseline may span other coverage changes.",
+          "Final quarters only; provisional quarters excluded."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "outside beam (width 2)"
+    },
+    {
+      "id": "n1.1.3",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "EV",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months summed across included quarters",
+        "assumptions": [
+          "Final quarters only",
+          "Fixed 4 pre vs 4 post windows"
+        ],
+        "effective_date": "2024-07-01",
+        "date_source": "EV-MAN-2024-PH",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q3",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "verify_final_quarters",
+          "verify_effective_date",
+          "verify_member_months",
+          "check_concurrent_policy_changes"
+        ],
+        "design_note": "Same windows; tests whether result hinges on documented date",
+        "variant": "date_sensitivity",
+        "sensitivity_date": "2024-06-01",
+        "sensitivity_source": "EV-BUL-2024-007 superseded",
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "EV",
+              "topic": "glp1_prior_auth"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "SELECT CASE WHEN quarter<='2024Q2' THEN 'pre' WHEN quarter='2024Q3' THEN 'partial' ELSE 'post' END period, SUM(prescriptions) rx, SUM(member_months) mm FROM ev_glp1_quarterly WHERE quarter BETWEEN '2023Q3' AND '2025Q2' AND final=1 GROUP BY period"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "EV",
+              "drug_class": "GLP1",
+              "effective_date": "2024-06-01",
+              "metric": "rx_per_1000_mm",
+              "materiality_pct": 5
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "(rate_0701-rate_0601)/rate_0601*100"
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Date sensitivity only; superseded date not authoritative.",
+          "Cannot establish causality.",
+          "Final quarters only; excludes provisional quarters."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "selected",
+      "prune_reason": ""
+    }
+  ]
+}

@@ -1,0 +1,528 @@
+{
+  "plan_id": "plan_c690f619",
+  "question": "How did GLP-1 use in Northland change after weight-management coverage began? Tell me which start date you used and why.",
+  "status": "selected",
+  "budget_used": {
+    "model_calls": 6,
+    "tool_calls": 2,
+    "seconds": 39.2,
+    "retries": 0,
+    "errors": []
+  },
+  "verified_facts": {
+    "coverage:NL": {
+      "final": [
+        "2023Q1",
+        "2023Q2",
+        "2023Q3",
+        "2023Q4",
+        "2024Q1",
+        "2024Q2",
+        "2024Q3",
+        "2024Q4",
+        "2025Q1",
+        "2025Q2"
+      ],
+      "provisional": [
+        "2025Q3",
+        "2025Q4"
+      ]
+    },
+    "timeline:NL:GLP1": {
+      "evidence_id": "E2",
+      "key": "NL:glp1_coverage:effective_date",
+      "status": "resolved",
+      "value": "2024-01-01",
+      "source_doc": "NL-SPA-2023-014",
+      "conflicts": [
+        {
+          "key": "NL:glp1_coverage:effective_date",
+          "value": "2024-02-01",
+          "source_doc": "NL-MAN-2024-RX",
+          "doc_type": "provider_manual",
+          "published": "2024-02-01",
+          "status": "verified",
+          "superseded_by": "",
+          "last_verified": "2026-11-20",
+          "note": ""
+        }
+      ],
+      "superseded": [],
+      "explanation": "NL-SPA-2023-014 (state_plan_amendment) is the highest-authority current source. Lower-authority sources disagree: NL-MAN-2024-RX says 2024-02-01. Disclose this conflict.",
+      "all_sources": [
+        "NL-SPA-2023-014"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "depth": 0,
+      "plan": {
+        "question": "How did GLP-1 use in Northland change after weight-management coverage began? Tell me which start date you used and why."
+      },
+      "score": 0.0,
+      "breakdown": {},
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months normalizes GLP-1 script counts across Northland enrollment shifts.",
+        "assumptions": [
+          "Coverage start = first full quarter after NL:glp1_coverage effective; unverified.",
+          "Pre/post windows equal length, e.g., 4 quarters each."
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Directly measures GLP-1 utilization change with member-month normalization, appropriate pre/post design, and discloses unverified start-date assumption. Does not claim causation.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n2",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "spending_change",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_pmpm",
+        "denominator_rationale": "PMPM captures per-enrollee cost burden regardless of utilization volume.",
+        "assumptions": [
+          "Start date = policy quarter indicated in NL:glp1_coverage metadata.",
+          "Trend reported as slope change, not level jump."
+        ]
+      },
+      "score": 6.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Spending PMPM measures cost burden, not GLP-1 use; could mislead by conflating price/mix with utilization. Start-date handling is noted but metric does not answer the question.",
+      "status": "pruned",
+      "prune_reason": "score 6.0 < 7.0"
+    },
+    {
+      "id": "n3",
+      "parent": "root",
+      "depth": 1,
+      "plan": {
+        "question_type": "period_comparison",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "spend_per_rx",
+        "denominator_rationale": "Per-script spend isolates mix/price shift from volume growth.",
+        "assumptions": [
+          "Compare equal-length pre vs post windows anchored on assumed start.",
+          "Start date cross-checked against EV/SP policy timing if NL missing."
+        ]
+      },
+      "score": 6.0,
+      "breakdown": {
+        "scope": 3,
+        "interpretation": 0
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Spend per prescription isolates price/mix, not utilization volume; it cannot show how GLP-1 use changed and risks being misread as use. Start-date cross-check is useful but insufficient.",
+      "status": "pruned",
+      "prune_reason": "score 6.0 < 7.0"
+    },
+    {
+      "id": "n1.1",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months normalizes GLP-1 script counts across Northland enrollment shifts.",
+        "assumptions": [
+          "Coverage start = 2024-01-01 per SPA; manual conflict 2024-02-01 disclosed.",
+          "Equal 4-quarter pre/post windows; provisional 2025Q3-Q4 excluded."
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "check_data_completeness",
+          "check_provisional_quarters"
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 1,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Uses a pre/post design with scripts per 1,000 member months, appropriately normalizing for enrollment changes. It clearly specifies the 2024-01-01 start date from the SPA and discloses the conflicting 2024-02-01 provider manual date. Exclud",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.2",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months normalizes GLP-1 script counts across Northland enrollment shifts.",
+        "assumptions": [
+          "Date-sensitivity test using manual 2024-02-01 start; conflict disclosed.",
+          "Equal 4-quarter windows shifted one quarter later."
+        ],
+        "effective_date": "2024-02-01",
+        "date_source": "NL-MAN-2024-RX",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q2",
+          "end_quarter": "2025Q1"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "check_data_completeness",
+          "check_enrollment_denominator"
+        ]
+      },
+      "score": 5.56,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 0,
+        "feasibility": 1,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: uses lower-authority date 2024-02-01 (authoritative: 2024-01-01)"
+    },
+    {
+      "id": "n1.3",
+      "parent": "n1",
+      "depth": 2,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "glp1_share_of_drug_class_scripts",
+        "denominator_rationale": "All GLP1/insulin/SGLT2 scripts as denominator captures class-mix shift.",
+        "assumptions": [
+          "Single-quarter immediate pre/post; seasonality confounds interpretation.",
+          "Coverage start = 2024-01-01; manual conflict disclosed."
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "two_quarters",
+          "window_quarters": 1,
+          "start_quarter": "2023Q4",
+          "end_quarter": "2024Q1"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "validate_metric_definition",
+          "check_data_completeness"
+        ]
+      },
+      "score": 3.33,
+      "breakdown": {
+        "scope": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "metric 'glp1_share_of_drug_class_scripts' unavailable"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: metric 'glp1_share_of_drug_class_scripts' unavailable"
+    },
+    {
+      "id": "n1.1.1",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months normalizes GLP-1 script counts across Northland enrollment shifts.",
+        "assumptions": [
+          "Coverage start = 2024-01-01 per SPA; manual conflict 2024-02-01 disclosed.",
+          "Equal 4-quarter pre/post windows; provisional 2025Q3-Q4 excluded."
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "check_data_completeness",
+          "check_provisional_quarters"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "effective_date": "2024-01-01",
+              "metric": "rx_per_1000_mm",
+              "materiality_pct": 5
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2024Q4"
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Shows level shift after coverage; not causal.",
+          "Cannot separate enrollment mix or benefit-design effects.",
+          "Manual's 2024-02-01 date not tested in this plan.",
+          "Provisional quarters excluded; late 2025 trends unseen."
+        ]
+      },
+      "score": 10.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 2
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Balanced 4-quarter pre/post design, uses normalized rate, correct SPA start date, discloses manual conflict and provisional-quarter exclusion, and avoids causal claims.",
+      "status": "selected",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.1.2",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "rx_per_1000_mm",
+        "denominator_rationale": "Member months normalizes GLP-1 script counts across Northland enrollment shifts.",
+        "assumptions": [
+          "Coverage start = 2024-01-01 per SPA; manual conflict 2024-02-01 disclosed.",
+          "Extended 6-quarter post window uses final data through 2025Q2 only."
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 6,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2025Q2"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "check_data_completeness",
+          "check_provisional_quarters"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "pre_post_analysis",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "effective_date": "2024-01-01",
+              "metric": "rx_per_1000_mm",
+              "materiality_pct": 5
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "quarterly GLP1 scripts and member months NL 2023Q1-2025Q2"
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2025Q2"
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Shows persistence or fade-out over six post quarters.",
+          "Longer window confounds with later policy or market changes.",
+          "Cannot prove coverage caused the change.",
+          "Provisional 2025Q3-Q4 excluded."
+        ]
+      },
+      "score": 9.0,
+      "breakdown": {
+        "scope": 3,
+        "evidence": 3,
+        "feasibility": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [],
+      "needs_evidence": false,
+      "critic_note": "Still uses normalized rate and discloses limits, but the stated 6-quarter pre/post window is unbalanced because only 4 pre quarters are final before 2024Q1; extended post window is informative but weaker for a clean pre/post comparison.",
+      "status": "kept",
+      "prune_reason": ""
+    },
+    {
+      "id": "n1.1.3",
+      "parent": "n1.1",
+      "depth": 3,
+      "plan": {
+        "question_type": "pre_post",
+        "state": "NL",
+        "drug_class": "GLP1",
+        "metric": "glp1_share_of_class_rx",
+        "denominator_rationale": "Class-script share controls for overall diabetes-drug volume and formulary shifts.",
+        "assumptions": [
+          "Coverage start = 2024-01-01 per SPA; manual conflict 2024-02-01 disclosed.",
+          "Share computed across GLP1, INSULIN, SGLT2 scripts; provisional excluded."
+        ],
+        "effective_date": "2024-01-01",
+        "date_source": "NL-SPA-2023-014",
+        "comparison": {
+          "type": "pre_post",
+          "window_quarters": 4,
+          "start_quarter": "2023Q1",
+          "end_quarter": "2024Q4"
+        },
+        "checks": [
+          "check_policy_timeline_conflict",
+          "check_data_completeness",
+          "check_provisional_quarters"
+        ],
+        "steps": [
+          {
+            "tool": "get_policy_timeline",
+            "args": {
+              "state": "NL",
+              "topic": "glp1_coverage"
+            }
+          },
+          {
+            "tool": "check_data_coverage",
+            "args": {
+              "state": "NL"
+            }
+          },
+          {
+            "tool": "run_sql",
+            "args": {
+              "sql": "quarterly GLP1, INSULIN, SGLT2 script counts NL 2023Q1-2024Q4"
+            }
+          },
+          {
+            "tool": "calculate",
+            "args": {
+              "expression": "GLP1 scripts / (GLP1+INSULIN+SGLT2 scripts)"
+            }
+          },
+          {
+            "tool": "spending_decomposition",
+            "args": {
+              "state": "NL",
+              "drug_class": "GLP1",
+              "start_quarter": "2023Q1",
+              "end_quarter": "2024Q4"
+            }
+          }
+        ],
+        "interpretation_limits": [
+          "Shows GLP1 mix shift within class, not absolute access.",
+          "Cannot rule out insulin/SGLT2 supply or preference changes.",
+          "Share metric hides total volume growth or decline.",
+          "Not causal; disclosure conflict remains."
+        ]
+      },
+      "score": 3.0,
+      "breakdown": {
+        "scope": 2,
+        "interpretation": 1
+      },
+      "hard_failures": [
+        "metric 'glp1_share_of_class_rx' unavailable"
+      ],
+      "needs_evidence": false,
+      "critic_note": "",
+      "status": "pruned",
+      "prune_reason": "hard failure: metric 'glp1_share_of_class_rx' unavailable"
+    }
+  ]
+}
