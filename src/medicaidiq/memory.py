@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 import re
+import threading
 from dataclasses import asdict, dataclass, field
 from datetime import date, datetime
 from pathlib import Path
@@ -43,6 +44,9 @@ AUTHORITY = {
     "provider_bulletin": 1,
     "agent_interpretation": 0,
 }
+
+
+_EVIDENCE_LOCK = threading.Lock()
 
 
 # ----------------------------------------------------------------------------- short-term
@@ -62,8 +66,9 @@ class WorkingMemory:
     failed_attempts: list[str] = field(default_factory=list)
 
     def add_evidence(self, kind: str, summary: str, payload: dict) -> str:
-        eid = f"E{len(self.evidence) + 1}"
-        self.evidence.append(Evidence(eid, kind, summary, payload))
+        with _EVIDENCE_LOCK:   # agents may write concurrently in the multi-agent workflow
+            eid = f"E{len(self.evidence) + 1}"
+            self.evidence.append(Evidence(eid, kind, summary, payload))
         return eid
 
     def record_failure(self, description: str) -> None:

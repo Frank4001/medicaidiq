@@ -40,12 +40,15 @@ def build_data() -> None:
 
 
 def make_agent(provider: str | None = None, model: str | None = None, interactive: bool = False,
-               retrieval: bool = True, planning: bool = False):
+               retrieval: bool = True, planning: bool = False, multi: bool = False):
     from .agent import MedicaidIQAgent
     from .db import ReadOnlyDB
     from .llm import ChatLLM
     from .tools import Toolbox
 
+    if multi:
+        from .multiagent import MultiAgentOrchestrator
+        return MultiAgentOrchestrator(ChatLLM(provider=provider, model=model), Toolbox(ReadOnlyDB()))
     clarify = (lambda q: input(f"\nMedicaidIQ asks: {q}\n> ").strip() or None) if interactive else None
     return MedicaidIQAgent(ChatLLM(provider=provider, model=model), Toolbox(ReadOnlyDB()), clarify=clarify,
                            retrieval=retrieval, planning=planning)
@@ -86,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     ask.add_argument("--json", action="store_true", help="Print the full result as JSON")
     ask.add_argument("--no-retrieval", action="store_true", help="Ablation: disable search_policy (no RAG)")
     ask.add_argument("--plan", action="store_true", help="Enable the Tree-of-Thought analysis planner")
+    ask.add_argument("--multi", action="store_true", help="Use the four-agent workflow")
     args = p.parse_args(argv)
 
     if args.cmd == "build-data":
@@ -99,7 +103,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         agent = make_agent(args.provider, args.model, args.interactive, retrieval=not args.no_retrieval,
-                           planning=args.plan)
+                           planning=args.plan, multi=args.multi)
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
         print(f"Setup error: {exc}", file=sys.stderr)
         return 2

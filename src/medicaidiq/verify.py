@@ -15,7 +15,10 @@ from .memory import WorkingMemory
 
 # Numbers that are structural, not claims: years, quarter labels, small ordinals, CI level, and
 # citations (42 CFR 430.20(b), § 447.512, chunk ids like 42-CFR-456.705(b)).
-_IGNORE = re.compile(r"\b\d+[\s-]*CFR[\s-]*(?:(?:part|§)\s*)?\d+(?:\.\d+)?(?:\([a-z0-9]+\))*(?:-\d+)?"
+_IGNORE = re.compile(r"\b[A-Z]{2,4}-[A-Z]{2,5}-\d{4}-[0-9A-Z]+(?:#p\d+)?"           # doc ids: EV-BUL-2024-011
+                     r"|\b(?:430|431|435|440|441|447|456)\.\d{1,3}(?:\([a-z0-9]+\))*"  # CFR section numbers
+                     r"|\b\d+[\s-]*CFR\b(?![\s-]*(?:part|§)?\s*\d)"                     # bare "42 CFR"
+                     r"|\b\d+[\s-]*CFR[\s-]*(?:(?:part|§)\s*)?\d+(?:\.\d+)?(?:\([a-z0-9]+\))*(?:-\d+)?"
                      r"|§+\s*\d+(?:\.\d+)?(?:\([a-z0-9]+\))*"
                      r"|\b(19|20)\d{2}(?:-\d{2}-\d{2})?\b|\b\d{4}Q[1-4]\b|\bQ[1-4]\b|\bE\d+\b|95%|\b1,000\b",
                      re.IGNORECASE)

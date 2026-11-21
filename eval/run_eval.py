@@ -37,6 +37,7 @@ def main() -> int:
     p.add_argument("--no-retrieval", action="store_true", help="Ablation: agent without search_policy")
     p.add_argument("--category", default=None, help="Only cases whose category starts with this (e.g. rag)")
     p.add_argument("--plan", action="store_true", help="Enable the Tree-of-Thought planner")
+    p.add_argument("--multi", action="store_true", help="Use the multi-agent workflow")
     args = p.parse_args()
 
     RESULTS.mkdir(exist_ok=True)
@@ -44,10 +45,11 @@ def main() -> int:
     for provider in args.provider:
         factory = lambda: ChatLLM(provider=provider, model=args.model, base_url=args.base_url)
         label = (factory().label + ("+no-retrieval" if args.no_retrieval else "")
-                 + ("+tot" if args.plan else ""))
+                 + ("+tot" if args.plan else "") + ("+multi" if args.multi else ""))
         print(f"\n### {label}")
         run = run_eval(factory, label, ids=args.ids, max_steps=args.max_steps,
-                       retrieval=not args.no_retrieval, category=args.category, planning=args.plan)
+                       retrieval=not args.no_retrieval, category=args.category, planning=args.plan,
+                       multi_agent=args.multi)
         summary = run.summary()
         summaries.append(summary)
         out = RESULTS / f"{label.replace(':', '_').replace('/', '-')}_{datetime.now():%Y%m%d_%H%M%S}.json"

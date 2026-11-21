@@ -80,3 +80,21 @@ Format: `D<week>.<n>`, the decision, why, and its status (active / superseded by
 | D4.6 | **Hard time limits**: per-call timeout from the remaining budget (planner); 240 s per question and 90 s per call (agent); provider errors become an honest `cannot_answer` | Live: a 49-minute hang on a connection error | Active |
 | D4.7 | **CrewAI and LangChain evaluated, not adopted**; roles implemented natively; **MCP used for branch state** (`plan://{plan_id}`) | Simplest scaffolding (harness lab / Building Effective Agents); no duplicate loop; full inspectability | Active (deviation from the Checkpoint 4.1 proposal) |
 | D4.8 | A policy question with a single-quarter design gets no window-feasibility credit | One quarter per side gives no uncertainty estimate; a weaker plan was observed winning on citation points | Active |
+
+---
+
+## Week 5: Multi-agent coordination (and the fine-tuning decision)
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D5.1 | **Single agent with role-structured tools is the default; the four-agent workflow is opt-in** (`--multi`) | Benchmark, 18 cases: single 18/18 @ 9.8 s / $0.0025 vs. multi-agent best 17/18 @ 49.4 s / $0.0137. Handoffs added failure surface (v1 12/18, v2 13/18, v3 17/18) | Active |
+| D5.2 | **Deterministic controller + four LLM roles** (planner/writer, policy researcher, claims analyst, reviewer) with **isolated tool sets** | Checkpoint 5.1 design; tool isolation enforced in code | Opt-in |
+| D5.3 | **Shared evidence store** (thread-safe `WorkingMemory`) with global evidence ids across agents; the final answer is verified against it | One source of truth; grounding check still applies | Active (opt-in path) |
+| D5.4 | **Reviewer checks only final drafts**; plan scoring stays with the ToT critic; ≤ 1 revision, then disclose | Grader feedback (dual role); Lab 5.1 retry cap | Active (opt-in path) |
+| D5.5 | **Controller failover to the single agent** on any stage failure; degraded defaults for unparseable scope or review; 300 s workflow limit | Grader feedback (controller failure) | Active (opt-in path) |
+| D5.6 | **Lossless policy handoff:** the writer receives retrieved passage text, not just evidence summaries; ids copied exactly; no other-entity facts in abstentions | v1 live failures | Active (opt-in path) |
+| D5.7 | **State normalization at the scope handoff** (names and codes) | v2 live bug: "Northland" → "NO" → treated as unknown → analyst skipped | Active (opt-in path) |
+| D5.8 | **Fine-tuning rejected; adapt with tools + RAG + prompts** | Facts change and must be versioned and cited; DeepSeek already 18/18; small data; 8 GB VRAM. Possible later only for the local-model backup | Rejected (documented) |
+| D5.9 | **Grader fixes:** accept the authoritative date even when sensitivity runs follow; ignore doc ids, CFR section lists, and bare "42 CFR" in numeric checks; more contrast synonyms | Grader blind spots #5–#7 found by reading traces | Active |
+
+**Known open issue (opt-in path):** data-evidence handoffs are still summarized (v3 `coverage_sp` failure). The fix would be to pass the structured payloads (e.g. `quarters_by_status`) to the writer, as D5.6 does for policy text.

@@ -165,6 +165,9 @@ def test_citations_are_not_treated_as_numeric_claims():
     from medicaidiq.verify import _claim_numbers
     text = "Per 42 CFR 430.20(b) and § 447.512, see [42-CFR-456.705(b)-2]; prescriptions rose 38.8%."
     assert [v for v, _ in _claim_numbers(text)] == [38.8]
+    # Regression (Week 5): document ids and listed CFR sections were read as -11 / 456.705
+    text2 = "See EV-BUL-2024-011 and NL-SPA-2023-014#p1; 42 CFR 456.703 and 456.705 apply."
+    assert _claim_numbers(text2) == []
 
 
 def test_provider_error_becomes_honest_failure(toolbox):
