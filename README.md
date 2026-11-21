@@ -3,7 +3,7 @@
 **A research assistant that connects Medicaid drug-policy changes to utilization data, with citations, reproducible statistics, and stated uncertainty.**
 
 > Capstone project for the CMU *Agentic AI: Building Autonomous Systems for Real-World Applications* program.
-> **Status:** Week 5 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, guardrails, an MCP server, and an eval harness, plus **opt-in Tree-of-Thought planning and an opt-in four-agent workflow** (both benchmarked; the single agent stays the default on evidence). **Live eval: 18/18 on DeepSeek** (9.8 s, $0.0025 per question). 97 offline tests.
+> **Status:** Week 6 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, layered **safety guardrails**, **human-in-the-loop review with SLAs**, a trajectory monitor, an MCP server, an eval harness with **release gates**, and a **demo and review console**. Opt-in Tree-of-Thought planning and a four-agent workflow were benchmarked; the single agent stays the default on evidence. **Live eval: 24/24 on DeepSeek, all release gates pass** (10.3 s, $0.0028 per question). 118 offline tests.
 
 ## The problem
 
@@ -88,6 +88,15 @@ llama-server -m Qwen3-8B-Q4_K_M.gguf -ngl 99 -c 16384 --jinja --reasoning-format
 medicaidiq ask "..." --provider local
 ```
 
+### Demo and review console
+
+```bash
+pip install -e ".[ui]"
+medicaidiq ui            # opens http://localhost:8501
+```
+
+Tabs: **Ask** (any mode; side-by-side comparison with the measured trade-off) · **Review queue** (approve / revise / reject withheld answers) · **Tools** · **Evaluation** (all runs, release gates) · **Monitoring** (PII-redacted run log).
+
 ### Evaluate
 
 ```bash
@@ -111,6 +120,11 @@ src/medicaidiq/
   agent.py         ReAct loop, stop conditions, verification retries, write-intent guardrail, time limits
   planner.py       Tree-of-Thought planner: beam search over analysis plans, tool-verified rubric, pruning
   multiagent.py    four-agent workflow: deterministic controller, role-isolated tools, shared evidence, reviewer, failover
+  guardrails.py    PII screen, injection screens (question + retrieved text), calibration check, redaction
+  oversight.py     escalation triggers, review queue (SQLite), SLAs, fail-closed expiry, reviewer metrics
+  monitor.py       trajectory suspicion score + structured PII-redacted run log
+  pipeline.py      single entry point: run -> monitor -> oversight -> log (CLI, eval, UI)
+app/streamlit_app.py  demo and review console
   tools.py         tool schemas + dispatch (each tool tied to an LLM limitation)
   memory.py        working memory; long-term knowledge store (supersession, conflicts, review)
   stats.py         pre/post with bootstrap CI + materiality, decomposition, coverage, calculator
@@ -123,7 +137,7 @@ src/medicaidiq/
   synth.py         synthetic data + policy corpus with planted effects and traps
   evaluation.py    deterministic graders, quality/cost/latency summary
 eval/              cases.jsonl, run_eval.py, results/
-tests/             97 tests: guardrails, statistics, memory, retrieval, ToT planner, multi-agent, agent loop, MCP, eval grader
+tests/             118 tests: guardrails, statistics, memory, retrieval, ToT planner, multi-agent, safety and oversight, agent loop, MCP, eval grader
 data/synthetic/    generated CSVs + policy documents (fictional states)
 data/public/       real federal regulations + CMS dataset docs (version-pinned snapshots)
 docs/              checkpoints, design log, architecture, LLM selection, cost, requirements traceability

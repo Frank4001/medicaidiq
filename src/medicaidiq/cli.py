@@ -55,9 +55,14 @@ def make_agent(provider: str | None = None, model: str | None = None, interactiv
 
 
 def render(result) -> str:
-    a = result.answer
-    lines = [f"\n=== {a.get('answer_type', '?').upper()} (confidence: {a.get('confidence')}) ===",
-             a.get("summary", "")]
+    a, o = result.answer, result.oversight or {}
+    lines = []
+    if o.get("mandatory"):
+        lines.append(f"\n*** {o.get('delivered_message')} ***\n--- DRAFT (reviewer only) ---")
+    elif o.get("escalated"):
+        lines.append(f"\n[{o.get('delivered_message')}]")
+    lines += [f"\n=== {a.get('answer_type', '?').upper()} (confidence: {a.get('confidence')}) ===",
+              a.get("summary", "")]
     for f in a.get("findings", []):
         lines.append(f"  - {f['statement']}  [{', '.join(f.get('evidence_ids', []))}]")
     if a.get("caveats"):
@@ -69,9 +74,10 @@ def render(result) -> str:
     lines.append("\nEvidence trail:")
     lines += [f"  {e['id']} [{e['tool']}] {e['summary']}" for e in result.evidence]
     u = result.usage
+    m = result.monitor or {}
     lines.append(f"\n{result.steps} steps · stop={result.stop_reason} · verified={result.verified} · "
                  f"{u['prompt_tokens']}+{u['completion_tokens']} tokens · ${u['cost_usd']:.4f} · "
-                 f"{u['llm_seconds']}s LLM time · {u['model']}")
+                 f"{u['llm_seconds']}s LLM time · {u['model']} · monitor {m.get('score', 0)}/100")
     return "\n".join(lines)
 
 
@@ -90,7 +96,13 @@ def main(argv: list[str] | None = None) -> int:
     ask.add_argument("--no-retrieval", action="store_true", help="Ablation: disable search_policy (no RAG)")
     ask.add_argument("--plan", action="store_true", help="Enable the Tree-of-Thought analysis planner")
     ask.add_argument("--multi", action="store_true", help="Use the four-agent workflow")
+    sub.add_parser("ui", help="Launch the demo and review console (Streamlit) in your browser")
     args = p.parse_args(argv)
+
+    if args.cmd == "ui":
+        import subprocess
+        app = Path(__file__).resolve().parents[2] / "app" / "streamlit_app.py"
+        return subprocess.call([sys.executable, "-m", "streamlit", "run", str(app)])
 
     if args.cmd == "build-data":
         build_data()
@@ -101,13 +113,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"saved {path}")
         return 0
 
+    from .pipeline import answer_question
+    mode = "multi" if args.multi else "tot" if args.plan else "no_retrieval" if args.no_retrieval else "single"
+    clarify = (lambda q: input(f"\nMedicaidIQ asks: {q}\n> ").strip() or None) if args.interactive else None
     try:
-        agent = make_agent(args.provider, args.model, args.interactive, retrieval=not args.no_retrieval,
-                           planning=args.plan, multi=args.multi)
+        result = answer_question(args.question, mode=mode, provider=args.provider, model=args.model,
+                                 clarify=clarify)
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
         print(f"Setup error: {exc}", file=sys.stderr)
         return 2
-    result = agent.run(args.question)
     RUNS_DIR.mkdir(exist_ok=True)
     out = RUNS_DIR / f"run_{datetime.now():%Y%m%d_%H%M%S}.json"
     out.write_text(json.dumps(result.to_dict(), indent=2, default=str), encoding="utf-8")

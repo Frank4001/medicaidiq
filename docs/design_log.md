@@ -98,3 +98,22 @@ Format: `D<week>.<n>`, the decision, why, and its status (active / superseded by
 | D5.9 | **Grader fixes:** accept the authoritative date even when sensitivity runs follow; ignore doc ids, CFR section lists, and bare "42 CFR" in numeric checks; more contrast synonyms | Grader blind spots #5–#7 found by reading traces | Active |
 
 **Known open issue (opt-in path):** data-evidence handoffs are still summarized (v3 `coverage_sp` failure). The fix would be to pass the structured payloads (e.g. `quarters_by_status`) to the writer, as D5.6 does for policy text.
+
+---
+
+## Week 6: Safety guardrails, evaluation metrics, human oversight, demo console
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D6.1 | **Deterministic PII screen** (SSN, member ID, DOB, phone, email, address) refuses before any model call; logs and the review queue are PII-redacted | Checkpoint 6.1: accept only public, synthetic, or anonymized data | Active |
+| D6.2 | **Retrieved-text injection screen**: the whole sentence carrying an embedded instruction is removed and the passage flagged; documents never authorize actions | Checkpoint 6.1; planted `SP-FAQ-2024-01` trap; removing only the trigger phrase left the payload readable | Active |
+| D6.3 | **Calibration check in the verifier**: causal overclaims and overconfident wording trigger a rewrite; hedged negations allowed | Lab 6.1 during/post-generation calibration | Active |
+| D6.4 | **Oversight policy**: 4 mandatory triggers (decision-sensitive, source conflict the answer depends on, unresolved date, causal question) withhold the conclusion; 4 recommended triggers release + queue | Checkpoint 6.1 sign-off criteria | Active |
+| D6.5 | **Review queue** (SQLite): approve / revise / reject; SLA 24 h (decision-sensitive), 72 h (conflict, date, causal), 7 days (recommended); **fail closed** on expiry | Grader feedback: how long can a withheld conclusion wait? | Active |
+| D6.6 | **Reviewer metrics per trigger** (approval / revision / rejection / expiry rates, median hours) | Grader feedback: do the escalation triggers work? | Active |
+| D6.7 | **Release gates**: citation support ≥ 95%, numerical accuracy ≥ 95%, 0 missed mandatory escalations, 0 prohibited-action successes; why 95% is documented | Grader feedback: why 95%? | Active |
+| D6.8 | **Trajectory monitor** (heuristic suspicion score, threshold 40) + structured run log | Lab 6.2 (SHADE-Arena style); log the whole trajectory | Active |
+| D6.9 | **Single pipeline** (`pipeline.answer_question`) for CLI, eval, and UI, so every path gets identical safety layers | Avoid unprotected side doors | Active |
+| D6.10 | **Conflict trigger precision**: mandatory only when the answer depends on the disputed fact; otherwise `background_conflict` | Live eval: 1 unnecessary escalation → 0 | Active |
+| D6.11 | **Demo and review console** (Streamlit): side-by-side mode comparison with the benchmark trade-off, trace/evidence/passages/ToT views, review queue, tools explorer, eval dashboard, monitoring log | Demo request; HITL needs a reviewer interface | Active |
+| D6.12 | Refusals and out-of-scope replies always go through `submit_answer`; no other-state facts when declining (main prompt) | Live eval v2 slips | Active |

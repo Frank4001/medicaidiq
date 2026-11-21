@@ -1,6 +1,6 @@
 # Final Requirements Traceability
 
-Every graded requirement of *Required Capstone Assignment 7.1*, where it will be met, and its current status. Updated at the end of each week. **Last update: Week 5.**
+Every graded requirement of *Required Capstone Assignment 7.1*, where it will be met, and its current status. Updated at the end of each week. **Last update: Week 6.**
 
 Status: ⬜ not started · 🟨 in progress · ✅ done (may still be polished)
 
@@ -11,10 +11,10 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (may still be polished)
 | A1 | Project title | `README.md`: *MedicaidIQ* | ✅ |
 | A2 | Problem, intended user, why it matters | `docs/checkpoints/week1_*.md` §1, README | ✅ |
 | A3 | Goal and scope (success criteria, boundaries) | Week 1 §1; D2.1 scope; eval pass criteria in `docs/llm_selection.md` §6 | 🟨 add a formal success-criteria list |
-| A4 | Final architecture (reasoning, memory, tools, retrieval, ToT, multi-agent, guardrails, logging, eval, human intervention) | `docs/architecture.md` | 🟨 reasoning, memory, tools, retrieval (hybrid RAG), ToT planner (opt-in), **multi-agent coordination (opt-in, benchmarked)**, guardrails, logging, eval, clarification done; human-review workflow pending (Week 6) |
-| A5 | Design evolution M1→M6 | `docs/design_log.md` + `docs/checkpoints/` | 🟨 Weeks 1–5 |
+| A4 | Final architecture (reasoning, memory, tools, retrieval, ToT, multi-agent, guardrails, logging, eval, human intervention) | `docs/architecture.md` | 🟨 reasoning, memory, tools, retrieval (hybrid RAG), ToT planner (opt-in), **multi-agent coordination (opt-in, benchmarked)**, layered guardrails, monitoring and logging, eval with release gates, **human intervention (review queue, SLAs)** done |
+| A5 | Design evolution M1→M6 | `docs/design_log.md` + `docs/checkpoints/` | 🟨 Weeks 1–6 |
 | A6 | Implementation overview | README "Repository layout"; `pyproject.toml` | 🟨 |
-| A7 | Evaluation methods and results | `eval/`, `src/medicaidiq/evaluation.py` | 🟨 18 cases; **live DeepSeek 18/18**; local Qwen3-8B 8/9 (Week 2 set); RAG ablation 1/5 → 5/5; ToT vs. linear 6/7 vs. 7/7 (5.9x latency); multi-agent 17/18 vs. single 18/18 (5x latency) |
+| A7 | Evaluation methods and results | `eval/`, `src/medicaidiq/evaluation.py` | 🟨 24 cases; **live DeepSeek 24/24, all release gates pass**; 18-case runs 18/18; local Qwen3-8B 8/9 (Week 2 set); RAG ablation 1/5 → 5/5; ToT vs. linear 6/7 vs. 7/7 (5.9x latency); multi-agent 17/18 vs. single 18/18 (5x latency) |
 | A8 | Safety, reliability, human oversight | SQL guard, verifier, stop conditions, clarification, knowledge-store human approval | 🟨 human-review workflow and monitoring pending |
 | A9 | Limitations and next steps | checkpoint docs §5 | 🟨 running list |
 | A10 | Public GitHub link | https://github.com/Frank4001/medicaidiq | ✅ |

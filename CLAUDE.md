@@ -20,7 +20,7 @@ Goal: **100% on every rubric criterion.** Track coverage in `docs/requirements_t
 |---|---|---|
 | `course/weekN/{assignment,labs}`, `course/final_project/` | Private course materials (prompts, rubrics, submissions, feedback, labs, templates) | **No** |
 | `src/medicaidiq/` | Agent package (see README layout) | Yes |
-| `tests/` | 97 offline tests (scripted LLM; no key needed; the embedding model downloads once to `.tools/fastembed`) | Yes |
+| `tests/` | 118 offline tests (scripted LLM; no key needed; the embedding model downloads once to `.tools/fastembed`) | Yes |
 | `eval/` | `cases.jsonl`, `run_eval.py`, `results/` (live results go here) | Yes |
 | `data/synthetic/` | Generated CSVs + policy docs (fictional states); `.duckdb` and `knowledge_store.json` are rebuilt | CSVs and docs yes |
 | `data/public/` | Real eCFR regulations + data.medicaid.gov SDUD description (JSON snapshots with URL, version, sha256) | Yes |
@@ -62,6 +62,8 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - **ToT (D4.1–D4.8):** `planner.py`, opt-in via `--plan`; beam 2, at most 3 children, depth 3, at most 15 nodes; rubric = scope/evidence/feasibility (tool-verified) + interpretation (LLM critic); prune below 7; ground facts after depth 1; budget 30 LLM / 20 tool / 60 s. CrewAI/LangChain NOT adopted (deviation from Checkpoint 4.1, justified); MCP serves branch records as `plan://{id}`; final benchmark trees committed in `eval/results/plan_trees/`.
 - **Multi-agent (D5.1–D5.7):** `multiagent.py`, opt-in via `--multi`: deterministic controller; planner (scope + write), policy researcher, claims analyst, reviewer (drafts only); isolated tools; shared thread-safe evidence; ≤ 1 revision; failover to the single agent. Benchmark: v1 12/18, v2 13/18, v3 17/18 vs. single 18/18 → single agent stays the default. Open: data-evidence handoff still summarized (v3 `coverage_sp`).
 - **Fine-tuning (D5.8):** rejected; tools + RAG instead.
+- **Safety and oversight (D6.1–D6.12):** `guardrails.py` (PII, injection, calibration, redaction), `oversight.py` (4 mandatory + 4 recommended triggers, SQLite review queue, SLA 24/72/168 h, fail closed, per-trigger reviewer metrics), `monitor.py` (suspicion score, threshold 40; `runs/events.jsonl`), `pipeline.py` (single entry point). Release gates: citation ≥ 95%, numeric ≥ 95%, 0 missed escalations, 0 prohibited actions. Eval tickets go to `runs/review_queue_eval.sqlite`.
+- **Demo UI (D6.11):** `app/streamlit_app.py`, launched with `medicaidiq ui` (extra `[ui]`). Ask tab compares modes side by side with the benchmark trade-off.
 - **Guardrails (D3.10–D3.11, D4.6):** deterministic write-intent refusal before the LLM; unparseable final answers rejected; output limit 4,096 tokens; 240 s per question, 90 s per call; provider errors become `cannot_answer`.
 - **Eval (D2.11):** deterministic graders, no LLM judge; decision rule = cheapest provider with ≥ 8/9 pass, no malformed tool calls, average < 30 s.
 - **Repo (D2.12):** public at https://github.com/Frank4001/medicaidiq (published 2026-11-20). Commits use the GitHub no-reply email (set in the repo-local git config).
@@ -113,6 +115,7 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - **Week 3 live runs:** 12/14 → 14/14. Found and fixed a real bug (a cut-off JSON answer was accepted unverified), a retrieval scope gap (Illinois at 0.681 similarity), and 2 more grader false negatives (CFR numbers counted as claims; "opposite" missing from contrast words). Keyword grading is brittle; consider a structured rubric or LLM judge in the evaluation module.
 - **Week 4 live ToT runs:** v1 4/7 (empty generations, `finish=length`); v2 4/7 (ungrounded date guesses, whole beam pruned; a 49-minute network hang); v3 6/7 after grounding and time limits. Linear 7/7 at 14 s vs. ToT 83 s, so ToT is opt-in only. Lesson: ToT only helps where deterministic tools can't already settle the choice.
 - **Week 5 live multi-agent runs:** v1 12/18 (lossy handoffs + 2 grader blind spots), v2 13/18 (state-name truncation bug at the scope handoff + 2 grader misses), v3 17/18 at 5x latency. Lesson: each handoff is an interface that can lose or corrupt information; one agent with all the tools has none.
+- **Week 6 live runs:** 23/24 (1 unnecessary escalation: conflict trigger too broad) → 22/24 (model slips: other-state facts in a single-agent refusal; a prose refusal) → **24/24, all release gates**. Testing also caught: injection neutralization left the payload readable; the calibration regex flagged a correct hedge.
 - The agent found a corpus gap itself (42 CFR 447.256 cited but missing) and declined to state it. We added it. That's good demo material for grounded behavior.
 - Southport shows a small, significant but immaterial dip (−3.5%) from noise. It's a useful live example of the significance × materiality quadrant.
 
@@ -127,6 +130,8 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
 - [x] Week 4: ToT planner built and benchmarked (opt-in); 18/18 default eval.
 - [x] Week 5: four-agent workflow built, 3 benchmark runs (best 17/18 vs. single 18/18); single agent stays the default; fine-tuning rejected.
 - [ ] Week 5 grader asked "why four agents": answered in docs/checkpoints/week5_multi_agent.md §5.
+- [x] Week 6: guardrails, oversight, monitor, release gates, demo console; 24/24 with all gates passing; the 3 grader questions answered (§3, §4).
+- [ ] Demo rehearsal: run `medicaidiq ui`, walk the HITL flow (causal question → withheld → approve in the Review tab) and the single-vs-multi comparison.
 - [ ] Week 4 checkpoint has no grader feedback yet; check when it arrives.
 - [x] **Method playbook DONE (2026-11-20):** user-level Claude Code skill `agent-builder` at `~/.claude/skills/agent-builder/` (SKILL.md: phases 0-7 with eval moved to phase 2, gates, checklists, anti-patterns; templates/: CLAUDE.md, design_log, requirements_traceability, checkpoint, eval_cases, llm_selection). Update it with Week 6-7 lessons.
 - [ ] **REUSABLE CODE TEMPLATE, post-submission task (requested 2026-11-20), ~1 day.** Extract the domain-independent
