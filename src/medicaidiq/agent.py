@@ -69,22 +69,28 @@ class AgentResult:
 class MedicaidIQAgent:
     def __init__(self, llm, toolbox: Toolbox, max_steps: int = 10, max_verify_retries: int = 2,
                  clarify: Callable[[str], str | None] | None = None, retrieval: bool = True,
-                 planning: bool = False, planner=None, max_seconds: float = 240.0, call_timeout: float = 90.0):
+                 planning: bool = False, planner=None, max_seconds: float = 240.0, call_timeout: float = 90.0,
+                 system_prompt: str | None = None, allowed_tools: set[str] | None = None):
         self.llm = llm
         self.max_seconds, self.call_timeout = max_seconds, call_timeout
         self.tools = toolbox
         self.max_steps = max_steps + (2 if planning else 0)   # the plan call + one extra execution step
         self.max_verify_retries = max_verify_retries
         self.clarify = clarify  # None -> non-interactive: stop and return the clarifying question
+        self.system_prompt = system_prompt or SYSTEM_PROMPT
         self.schemas = tool_schemas(retrieval, planning)
+        if allowed_tools is not None:   # role-specific sub-agent (Week 5): only its own tools + submit_answer
+            self.schemas = [t for t in self.schemas
+                            if t["function"]["name"] in allowed_tools | {"submit_answer"}]
         self.offered = {t["function"]["name"] for t in self.schemas}
         self.planner = planner
         if planning and planner is None:
             from .planner import ToTPlanner
             self.planner = ToTPlanner(llm, toolbox)
 
-    def run(self, question: str) -> AgentResult:
-        memory = WorkingMemory(question)
+    def run(self, question: str, memory: WorkingMemory | None = None) -> AgentResult:
+        """memory: pass a shared WorkingMemory so several agents write to one evidence store (Week 5)."""
+        memory = memory or WorkingMemory(question)
         if write_intent(question):
             answer = {"answer_type": "cannot_answer",
                       "summary": "I can't modify, delete, or insert data: MedicaidIQ has read-only access by design. "
@@ -96,7 +102,7 @@ class MedicaidIQAgent:
             trace = [TraceStep(0, "Guardrail: write-intent detected before any model call.", "guardrail_refusal",
                                {}, {"blocked": True}, 0.0)]
             return self._result(question, answer, trace, memory, "guardrail", True, 0)
-        messages = [{"role": "system", "content": SYSTEM_PROMPT},
+        messages = [{"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": question}]
         trace: list[TraceStep] = []
         verify_retries = 0
