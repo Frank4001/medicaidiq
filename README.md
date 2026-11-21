@@ -3,7 +3,7 @@
 **A research assistant that connects Medicaid drug-policy changes to utilization data, with citations, reproducible statistics, and stated uncertainty.**
 
 > Capstone project for the CMU *Agentic AI: Building Autonomous Systems for Real-World Applications* program.
-> **Status:** Week 6 of 7. ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, layered **safety guardrails**, **human-in-the-loop review with SLAs**, a trajectory monitor, an MCP server, an eval harness with **release gates**, and a **demo and review console**. Opt-in Tree-of-Thought planning and a four-agent workflow were benchmarked; the single agent stays the default on evidence. **Live eval: 24/24 on DeepSeek, all release gates pass** (10.3 s, $0.0028 per question). 118 offline tests.
+> **Status: complete (v1.0, final capstone submission).** ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, layered **safety guardrails**, **human-in-the-loop review with SLAs**, a trajectory monitor, an MCP server, an eval harness with **release gates**, and a **demo and review console**. Opt-in Tree-of-Thought planning and a four-agent workflow were benchmarked; the single agent stays the default on evidence. **Live eval: 24/24 on DeepSeek, all release gates pass** (10.3 s, $0.0028 per question). 118 offline tests.
 
 ## The problem
 
@@ -46,6 +46,27 @@ flowchart TD
 ```
 
 Details: [`docs/architecture.md`](docs/architecture.md). Design history: [`docs/design_log.md`](docs/design_log.md).
+
+## Results
+
+**Success criteria** (checked on every release by `eval/run_eval.py`): citation support ≥ 95%, numerical accuracy ≥ 95%, zero missed mandatory escalations, zero successful prohibited actions, correct behavior on every planted trap, and under 30 s per question.
+
+| Evaluation (live, DeepSeek `deepseek-flash`) | Result |
+|---|---|
+| Final 24-case suite: analysis, traps, retrieval, abstention, clarification, paraphrase, safety, escalation | **24/24**; citation 100%, numeric 100%, 0 missed / 0 unnecessary escalations, 0 prohibited actions; 10.3 s and $0.0028 per question |
+| RAG ablation (5 policy-text cases) | retrieval off **1/5** → on **5/5** |
+| Tree-of-Thought vs. linear (7 analysis cases) | 6/7 at 83 s vs. **7/7 at 14 s** → ToT is opt-in |
+| Four-agent vs. single agent (18 cases, best of 3 runs) | 17/18 at 49 s vs. **18/18 at 10 s** → single agent is the default |
+| Model choice (Week 2 set, 9 cases) | DeepSeek **9/9 at 9 s** vs. local Qwen3-8B 8/9 at 69 s |
+
+Every run is archived in [`eval/results/`](eval/results/) with full traces. The graders are deterministic: they check the date actually used, numbers against the tool value, citations, and that refusals contain no invented numbers. Reading every failing trace found real bugs, plus 8 cases where the grader itself was wrong. Both are recorded in [`docs/design_log.md`](docs/design_log.md).
+
+## Limitations
+
+- State utilization data and state policy documents are **synthetic** (fictional states). Federal text is real. A real Illinois slice is feasible ([`docs/real_data_feasibility_illinois.md`](docs/real_data_feasibility_illinois.md)) but not yet built.
+- Pre/post analysis shows **association only**. Causal questions are withheld for human review.
+- The eval set is small (24 cases), and its keyword-based checks are brittle. PII and injection screens are regex-based.
+- No real reviewer traffic yet, so the reviewer metrics are not yet meaningful.
 
 ## Quick start
 
@@ -100,7 +121,7 @@ Tabs: **Ask** (any mode; side-by-side comparison with the measured trade-off) ·
 ### Evaluate
 
 ```bash
-python eval/run_eval.py --provider deepseek                    # 18 graded cases
+python eval/run_eval.py --provider deepseek                    # 24 graded cases + release gates
 python eval/run_eval.py --provider deepseek --plan --category tot   # ToT benchmark
 python eval/run_eval.py --provider deepseek --multi                 # multi-agent benchmark
 python eval/run_eval.py --provider deepseek --category rag --no-retrieval   # RAG ablation
@@ -124,7 +145,6 @@ src/medicaidiq/
   oversight.py     escalation triggers, review queue (SQLite), SLAs, fail-closed expiry, reviewer metrics
   monitor.py       trajectory suspicion score + structured PII-redacted run log
   pipeline.py      single entry point: run -> monitor -> oversight -> log (CLI, eval, UI)
-app/streamlit_app.py  demo and review console
   tools.py         tool schemas + dispatch (each tool tied to an LLM limitation)
   memory.py        working memory; long-term knowledge store (supersession, conflicts, review)
   stats.py         pre/post with bootstrap CI + materiality, decomposition, coverage, calculator
@@ -136,7 +156,9 @@ app/streamlit_app.py  demo and review console
   mcp_server.py    the same tools over Model Context Protocol
   synth.py         synthetic data + policy corpus with planted effects and traps
   evaluation.py    deterministic graders, quality/cost/latency summary
-eval/              cases.jsonl, run_eval.py, results/
+app/streamlit_app.py  demo and review console (medicaidiq ui)
+eval/              cases.jsonl, run_eval.py, results/ (every live run, ToT plan trees)
+scripts/           make_figures.py (report/slide figures from archived results), fill_report.py
 tests/             118 tests: guardrails, statistics, memory, retrieval, ToT planner, multi-agent, safety and oversight, agent loop, MCP, eval grader
 data/synthetic/    generated CSVs + policy documents (fictional states)
 data/public/       real federal regulations + CMS dataset docs (version-pinned snapshots)
