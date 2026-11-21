@@ -153,4 +153,6 @@ New weekly material arrives as `WeekN/` at the root; move it into `course/weekN/
   (4) add a DeepSeek vs. local-8B (stock/tuned) row to the report's model comparison. Positioning: DeepSeek stays
   primary; local 8B = free offline backup. No model upgrade possible on this laptop (8 GB VRAM / 16 GB RAM:
   8B is the ceiling). ToT and multi-agent on local are impractical (~3-6 min per question).
+- [x] **Week 7 final deliverables built (2026-11-20)**, private in `deliverables/` (gitignored): Word report (9 pages, from `scripts/fill_report.py`), a 12-slide PowerPoint (pptxgenjs build in `deliverables/_deck/build_deck.js`, timed speaker notes ~9:55), PDFs of both, and `MedicaidIQ_Recording_Script.md` (video script, click-by-click demo, 90-second pitch). Figures: `scripts/make_figures.py`. Repo tagged v1.0.
+- [ ] **USER:** record the 8–10 minute video (and optional pitch) and submit the report, slides, video and repo link.
 - [ ] Expand the eval to about 40 cases (now 18); add a formal success-criteria list (A3); replace brittle keyword checks.

@@ -38,3 +38,6 @@ Thumbs.db
 
 # --- Retrieval index (rebuilt from the corpus) ---
 data/index/
+
+# --- Final deliverables (report, slides, scripts): kept private ---
+deliverables/
