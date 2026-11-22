@@ -51,7 +51,8 @@ def test_stale_fact_triggers_review(tmp_path):
 def test_agent_interpretation_requires_human_approval(tmp_path):
     ks = _store(tmp_path)
     ks.add_interpretation("EV:pa:effective_date", "2024-08-01", "inferred from claims pattern")
-    assert ks.resolve("EV:pa:effective_date").status == "unknown"   # provisional is not evidence
+    r = ks.resolve("EV:pa:effective_date")
+    assert r.status == "needs_review" and r.value is None          # provisional is not evidence
     assert ks.approve("EV:pa:effective_date", "2024-08-01", reviewer="analyst")
     assert ks.resolve("EV:pa:effective_date").value == "2024-08-01"
 

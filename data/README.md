@@ -6,7 +6,7 @@ Generated deterministically by `medicaidiq build-data` (`src/medicaidiq/synth.py
 
 | File | Contents |
 |---|---|
-| `states.csv` | Three **fictional** states: NL Northland, EV Eastvale, SP Southport |
+| `states.csv` | Three **fictional** states: NL Northland, EV Eastvale, SP Southport (the real state IL is added at build time from `real/illinois/`) |
 | `enrollment.csv` | Member-months by state and quarter, 2023Q1–2025Q4 |
 | `drug_utilization.csv` | SDUD-shaped rows: state, quarter, drug class, product, NDC-style code, prescriptions, units, reimbursement, `suppressed` |
 | `reporting_status.csv` | Each quarter `final`, `provisional` (claims lag), or `missing` |
@@ -27,9 +27,20 @@ Generated deterministically by `medicaidiq build-data` (`src/medicaidiq/synth.py
 
 Product names are real generic drug names. NDC-style codes and every number are synthetic.
 
-## Real public data (planned, Week 3+)
+## `real/illinois/`: one real state (Week 7)
 
-CMS State Drug Utilization Data and public enrollment data from data.medicaid.gov, plus public state policy documents. Restricted data (T-MSIS/TAF) is out of scope.
+Fetched by `medicaidiq fetch-real` (`src/medicaidiq/real_data.py`); loaded by `medicaidiq build-data` as state **IL** next to the synthetic states. Snapshots are committed; `manifest.json` records each source's dataset id or URL, version, retrieval time and SHA-256.
+
+| File | Source | Notes |
+|---|---|---|
+| `sdud_il.csv` | CMS State Drug Utilization Data, data.medicaid.gov datastore API, 2022–2026 releases | GLP-1, SGLT2, insulin by product-name pattern; FFS and MCO rows; combination products excluded |
+| `enrollment_il.csv` | Medicaid & CHIP enrollment (PI dataset), data.medicaid.gov | Updated (`U`) monthly rows only; member-months = sum of 3 months |
+| `pdl_history.json` | Illinois HFS Preferred Drug List spreadsheets, 20 versions 2022–2026 (hfs.illinois.gov; robots.txt allows; fetched ≥ 2 s apart) | Only GLP-1, SGLT2 and anti-obesity sections |
+| `policies/IL-PDL-*.md` | Generated from `pdl_history.json`: one document per version whose sections changed | Effective dates deliberately left blank |
+| `candidate_facts.json` | Candidate policy dates proposed from the documents | Provisional until a human approves |
+| `approvals.json` | Human reviewer decisions (`medicaidiq approve-fact`) | Re-applied on every build |
+
+**Caveats the agent must state for Illinois:** amounts are pre-rebate (overstate net cost); about 95% of GLP-1 prescriptions are managed care; suppressed rows (< 11 prescriptions) are lower bounds; the latest quarter (2026Q1) is incomplete; product names are truncated to 10 characters. Restricted data (T-MSIS/TAF) remains out of scope.
 
 ## `public/`: real external corpus (Week 3)
 

@@ -39,8 +39,8 @@ from .verify import verify_answer
 
 POLICY_TOOLS = {"search_policy", "get_policy_timeline"}
 DATA_TOOLS = {"check_data_coverage", "run_sql", "pre_post_analysis", "spending_decomposition", "calculate"}
-KNOWN_STATES = {"NL", "EV", "SP"}
-_STATE_NAMES = {"NORTHLAND": "NL", "EASTVALE": "EV", "SOUTHPORT": "SP"}
+KNOWN_STATES = {"NL", "EV", "SP", "IL"}
+_STATE_NAMES = {"NORTHLAND": "NL", "EASTVALE": "EV", "SOUTHPORT": "SP", "ILLINOIS": "IL"}
 
 
 def normalize_state(value) -> str:
@@ -56,8 +56,9 @@ def normalize_state(value) -> str:
     return raw
 
 _SHARED_RULES = """Rules: use tools for every fact and number; never compute in your head. Cite tool evidence ids
-(E1, E2, ...) and, for policy text, chunk_ids in brackets. Data and states are synthetic (NL Northland,
-EV Eastvale, SP Southport). Policy topics: glp1_coverage (NL), glp1_prior_auth (EV), sglt2_pdl (SP).
+(E1, E2, ...) and, for policy text, chunk_ids in brackets. NL Northland, EV Eastvale, SP Southport are
+synthetic; IL Illinois is real public data (pre-rebate amounts, ~95% managed care, latest quarter provisional).
+Policy topics: glp1_coverage (NL, IL), glp1_prior_auth (EV), sglt2_pdl (SP).
 Finish by calling submit_answer: summary = your handoff note for the team (what you found, what is
 uncertain); findings = the facts with evidence ids. If you found nothing usable, use answer_type
 "cannot_answer" and say exactly what is missing."""
@@ -85,7 +86,8 @@ what is missing. When declining, do NOT add facts about other states (never plac
 question about another). Copy document and chunk ids EXACTLY as given (e.g. NL-SPA-2023-014#p1). Keep it concise (summary <= 4 sentences, <= 6 findings). Call submit_answer."""
 
 SCOPE_PROMPT = """You are the PLANNER on the MedicaidIQ team. Scope the user's question. Available data: states
-NL (Northland), EV (Eastvale), SP (Southport); drug classes GLP1, SGLT2, INSULIN; quarters 2023Q1-2025Q4; policy
+NL (Northland), EV (Eastvale), SP (Southport) (synthetic, 2023Q1-2025Q4) and IL (Illinois; real, 2022Q1-2026Q1);
+drug classes GLP1, SGLT2, INSULIN; policy
 documents for those states plus federal regulations. Reply with JSON only:
 {"states": [state codes or names as asked; include unknown states as named], "drug_class": code or null,
  "needs_policy": true if any policy date or policy text matters, "needs_data": true if utilization or spending

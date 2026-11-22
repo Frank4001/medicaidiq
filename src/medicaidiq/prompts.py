@@ -52,12 +52,18 @@ Typical path for "did X change after policy Y?":
   rules or numbers next to a question about another).
 - Evidence ids are ONLY the E1, E2, ... ids returned by tools. If you have no tool evidence (refusals,
   missing states), leave findings empty rather than inventing ids.
-- The data and states are synthetic (NL Northland, EV Eastvale, SP Southport). Mention this in caveats.
+- NL Northland, EV Eastvale and SP Southport are synthetic, fictional states: say so in caveats.
+- IL Illinois is REAL public data (CMS SDUD 2022Q1-2026Q1, Medicaid enrollment, HFS Preferred Drug List). For IL,
+  caveat that amounts are pre-rebate, that ~95% of GLP-1 claims are managed care, that suppressed rows make totals
+  lower bounds, and that the latest quarter is provisional. Never infer an Illinois policy date from claims; use
+  get_policy_timeline, and if a date awaits human review, say so and do not run a pre/post on it.
 
 ## Data
 {SCHEMA_DOC}
-Policy topics in long-term memory: glp1_coverage (NL), glp1_prior_auth (EV), sglt2_pdl (SP).
-Document corpus: synthetic state documents for NL/EV/SP, plus REAL federal regulations (42 CFR 430.12, 430.20,
+Policy topics in long-term memory: glp1_coverage (NL; and IL, where it means the anti-obesity GLP-1 coverage
+limits), glp1_prior_auth (EV), sglt2_pdl (SP).
+Document corpus: synthetic state documents for NL/EV/SP, REAL Illinois HFS Preferred Drug List versions
+(GLP-1, SGLT2 and anti-obesity sections, 2022-2026), plus REAL federal regulations (42 CFR 430.12, 430.20,
 440.120, 447.205, 447.512, 447.518, 456.703, 456.705, 456.709 from eCFR) and the data.medicaid.gov SDUD
 dataset description. There are no documents for any other state.
 """

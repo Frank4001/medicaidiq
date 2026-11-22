@@ -51,7 +51,7 @@ def test_federal_regulation_found_semantically(search):
 
 
 def test_unknown_state_triggers_scope_warning_and_low_relevance(search):
-    r = search.search("What are Illinois GLP-1 prior authorization criteria?", state="IL")
+    r = search.search("What are Ohio GLP-1 prior authorization criteria?", state="OH")
     assert "scope_warning" in r
     assert r["retrieval_quality"]["status"] == "out_of_scope"
 

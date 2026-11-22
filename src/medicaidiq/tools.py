@@ -25,7 +25,7 @@ from .retrieval import PolicySearch
 from . import stats
 
 TOPICS = ["glp1_coverage", "glp1_prior_auth", "sglt2_pdl"]
-STATE_ENUM = ["NL", "EV", "SP"]
+STATE_ENUM = ["NL", "EV", "SP", "IL"]
 DRUG_ENUM = ["GLP1", "SGLT2", "INSULIN"]
 
 

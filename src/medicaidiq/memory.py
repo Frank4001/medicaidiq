@@ -41,6 +41,7 @@ AUTHORITY = {
     "waiver": 4,
     "federal_guidance": 3,
     "provider_manual": 2,
+    "preferred_drug_list": 2,
     "provider_bulletin": 1,
     "agent_interpretation": 0,
 }
@@ -173,11 +174,29 @@ class KnowledgeStore:
         self._upsert(Fact(key=key, value=value, source_doc="agent", doc_type="agent_interpretation",
                           published=self.today.isoformat(), status="provisional", note=note))
 
-    def approve(self, key: str, value: str, reviewer: str) -> bool:
+    def add_candidate(self, key: str, value: str, source_doc: str, doc_type: str, published: str,
+                      note: str) -> None:
+        """A document-derived fact that needs a human decision before use (real-state policy dates)."""
+        self._upsert(Fact(key=key, value=value, source_doc=source_doc, doc_type=doc_type, published=published,
+                          status="provisional", note=f"Candidate awaiting human review. {note}".strip()))
+
+    def pending(self) -> list[Fact]:
+        return [f for f in self.facts if f.status == "provisional"]
+
+    def approve(self, key: str, value: str, reviewer: str, on: str | None = None) -> bool:
+        on = on or self.today.isoformat()
         for f in self.facts:
             if f.key == key and f.value == value and f.status == "provisional":
-                f.status, f.last_verified = "verified", self.today.isoformat()
-                f.note += f" Approved by {reviewer} on {self.today.isoformat()}."
+                f.status, f.last_verified = "verified", on
+                f.note += f" Approved by {reviewer} on {on}."
+                return True
+        return False
+
+    def reject(self, key: str, value: str, reviewer: str) -> bool:
+        for f in self.facts:
+            if f.key == key and f.value == value and f.status == "provisional":
+                f.status = "rejected"
+                f.note += f" Rejected by {reviewer} on {self.today.isoformat()}."
                 return True
         return False
 
@@ -191,6 +210,11 @@ class KnowledgeStore:
         live = [f for f in all_facts if f.status == "verified"]
         superseded = [asdict(f) for f in all_facts if f.status == "superseded"]
         if not live:
+            pending = [asdict(f) for f in all_facts if f.status == "provisional"]
+            if pending:
+                return Resolution(key, "needs_review", None, None, pending, superseded,
+                                  "Candidate values exist but no human reviewer has approved one yet; do not "
+                                  "use any of them as the policy date. State that the date awaits review.")
             return Resolution(key, "unknown", None, None, [], superseded,
                               "No verified fact on record; retrieve source documents.")
         top = max(f.authority for f in live)

@@ -29,18 +29,21 @@ MAX_ROWS = 200
 TIMEOUT_S = 10.0
 
 SCHEMA_DOC = """\
-Tables (synthetic data mirroring CMS State Drug Utilization Data; states are FICTIONAL):
+Tables (CMS State Drug Utilization Data shape). Three FICTIONAL synthetic states with known answers, plus
+one REAL state (Illinois) from public CMS data:
 
-states(state VARCHAR, state_name VARCHAR, data_as_of DATE)
-  - state codes: NL = Northland, EV = Eastvale, SP = Southport
+states(state VARCHAR, state_name VARCHAR, data_as_of DATE, data_source VARCHAR)
+  - state codes: NL = Northland, EV = Eastvale, SP = Southport (synthetic); IL = Illinois (real, 2022Q1-2026Q1)
 
 enrollment(state VARCHAR, year INT, quarter INT, member_months BIGINT)
   - member_months = sum of months of enrollment in the quarter (denominator for rates/PMPM)
 
 drug_utilization(state VARCHAR, year INT, quarter INT, drug_class VARCHAR, product_name VARCHAR,
                  ndc VARCHAR, prescriptions BIGINT, units BIGINT, reimbursement_usd DOUBLE,
-                 suppressed BOOLEAN)
+                 suppressed BOOLEAN, utilization_type VARCHAR)
   - drug_class in ('GLP1', 'SGLT2', 'INSULIN')
+  - utilization_type: 'FFS' (fee-for-service) or 'MCO' (managed care) for IL; 'ALL' for synthetic states.
+    IL reimbursement is pre-rebate (overstates net cost); IL product_name is truncated to 10 characters
   - suppressed = TRUE means the count was < 11 and is NULL (privacy suppression); never treat as 0
 
 reporting_status(state VARCHAR, year INT, quarter INT, status VARCHAR, note VARCHAR)

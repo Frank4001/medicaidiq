@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 ui = ["streamlit>=1.40", "pandas>=2.0"]
+real = ["openpyxl>=3.1"]   # only for `medicaidiq fetch-real` (parses HFS PDL spreadsheets)
 
 [project.scripts]
 medicaidiq = "medicaidiq.cli:main"

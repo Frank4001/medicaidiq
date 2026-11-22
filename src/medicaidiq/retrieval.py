@@ -110,12 +110,22 @@ def _group_regulation(paras: list[str]) -> list[tuple[str, str]]:
     return out
 
 
+def _policy_paths(policy_dir: Path) -> list[Path]:
+    """Synthetic state documents plus real state documents (data/real/*/policies), when present."""
+    paths = sorted(Path(policy_dir).glob("*.md"))
+    if Path(policy_dir) == POLICY_DIR:
+        paths += sorted((DATA_DIR / "real").glob("*/policies/*.md"))
+    return paths
+
+
 def load_chunks(policy_dir: Path = POLICY_DIR, public_dir: Path = PUBLIC_DIR) -> list[Chunk]:
     chunks: list[Chunk] = []
-    for path in sorted(Path(policy_dir).glob("*.md")):
+    for path in _policy_paths(policy_dir):
         meta, title, paras = _parse_md(path)
-        meta = {**meta, "jurisdiction": meta.get("state", ""), "source": "synthetic test corpus",
-                "url": f"data/synthetic/policies/{path.name}"}
+        real = str(meta.get("synthetic", "true")).lower() == "false"
+        meta = {**meta, "jurisdiction": meta.get("state", ""),
+                "source": "real public state document (Illinois HFS)" if real else "synthetic test corpus",
+                "url": meta.get("source_url") if real else f"data/synthetic/policies/{path.name}"}
         for i, p in enumerate(paras):
             chunks.append(Chunk(f"{meta['doc_id']}#p{i + 1}", meta["doc_id"], i, title, f"p{i + 1}", p, meta))
     for path in sorted(Path(public_dir).glob("*.json")):
@@ -307,7 +317,7 @@ class PolicyDoc:
 
 def load_corpus(policy_dir: Path = POLICY_DIR) -> list[PolicyDoc]:
     docs = []
-    for path in sorted(Path(policy_dir).glob("*.md")):
+    for path in _policy_paths(policy_dir):
         meta, title, paras = _parse_md(path)
         docs.append(PolicyDoc(meta, title, "\n\n".join(paras)))
     return docs

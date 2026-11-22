@@ -111,10 +111,10 @@ def test_write_guardrail_still_applies(toolbox):
 
 def test_state_names_and_codes_normalize():
     from medicaidiq.multiagent import normalize_state
-    assert [normalize_state(s) for s in ["Northland", "EV", "sp", "Southport (SP)", "Illinois"]] == \
-        ["NL", "EV", "SP", "SP", "Illinois"]
+    assert [normalize_state(s) for s in ["Northland", "EV", "sp", "Southport (SP)", "Ohio"]] == \
+        ["NL", "EV", "SP", "SP", "Ohio"]
 
 
 def test_bare_cfr_mention_is_not_a_numeric_claim():
     from medicaidiq.verify import _claim_numbers
-    assert _claim_numbers("Only federal 42 CFR passages were returned; none are Illinois-specific.") == []
+    assert _claim_numbers("Only federal 42 CFR passages were returned; none are Ohio-specific.") == []

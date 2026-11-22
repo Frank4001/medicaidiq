@@ -17,7 +17,7 @@ D1 = j({"candidates": [
     {"question_type": "pre_post", "state": "EV", "drug_class": "GLP1", "metric": "rx_per_1000_mm",
      "denominator_rationale": "per member to control for enrollment"},
     {"question_type": "pre_post", "state": "EV", "drug_class": "GLP1", "metric": "raw_prescription_count"},
-    {"question_type": "pre_post", "state": "IL", "drug_class": "GLP1", "metric": "rx_per_1000_mm"},
+    {"question_type": "pre_post", "state": "OH", "drug_class": "GLP1", "metric": "rx_per_1000_mm"},
 ]})
 C1 = j({"scores": [{"id": "n1", "interpretation": 2, "note": "per-member rate answers the question"}]})
 D2 = j({"candidates": [
@@ -48,7 +48,7 @@ def test_full_tree_selects_correct_plan_and_prunes_traps(toolbox):
     assert res["selected_plan"]["effective_date"] == "2024-07-01"
     assert res["score"] >= 7
     reasons = {p["id"]: p["reason"] for p in res["pruned"]}
-    assert "metric" in reasons["n2"] and "state 'IL'" in reasons["n3"]
+    assert "metric" in reasons["n2"] and "state 'OH'" in reasons["n3"]
     assert "superseded date 2024-06-01" in reasons["n1.2"]
     assert "fewer than 2 final quarters" in reasons["n1.3"]       # provisional 2025Q3/Q4
     assert "invalid step" in reasons["n1.1.2"]
@@ -74,9 +74,9 @@ def test_beam_width_limits_frontier(toolbox):
 
 
 def test_no_valid_plan_when_everything_fails(toolbox):
-    d1 = j({"candidates": [{"question_type": "pre_post", "state": "IL", "drug_class": "GLP1",
+    d1 = j({"candidates": [{"question_type": "pre_post", "state": "OH", "drug_class": "GLP1",
                             "metric": "rx_per_1000_mm"}]})
-    res = _planner(toolbox, [d1]).plan("Did GLP-1 use change in Illinois after its PA policy?")
+    res = _planner(toolbox, [d1]).plan("Did GLP-1 use change in Ohio after its PA policy?")
     assert res["status"] == "no_valid_plan" and "selected_plan" not in res
     assert "explain" in res["instruction"]
 

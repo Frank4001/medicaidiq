@@ -45,7 +45,7 @@ from .memory import WorkingMemory
 from .paths import RUNS_DIR
 from .tools import TOOL_SCHEMAS, Toolbox
 
-STATES = {"NL", "EV", "SP"}
+STATES = {"NL", "EV", "SP", "IL"}
 DRUGS = {"GLP1", "SGLT2", "INSULIN"}
 METRICS = set(stats.METRICS) | {"spending_decomposition"}
 SPEND_METRICS = {"spend_pmpm", "spend_per_rx", "spending_decomposition"}
@@ -182,9 +182,11 @@ class ToTPlanner:
     def _expand(self, parent: PlanNode, d: int) -> list[PlanNode]:
         task = DEPTH_TASK[d].format(k=self.k, metrics=sorted(METRICS), tools=TOOL_SIGS)
         ctx = {"question": self.question,
-               "data": {"states": {"NL": "Northland", "EV": "Eastvale", "SP": "Southport"},
-                        "drug_classes": sorted(DRUGS), "quarters": "2023Q1-2025Q4",
-                        "policy_topics": ["NL:glp1_coverage", "EV:glp1_prior_auth", "SP:sglt2_pdl"]},
+               "data": {"states": {"NL": "Northland", "EV": "Eastvale", "SP": "Southport",
+                                   "IL": "Illinois (real data)"},
+                        "drug_classes": sorted(DRUGS), "quarters": "2023Q1-2025Q4 (IL: 2022Q1-2026Q1)",
+                        "policy_topics": ["NL:glp1_coverage", "EV:glp1_prior_auth", "SP:sglt2_pdl",
+                                          "IL:glp1_coverage"]},
                "verified_facts": self.facts or "none yet",
                "parent": parent.plan if d > 1 else None}
         content = self._llm([{"role": "system", "content": GEN_SYSTEM},

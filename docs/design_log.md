@@ -117,3 +117,17 @@ Format: `D<week>.<n>`, the decision, why, and its status (active / superseded by
 | D6.10 | **Conflict trigger precision**: mandatory only when the answer depends on the disputed fact; otherwise `background_conflict` | Live eval: 1 unnecessary escalation → 0 | Active |
 | D6.11 | **Demo and review console** (Streamlit): side-by-side mode comparison with the benchmark trade-off, trace/evidence/passages/ToT views, review queue, tools explorer, eval dashboard, monitoring log | Demo request; HITL needs a reviewer interface | Active |
 | D6.12 | Refusals and out-of-scope replies always go through `submit_answer`; no other-state facts when declining (main prompt) | Live eval v2 slips | Active |
+
+---
+
+## Week 7: Real Illinois data and local-model tuning
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D7.1 | **Add one real state (Illinois) beside the synthetic states**, not instead of them: CMS SDUD 2022Q1-2026Q1 (FFS and MCO), monthly Medicaid enrollment, HFS Preferred Drug List versions 2022-2026 | Real data shows the design works outside the test environment; the synthetic states stay the regression suite because only they have known answers | Active |
+| D7.2 | **Snapshots with provenance** (`data/real/illinois/`, `manifest.json`: dataset id and version, URL, retrieval time, SHA-256); builds are offline; fetches retry with backoff and resume from a cache | Reproducibility; the first live fetch died on a transient DNS failure | Active |
+| D7.3 | **Drug classes by name pattern with a reviewed list** (SDUD names are truncated to 10 characters); fixed-ratio combination products (Soliqua, Xultophy, SGLT2 + metformin) excluded | Each class means one mechanism; documented limitation vs. NDC-to-ingredient mapping | Active |
+| D7.4 | **Real-data caveats are data, not prose**: `utilization_type` (FFS/MCO), `data_source`, pre-rebate amounts, suppressed rows NULL (lower bounds), latest quarter `provisional` (< 6 months before the release) | The agent's existing coverage and suppression logic applies unchanged | Active |
+| D7.5 | **Real policy dates need a human**: dates proposed from documents enter memory as candidates; only a recorded approval (`approvals.json`, `medicaidiq approve-fact`) makes one usable; never inferred from claims | Feasibility check (D-real): a wrong date silently corrupts every pre/post; the real PDL turned out to be ambiguous (10/01 archive label vs. "Effective October 20, 2026" PDF header, and the archived 10/01 PDF link serves the 10/20 file) | Active |
+| D7.6 | Unverified claims removed from the generated documents (that the PDL binds managed-care plans; that non-preferred means PA required): the HFS pages don't state them | Never claim what the source doesn't say | Active |
+| D7.7 | **`local-fast` provider**: same llama.cpp server, Qwen3 thinking off per request (`chat_template_kwargs`) | Local-model plan: tool selection doesn't need long hidden reasoning | Pending benchmark |

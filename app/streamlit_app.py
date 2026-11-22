@@ -47,7 +47,11 @@ SAMPLES = {
         "Southport's GLP-1 spending rose between 2023Q4 and 2025Q2. Does that mean members were getting more treatment?",
     "Provisional data trap":
         "Compare Eastvale's GLP-1 prescriptions per 1,000 member-months in 2025Q2 versus 2025Q4. Did use fall?",
-    "Out of scope (Illinois)": "What are Illinois Medicaid's prior authorization criteria for GLP-1 drugs?",
+    "Out of scope (Ohio)": "What are Ohio Medicaid's prior authorization criteria for GLP-1 drugs?",
+    "REAL Illinois: GLP-1 trend": "How did GLP-1 prescriptions per 1,000 member-months change in Illinois Medicaid between 2023Q1 and 2025Q4?",
+    "REAL Illinois: weight-loss coverage": "Does Illinois Medicaid cover Wegovy or Zepbound for weight loss?",
+    "REAL Illinois: spending vs enrollment": "Illinois GLP-1 spending rose between 2023Q1 and 2025Q4 while enrollment fell. How much of the change is enrollment versus use versus price?",
+    "REAL Illinois: policy date awaiting review": "Did GLP-1 prescribing in Illinois change after its anti-obesity GLP-1 coverage limits took effect?",
     "HITL: causal question -> withheld": "Did Eastvale's prior authorization requirement cause the drop in GLP-1 prescribing?",
     "HITL: decision-sensitive -> withheld":
         "Based on Eastvale's prior authorization criteria, should we deny a GLP-1 claim for a member with type 2 diabetes and an A1c of 6.5 after a metformin trial?",
@@ -215,8 +219,8 @@ with tab_ask:
         compare = st.checkbox("Compare side by side")
         mode_b = st.selectbox("Compare with", [m for m in MODES if m != mode_a],
                               format_func=lambda m: MODES[m], disabled=not compare)
-        provider = st.selectbox("LLM provider", ["deepseek", "local", "qwen", "kimi"],
-                                help="local = your llama.cpp server on port 8080")
+        provider = st.selectbox("LLM provider", ["deepseek", "local", "local-fast", "qwen", "kimi"],
+                                help="local = your llama.cpp server on port 8080; local-fast = same, Qwen3 thinking off")
     modes = [mode_a] + ([mode_b] if compare else [])
     if compare:
         tradeoff_panel(load_benchmarks(), modes)

@@ -1,0 +1,18 @@
+[
+  {
+    "key": "IL:glp1_coverage:effective_date",
+    "value": "2026-10-01",
+    "source_doc": "IL-PDL-2026-10-01",
+    "doc_type": "preferred_drug_list",
+    "published": "2026-10-01",
+    "note": "Anti-obesity GLP-1 class note (Wegovy covered for MACE & MASH only; Zepbound for OSA only; neither for weight loss alone) first appears in the PDL spreadsheet that the HFS archive page labels 'Medicaid Preferred Drug List - 10/01/2026'. It is absent from the 07/01/2026 PDL. Competing candidate: 2026-10-20."
+  },
+  {
+    "key": "IL:glp1_coverage:effective_date",
+    "value": "2026-10-20",
+    "source_doc": "IL-PDL-2026-10-20",
+    "doc_type": "preferred_drug_list",
+    "published": "2026-10-20",
+    "note": "The current PDL PDF is headed 'Effective October 20, 2026'. The archived 10/01/2026 PDF link serves this same file (identical SHA-256, created 2026-10-20), so the PDF cannot confirm the 10/01 date. Competing candidate: 2026-10-01."
+  }
+]

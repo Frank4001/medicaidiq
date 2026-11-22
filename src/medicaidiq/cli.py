@@ -22,13 +22,26 @@ def build_data() -> None:
     from .memory import KnowledgeStore
     from .retrieval import load_corpus
 
+    from . import real_data
+
     db = synth.build()
+    if real_data.available():
+        info = real_data.extend_database(db)
+        docs = real_data.write_policy_docs()
+        print(f"Illinois (real): {info['utilization_rows']} SDUD rows, {info['enrollment_quarters']} enrollment "
+              f"quarters, provisional {info['provisional']}; {len(docs)} PDL documents")
     if KNOWLEDGE_PATH.exists():
         KNOWLEDGE_PATH.unlink()
     ks = KnowledgeStore()
     # Ingest in publication order: later documents can supersede earlier ones.
     for doc in sorted(load_corpus(), key=lambda d: d.meta["published"]):
         ks.ingest_document(doc.meta)
+    # Real-state policy dates: proposed from documents as provisional facts; only a recorded human
+    # approval makes them usable (never inferred from claims, never auto-approved).
+    for c in real_data.candidate_facts():
+        ks.add_candidate(c["key"], c["value"], c["source_doc"], c["doc_type"], c["published"], c["note"])
+    for a in real_data.approvals():
+        ks.approve(a["key"], a["value"], a["reviewer"], on=a["approved_on"])
     ks.save()
     print(f"Database: {db}\nLong-term memory: {KNOWLEDGE_PATH} ({len(ks.facts)} facts)")
     try:
@@ -37,6 +50,35 @@ def build_data() -> None:
         print(f"Retrieval index: {len(s.chunks)} chunks, mode={s.mode}")
     except Exception as exc:  # retrieval is optional for the data build
         print(f"Retrieval index not built ({exc}); search falls back to keyword mode.")
+
+
+def review_cli(args) -> int:
+    from . import real_data
+    from .memory import KnowledgeStore
+
+    ks = KnowledgeStore()
+    if args.cmd == "review-facts":
+        pending = ks.pending()
+        if not pending:
+            print("No facts waiting for review.")
+        for f in pending:
+            print(f"{f.key} = {f.value}" + chr(10) + f"  source: {f.source_doc} ({f.doc_type}, "
+                  f"published {f.published})" + chr(10) + f"  {f.note}" + chr(10))
+        return 0
+    if args.cmd == "approve-fact":
+        if not ks.approve(args.key, args.value, args.reviewer):
+            print("No pending candidate with that key and value (see `medicaidiq review-facts`).")
+            return 1
+        real_data.record_approval(args.key, args.value, args.reviewer, args.note)
+        ks.save()
+        print(f"Approved {args.key} = {args.value} by {args.reviewer}; recorded in {real_data.APPROVALS_PATH}.")
+        return 0
+    if not ks.reject(args.key, args.value, args.reviewer):
+        print("No pending candidate with that key and value.")
+        return 1
+    ks.save()
+    print(f"Rejected {args.key} = {args.value}.")
+    return 0
 
 
 def make_agent(provider: str | None = None, model: str | None = None, interactive: bool = False,
@@ -87,6 +129,17 @@ def main(argv: list[str] | None = None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("build-data", help="Generate synthetic data, policy corpus, long-term memory, retrieval index")
     sub.add_parser("fetch-public", help="Re-download public eCFR + data.medicaid.gov documents (needs network)")
+    sub.add_parser("fetch-real", help="Re-download real Illinois SDUD, enrollment and HFS PDL snapshots (network)")
+    sub.add_parser("review-facts", help="List policy facts waiting for human approval")
+    ap = sub.add_parser("approve-fact", help="Approve a candidate policy fact (human reviewer)")
+    ap.add_argument("key")
+    ap.add_argument("value")
+    ap.add_argument("--reviewer", required=True)
+    ap.add_argument("--note", default="")
+    rj = sub.add_parser("reject-fact", help="Reject a candidate policy fact (human reviewer)")
+    rj.add_argument("key")
+    rj.add_argument("value")
+    rj.add_argument("--reviewer", required=True)
     ask = sub.add_parser("ask", help="Ask a question")
     ask.add_argument("question")
     ask.add_argument("--provider", default=None, help="deepseek | qwen | kimi | local")
@@ -107,6 +160,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "build-data":
         build_data()
         return 0
+    if args.cmd == "fetch-real":
+        from .real_data import fetch_illinois
+        fetch_illinois()
+        print("Snapshots saved; run `medicaidiq build-data` to load them.")
+        return 0
+    if args.cmd in ("review-facts", "approve-fact", "reject-fact"):
+        return review_cli(args)
     if args.cmd == "fetch-public":
         from .ingest_public import fetch_all
         for path in fetch_all():

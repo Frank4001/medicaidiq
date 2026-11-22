@@ -26,6 +26,11 @@ PROVIDERS = {
              "model": "kimi-k2.6", "price": {"in": 0.95, "cached_in": 0.16, "out": 4.00}},
     "local": {"base_url": "http://127.0.0.1:8080/v1", "key_env": "", "model": "local",
               "price": {"in": 0.0, "cached_in": 0.0, "out": 0.0}},
+    # Same llama.cpp server, Qwen3 "thinking" switched off per request via the chat template
+    # (tuned local run: tool selection does not need long hidden reasoning; roughly halves latency).
+    "local-fast": {"base_url": "http://127.0.0.1:8080/v1", "key_env": "", "model": "local",
+                   "price": {"in": 0.0, "cached_in": 0.0, "out": 0.0},
+                   "extra_body": {"chat_template_kwargs": {"enable_thinking": False}}},
 }
 
 
@@ -91,6 +96,7 @@ class ChatLLM:
         if not key:
             raise RuntimeError(f"Set {cfg['key_env']} in .env to use provider '{self.provider}'.")
         self.price = cfg["price"]
+        self.extra_body = cfg.get("extra_body")
         self.temperature = temperature
         self.meter = UsageMeter()
         self.client = OpenAI(base_url=base_url or os.getenv("MEDICAIDIQ_BASE_URL") or cfg["base_url"],
@@ -108,6 +114,8 @@ class ChatLLM:
             kwargs.update(tools=list(tools), tool_choice="auto")
         if json_mode:   # provider-enforced JSON object output (prompt must also ask for JSON)
             kwargs["response_format"] = {"type": "json_object"}
+        if self.extra_body:
+            kwargs["extra_body"] = self.extra_body
         t0 = time.perf_counter()
         client = self.client.with_options(timeout=timeout, max_retries=1) if timeout else self.client
         resp = client.chat.completions.create(**kwargs)
