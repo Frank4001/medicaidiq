@@ -4,6 +4,8 @@
 
 > Capstone project for the CMU *Agentic AI: Building Autonomous Systems for Real-World Applications* program.
 > **Status: complete (v1.0, final capstone submission).** ReAct agent with tools, short- and long-term memory, **hybrid RAG over real federal regulations (eCFR)**, layered **safety guardrails**, **human-in-the-loop review with SLAs**, a trajectory monitor, an MCP server, an eval harness with **release gates**, and a **demo and review console**. Opt-in Tree-of-Thought planning and a four-agent workflow were benchmarked; the single agent stays the default on evidence. **Live eval: 24/24 on DeepSeek, all release gates pass** (10.3 s, $0.0028 per question). 118 offline tests.
+>
+> **Presentation video (9:56):** [youtu.be/nDrWNUwB6VQ](https://youtu.be/nDrWNUwB6VQ): problem, architecture, design decisions, evaluation, and a live demo of the console.
 
 ## The problem
 
