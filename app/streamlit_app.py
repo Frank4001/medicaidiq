@@ -194,8 +194,9 @@ def tradeoff_panel(df: pd.DataFrame, modes: list[str]):
         st.markdown("**Measured trade-off on the full eval set** (archived runs in `eval/results/`)")
         st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
         if {"single", "multi"} <= set(modes):
-            st.caption("Why the single agent is the default: the four-agent workflow matched accuracy at best, at ~5x the "
-                       "time and cost, and every handoff between agents was a new failure point (design log D5.1).")
+            st.caption("Why the single agent is the default: the four-agent workflow was one case less accurate (17/18 vs "
+                       "18/18) at ~5x the time and cost, and every handoff between agents was a new failure point "
+                       "(design log D5.1).")
 
 
 # ----------------------------------------------------------------------------- tabs
