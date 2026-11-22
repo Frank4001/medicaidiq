@@ -41,3 +41,6 @@ data/index/
 
 # --- Final deliverables (report, slides, scripts): kept private ---
 deliverables/
+
+
+data/real/*/.cache/

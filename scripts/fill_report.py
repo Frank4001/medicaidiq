@@ -18,6 +18,8 @@ from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "course/final_project/Self-study Capstone Checkpoint Activity 7.1_Final Capstone Report Planning Template.docx"
 OUT = ROOT / "deliverables/MedicaidIQ_Final_Capstone_Report.docx"
+AUTHOR = "Frank Sun"
+TITLE = "MedicaidIQ: Final Capstone Report"
 FIG = ROOT / "deliverables/figures/architecture.png"
 REPO = "https://github.com/Frank4001/medicaidiq"
 FONT = '<w:rFonts w:ascii="Open Sans" w:eastAsia="Open Sans" w:hAnsi="Open Sans" w:cs="Open Sans"/>'
@@ -408,6 +410,16 @@ def main() -> int:
         "</Relationships>", '<Relationship Id="rIdMiqArch" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
                             'relationships/image" Target="media/medicaidiq_architecture.png"/></Relationships>')
     rels_path.write_text(rels, encoding="utf-8")
+
+    # Document properties: the template carries its own authors; the report is the student's.
+    core = work / "docProps" / "core.xml"
+    if core.exists():
+        c = core.read_text(encoding="utf-8")
+        for tag, value in (("dc:creator", AUTHOR), ("cp:lastModifiedBy", AUTHOR), ("dc:title", TITLE)):
+            c = re.sub(rf"<{tag}>[^<]*</{tag}>|<{tag}/>", f"<{tag}>{value}</{tag}>", c)
+            if f"<{tag}>" not in c:
+                c = c.replace("</cp:coreProperties>", f"<{tag}>{value}</{tag}></cp:coreProperties>")
+        core.write_text(c, encoding="utf-8")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     if OUT.exists():
